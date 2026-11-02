@@ -1,0 +1,182 @@
+{
+  "status": "PASS_BUNSHO_INVALID_PREFIX",
+  "scope": "Synthetic macOS Arm and Chrome/Wasm only; no real-user migration, OS/QEMU, delivery or release qualification",
+  "sources": {
+    "src/moji/editor.kotoba": "e9501c695bf6420d9c085fd3d8298386d46bc68b4135a09634ce35ee0ca1bdeb",
+    "scripts/check-browser-ui.py": "add538ddbcfc5455878fafb7390b2b11771949ee91ea141115a9aede1e7dd04e",
+    "scripts/check-snapshot-wasm.py": "989169a0d71a4fc7bd481dac16789a043d01d2fd7765268eb4019cc0ff92e1b6",
+    "scripts/check-native-document-host.py": "1c57524e77e8a62b89196ae8cc0651a12ec8cfb7abce142ac9d26240adea6143"
+  },
+  "preFix": {
+    "input": "雪雪",
+    "command": "amu run on narrowed-export model with invalid-input assertion",
+    "shellExit": 133,
+    "meaning": "SIGTRAP observed on macOS"
+  },
+  "model": {
+    "sourceSha256": "e9501c695bf6420d9c085fd3d8298386d46bc68b4135a09634ce35ee0ca1bdeb",
+    "compilerSha256": "2c551579c06a0228029bb06bae177e93126ecbbc37d636d693c471dbac8d1536",
+    "results": {
+      "snapshot": {
+        "result": 17,
+        "report": "{:status :ok :result 17 :fuel {:initial 9007199254740991 :remaining 9007199252042951 :metered false}}",
+        "wasmSha256": "eaaaafc9028f321769e6cd1a7f1cba683076f890c10c3b493842e846ee793055"
+      },
+      "mutant": {
+        "result": 16,
+        "report": "{:status :ok :result 16 :fuel {:initial 9007199254740991 :remaining 9007199252289590 :metered false}}",
+        "wasmSha256": "8694bfae0e63299e9df2ec0c5785bf6aa964d51c29c09ee0cfa145817e45608c"
+      }
+    }
+  },
+  "build": {
+    "wasmSha256": "f46b02f8ff8288dc7fbe8721de2727b968636d36e087249e13d99a1e3268e65e",
+    "compilerSha256": "2c551579c06a0228029bb06bae177e93126ecbbc37d636d693c471dbac8d1536",
+    "sourceSha256": "cfb4426fec9e463c6cf1e3fb2e2dcd6cda52152a71d8000fdc729c90e52123db",
+    "brokerRevision": "e00ae75e1c589f76b4f53a88a5e3256c98c9e162",
+    "brokerSha256": "7f760128c3a58098123c31ec3dd34b9c871932e3933f2c952facc4ab0e647212",
+    "workerSha256": "58d606d0b3f22766a1b7288fe911c106aea9606fecfe59a2adb66a4bac8923ab"
+  },
+  "browser": {
+    "status": "PASS",
+    "checks": [
+      "backup-export-import-cancel-restore",
+      "backup-invalid-and-both-write-failures",
+      "init",
+      "edit-save",
+      "synthetic-composition-with-concurrent-redraw",
+      "queued-input",
+      "add",
+      "preview",
+      "reload",
+      "concurrent-write-refusal",
+      "worker-timeout-and-retry",
+      "hidden-timeout-and-retry",
+      "worker-interruption-and-retry",
+      "storage-failure-and-retry",
+      "multiple-unsaved-fields",
+      "oversized-input-recovery",
+      "corruption-refusal",
+      "digest-refusal",
+      "loopback-only"
+    ]
+  },
+  "browserAdditionalChecks": [
+    "Unicode and partial ASCII prefix files refused; prior localStorage unchanged"
+  ],
+  "linkedHost": {
+    "status": "PASS_BUNSHO_LINKED_HOST",
+    "compilerSHA256": "2c551579c06a0228029bb06bae177e93126ecbbc37d636d693c471dbac8d1536",
+    "host": [
+      "Darwin",
+      "arm64"
+    ],
+    "packagerSHA256": "e95284408f091c8979ef74ece57116a4df2250e61e42074da5dc95ca30264142",
+    "resultBits": 8,
+    "artifacts": {
+      "host": {
+        "unsignedSHA256": "15e6c337ba7f076213c4d9dcc8c9075cb4d5206764c2312697ec02863c48f6c7",
+        "lockSHA256": "87307aa249a40104ea4333043c5c0245eb38c3525577b4e4dc490385bc6d9154",
+        "sources": {
+          "moji/editor.kotoba": "6b2e56d192c1cb8a6f37eceab157fcd372a8dc523af6de076a02e6fb6a777476",
+          "moji/native_document_host.kotoba": "789234aa14543864b457850aaf7890642bff89d240c196371d8ec1fd3715b152"
+        }
+      },
+      "mutant": {
+        "unsignedSHA256": "adb28ee99de91dbc79b84f2d82bf420a7bb7c4fce40d6e356fd82649c810002e",
+        "lockSHA256": "da64479c5911afdaa12f9ce79bfaf15010e449f672088e1b89ac042e211b85d1",
+        "sources": {
+          "moji/editor.kotoba": "97d5a0fe891d9715fb35fa705c626e0718d325c13f4c80aae1663608f9563bf3",
+          "moji/native_document_host.kotoba": "789234aa14543864b457850aaf7890642bff89d240c196371d8ec1fd3715b152"
+        }
+      }
+    },
+    "observations": [
+      {
+        "name": "host-check",
+        "exit": 0,
+        "seconds": 1.07,
+        "stdoutSHA256": "dc51b8c96c2d745df3bd5590d990230a482fd247123599548e0632fdbf97fc22",
+        "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "host-compile",
+        "exit": 0,
+        "seconds": 1.408,
+        "stdoutSHA256": "a6d5d43b98705a895145ede5439ed123144e66b03c8e589d11a8a1342956639c",
+        "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "host-extract",
+        "exit": 0,
+        "seconds": 0.01,
+        "stdoutSHA256": "2441d9e68bbc2c10c3a604c6062b1cb9c9e983151ed031daa29d6c02bfbee9c8",
+        "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "host-package",
+        "exit": 0,
+        "seconds": 0.023,
+        "stdoutSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "linked-model",
+        "exit": 0,
+        "seconds": 0.526,
+        "stdoutSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "mutant-check",
+        "exit": 0,
+        "seconds": 1.11,
+        "stdoutSHA256": "dc51b8c96c2d745df3bd5590d990230a482fd247123599548e0632fdbf97fc22",
+        "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "mutant-compile",
+        "exit": 0,
+        "seconds": 1.019,
+        "stdoutSHA256": "cd6586cdf24991bc6d398d47e68069882ec15abb302394946506a43d4ce7f88b",
+        "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "mutant-extract",
+        "exit": 0,
+        "seconds": 0.011,
+        "stdoutSHA256": "a74272d55944b669e7aa939a8b1e45e7c5862488b4f689ccb8e445fcbf0874d5",
+        "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "mutant-package",
+        "exit": 0,
+        "seconds": 0.012,
+        "stdoutSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "mutation-detected",
+        "exit": 1,
+        "seconds": 0.761,
+        "stdoutSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ],
+    "publicTestKeysOnly": true,
+    "observerSHA256": "1c57524e77e8a62b89196ae8cc0651a12ec8cfb7abce142ac9d26240adea6143",
+    "stagerSHA256": "f9af49b01138cef435ea7838b6a4d66e01f38241e1f3e3722b2a0edcbe963d24",
+    "browserStagerSHA256": "9daf87bade044e939b8a4085fefaa08544740514c1b3066ceae7504172f20b9b",
+    "nativeGateSHA256": "84dea6644db292aaede4d93c39f326cdf41b83ad7482632c969dd6cae9bf9e37",
+    "browserBuild": {
+      "wasmSha256": "f46b02f8ff8288dc7fbe8721de2727b968636d36e087249e13d99a1e3268e65e",
+      "compilerSha256": "2c551579c06a0228029bb06bae177e93126ecbbc37d636d693c471dbac8d1536",
+      "sourceSha256": "cfb4426fec9e463c6cf1e3fb2e2dcd6cda52152a71d8000fdc729c90e52123db",
+      "brokerRevision": "e00ae75e1c589f76b4f53a88a5e3256c98c9e162",
+      "brokerSha256": "7f760128c3a58098123c31ec3dd34b9c871932e3933f2c952facc4ab0e647212",
+      "workerSha256": "58d606d0b3f22766a1b7288fe911c106aea9606fecfe59a2adb66a4bac8923ab"
+    },
+    "hostSourceSha256": "6b2e56d192c1cb8a6f37eceab157fcd372a8dc523af6de076a02e6fb6a777476",
+    "scope": "macOS Arm native synthetic data; no Itonami OS GUI, QEMU, durable storage or release"
+  }
+}

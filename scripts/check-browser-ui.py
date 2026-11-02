@@ -146,7 +146,7 @@ try:
     select_file(bad)
     wait("document.getElementById('status').textContent.includes('バックアップを読み込めません')", 'bad backup refusal')
     if evaluate("localStorage.getItem('itonami.bunsho.candidate.bs1')") != prior or evaluate("document.getElementById('backup-dialog').open"): raise ValueError('bad import changed state')
-    for name, contents in [('utf8.bs1', b'BS1|\xff'), ('large.bs1', b'BS1|' + b'x' * 35000), ('unknown.bs1', b'OLD|document')]:
+    for name, contents in [('unicode-prefix.bs1', '雪雪'.encode()), ('partial-prefix.bs1', 'BS雪雪'.encode()), ('utf8.bs1', b'BS1|\xff'), ('large.bs1', b'BS1|' + b'x' * 35000), ('unknown.bs1', b'OLD|document')]:
         invalid = out / name
         invalid.write_bytes(contents)
         evaluate("document.getElementById('status').textContent='' ; document.getElementById('backup-file').value=''")

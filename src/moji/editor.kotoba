@@ -437,7 +437,9 @@
               (document-vector-conj acc (block kind (snap-text s t))))))))))
 
 (defn snap-decode [s :string] [:option :document]
-  (if (or (< (string-byte-length s) 4) (not (string=? (string-substring s 0 4) "BS1|")))
+  (if (or (< (string-byte-length s) 4) (not (= (string-code-point-at s 0) 66))
+          (not (= (string-code-point-at s 1) 83)) (not (= (string-code-point-at s 2) 49))
+          (not (= (string-code-point-at s 3) 124)))
     (option-none-of [:option :document])
     (let [a (snap-read s 4)]
       (if (< (vector-at a 0) 0) (option-none-of [:option :document])
@@ -539,7 +541,9 @@
 
 (defn test-snapshot-refuse [] :i64
   (let [s (init) bytes (option-value-of [:option :string] (snap-encode s) "")]
-    (if (and (not (option-some?-of [:option :document] (snap-decode (string-concat bytes "x"))))
+    (if (and (not (option-some?-of [:option :document] (snap-decode "雪雪")))
+             (not (option-some?-of [:option :document] (snap-decode "BS雪雪")))
+             (not (option-some?-of [:option :document] (snap-decode (string-concat bytes "x"))))
              (not (option-some?-of [:option :document] (snap-decode "BS2|0:4:edit1:0")))
              (not (option-some?-of [:option :document] (snap-decode "BS1|01:a4:edit1:0")))
              (not (option-some?-of [:option :document] (snap-decode "BS1|1:😀4:edit1:0")))
