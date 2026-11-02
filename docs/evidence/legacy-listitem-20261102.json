@@ -3,7 +3,9 @@
   "scope": "synthetic local Chrome and native tests; not release or actual-user migration",
   "sourceSha256": {
     "src/moji/legacy_document.kotoba": "47f2284471707dfbd15a1eafe894f49a0248174dbbf78c74347f7623a51851ac",
-    "scripts/check-legacy-browser.py": "4709b18e39d388f6b2098f5816f944f59a48781736e5badd5885981db1c5affa"
+    "scripts/check-legacy-browser.py": "4709b18e39d388f6b2098f5816f944f59a48781736e5badd5885981db1c5affa",
+    "scripts/check-legacy-document.py": "5511adcb50cd68a821b36f570f79f69c34fd14ad1d26fb72a2fdcfe24850314c",
+    "tests/legacy-document-cases.kotoba": "72fae75f2e03cc3fa4dead7139e327c4962edddd4a5a05bfdc218ef0f305987a"
   },
   "build": {
     "wasmSha256": "56a202b30205dab99d202690b3f1c402dccf22cdeec89050d7a89296a72988e7",
@@ -14,7 +16,7 @@
     "workerSha256": "58d606d0b3f22766a1b7288fe911c106aea9606fecfe59a2adb66a4bac8923ab"
   },
   "tests": {
-    "legacy_document": "native and Wasm conversion and duplicate-id mutant pass",
+    "legacy_document": "explicit list kind, text, id and raw JSON passed Amu native and Chrome Wasm; duplicate-id mutation detected",
     "browser_normal": "PASS",
     "browser_32_blocks": "PASS",
     "older_bs2_candidate_refuses_list_and_new_candidate_reopens": "PASS"
