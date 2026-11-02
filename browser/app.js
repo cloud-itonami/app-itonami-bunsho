@@ -295,7 +295,8 @@ function run(args, module = compiledModule) {
       else resolve(data.output);
     };
     worker.onerror = () => { clearTimeout(timer); worker.terminate(); reject(Error('worker failed')); };
-    const fuel = args[0] === 'legacy-import' || (typeof args[1] === 'string' && (args[1].startsWith('BS2|') || args[1].startsWith('BS3|2'))) ? 100000000 : 25000000;
+    const state = typeof args[1] === 'string' ? args[1] : '';
+    const fuel = args[0] === 'view' || args[0] === 'legacy-import' || state.startsWith('BS2|') || state.startsWith('BS3|2') ? 100000000 : 25000000;
     worker.postMessage({ module, fuel, allow: [37, 38], args });
   });
 }
