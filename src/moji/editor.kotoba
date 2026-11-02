@@ -234,7 +234,7 @@
               (button "mode" "mode" (if preview "編集" "プレビュー"))))
          (el "div"
              (document-map :class (document-string "tools"))
-             (document-vector
+             (let [tools (document-vector
               (button "add-h1" "add" "+ 見出し1")
               (button "add-h2" "add" "+ 見出し2")
               (button "add-h3" "add" "+ 見出し3")
@@ -245,7 +245,10 @@
               (button "add-li" "add" "+ 箇条書き")
               (button "backup-export" "add" "バックアップ")
               (button "backup-import" "add" "読み込む")
-              (button "backup-restore" "add" "読み込み前に戻す")))
+              (button "backup-restore" "add" "読み込み前に戻す"))]
+               (if (option-some?-of [:option :document] (document-get state :legacy-original))
+                 (document-vector-conj tools (button "backup-original" "add" "旧文書の原文を書き出す"))
+                 tools)))
          (el "main"
              (document-map :class (document-string (if preview "page preview" "page edit")))
              (rows-from state 0 n preview (document-vector) 1))

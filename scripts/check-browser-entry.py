@@ -61,6 +61,9 @@ batch = call('trace', [
     ('multiline-reload', {'allow': allowed, 'args': ['step', multiline, 'unused', 'click', '']}),
     ('legacy-multiline', {'allow': allowed, 'fuel': 100000000, 'args': ['legacy-import', legacy_raw]}),
     ('legacy-multiline-reload', {'allow': allowed, 'fuel': 100000000, 'args': ['step', legacy_multiline, 'unused', 'click', '']}),
+    ('legacy-original', {'allow': allowed, 'fuel': 100000000, 'args': ['legacy-original', legacy_multiline]}),
+    ('no-legacy-original', {'allow': allowed, 'args': ['legacy-original', initial]}),
+    ('corrupt-legacy-original', {'allow': allowed, 'fuel': 100000000, 'args': ['legacy-original', legacy_multiline + 'x']}),
     ('bad-multiline-version', {'allow': allowed, 'args': ['view', 'BS3|3']}),
     ('edit', {'allow': allowed, 'args': ['step', initial, 'title', 'input', '議事😀']}),
     ('view', {'allow': allowed, 'fuel': 10000000, 'args': ['view', changed]}),
@@ -79,6 +82,9 @@ expect(batch['multiline'], 0, multiline + '\n')
 expect(batch['multiline-reload'], 0, multiline + '\n')
 expect(batch['legacy-multiline'], 0, legacy_multiline + '\n')
 expect(batch['legacy-multiline-reload'], 0, legacy_multiline + '\n')
+expect(batch['legacy-original'], 0, legacy_raw + '\n')
+expect(batch['no-legacy-original'], 3, '')
+expect(batch['corrupt-legacy-original'], 3, '')
 expect(batch['bad-multiline-version'], 3, '')
 expect(batch['edit'], 0, changed + '\n')
 expect(batch['reload'], 0, changed + '\n')

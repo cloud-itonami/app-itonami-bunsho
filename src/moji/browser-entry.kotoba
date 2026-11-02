@@ -94,6 +94,17 @@
             (let [converted (legacy-convert raw)]
               (if (option-some?-of [:option :document] converted)
                 (browser-emit (option-value-of [:option :document] converted (document-null))) 3))))
+      (and (string=? argc "2") (string=? op "legacy-original"))
+        (let [raw (browser-arg "1") decoded (if (> (string-byte-length raw) 35000)
+                        (option-none-of [:option :document]) (browser-decode raw))
+              original (if (option-some?-of [:option :document] decoded)
+                         (document-get (option-value-of [:option :document] decoded (document-null)) :legacy-original)
+                         (option-none-of [:option :document]))]
+          (if (and (option-some?-of [:option :document] original)
+                   (string? (option-value-of [:option :document] original (document-null))))
+            (let [out (typed-cap-call :io/write :string :string
+                        (string-concat (dstr (option-value-of [:option :document] original (document-null))) "\n"))] 0)
+            3))
       (and (string=? argc "5") (string=? op "step"))
         (let [raw (browser-arg "1") target (browser-arg "2")
               kind (browser-arg "3") value (browser-arg "4")]

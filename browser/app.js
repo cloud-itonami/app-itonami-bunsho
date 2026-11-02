@@ -277,6 +277,7 @@ for (const kind of ['click', 'input']) mount.addEventListener(kind, e => {
   if (e.type === 'click' && key.startsWith('backup-') && edits.size) { fail('未保存の入力を再保存または修正してください。'); return; }
   if (e.type === 'click' && key === 'backup-import') { backupFile.value = ''; backupFile.click(); return; }
   if (e.type === 'click' && key === 'backup-export') { pending = pending.then(exportBackup); return; }
+  if (e.type === 'click' && key === 'backup-original') { pending = pending.then(exportOriginal); return; }
   if (e.type === 'click' && key === 'backup-restore') { pending = pending.then(restoreBackup); return; }
   const captured = { key, value, focus: null, type: e.type, sequence: 0 };
   pending = pending.then(() => dispatch(captured));
@@ -299,6 +300,18 @@ function exportBackup() {
   link.href = url; link.download = snapshot.startsWith('BS3|') ? 'bunsho-backup.bs3' : snapshot.startsWith('BS2|') ? 'bunsho-backup.bs2' : 'bunsho-backup.bs1'; link.click();
   setTimeout(() => URL.revokeObjectURL(url), 60000);
   fail('バックアップのダウンロードを開始しました。');
+}
+async function exportOriginal() {
+  try {
+    if (draftBlocked || edits.size || typeof snapshot !== 'string') throw Error('unsaved input');
+    const base = snapshot, basePersisted = persisted;
+    const output = await run(['legacy-original', base]);
+    if (!output.endsWith('\n') || edits.size || snapshot !== base || persisted !== basePersisted || localStorage.getItem(KEY) !== persisted) throw Error('state changed');
+    const url = URL.createObjectURL(new Blob([output.slice(0, -1)], { type: 'application/json' }));
+    const link = document.createElement('a'); link.href = url; link.download = 'bunsho-legacy-original.json'; link.click();
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+    fail('旧文書の原文のダウンロードを開始しました。');
+  } catch (_) { fail('旧文書の原文を書き出せません。保存済みの文書は変更していません。'); }
 }
 async function previewBackup(candidate, label) {
   const base = snapshot, basePersisted = persisted;

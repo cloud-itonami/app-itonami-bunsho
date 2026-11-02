@@ -54,7 +54,7 @@ if os.environ.get('BUNSHO_MAX_TEST') == '1':
 multiline = os.environ.get('BUNSHO_MULTILINE_TEST') == '1'
 if multiline: legacy['document']['body'][1]['text'] = '本文\n二行目'
 paragraph = legacy['document']['body'][1]['text']
-raw = json.dumps(legacy, ensure_ascii=True, separators=(',', ':'))
+raw = json.dumps(legacy, ensure_ascii=True, separators=(',', ':')) + '\n'
 valid = out / 'legacy.json'
 valid.write_text(raw, encoding='utf-8')
 invalid = out / 'unsupported.json'
@@ -102,6 +102,7 @@ try:
             pos += length
         return fields
     wait("document.querySelector('[data-k=title]') !== null", 'initial')
+    if evaluate("document.querySelector('[data-k=backup-original]') !== null"): raise ValueError('original export offered without provenance')
     evaluate("(()=>{let e=document.querySelector('[data-k=title]');e.value='既存';e.dispatchEvent(new Event('input',{bubbles:true}));})()")
     wait("localStorage.getItem('" + key + "')?.includes('既存') && document.getElementById('status').textContent === '保存しました'", 'BS1 baseline')
     baseline = stored()
@@ -153,6 +154,12 @@ try:
     wait('window.__oldDocument !== true', 'new document')
     wait("document.querySelector('[data-k=b1]')?.value === '編集😀'", 'BS2 reopen')
     if stored() != edited: raise ValueError('reopen changed state')
+    evaluate("document.querySelector('[data-k=backup-original]').click()")
+    original = download / 'bunsho-legacy-original.json'
+    deadline = time.time() + 90
+    while time.time() < deadline and not original.exists(): time.sleep(.2)
+    if not original.exists() or original.read_bytes() != raw.encode('utf-8'): raise ValueError('original export changed bytes')
+    if stored() != edited: raise ValueError('original export changed saved document')
     if evaluate("document.querySelector('[data-k=kl2]')?.classList.contains('on')") is not True or evaluate("document.querySelector('[data-k=b2]')?.value") != '項目😀': raise ValueError('list item did not survive reopen')
     evaluate("document.querySelector('[data-k=mode]').click()")
     wait("document.querySelector('main.preview h6')?.textContent === '見出し6'", 'heading preview')
