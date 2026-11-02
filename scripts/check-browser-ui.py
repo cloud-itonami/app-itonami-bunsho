@@ -83,6 +83,13 @@ try:
     saved = evaluate("localStorage.getItem('itonami.bunsho.candidate.bs1')")
     if '先の変更' not in saved or '後の変更' in saved: raise ValueError('concurrent write clobbered state')
     pipe.call('Target.closeTarget', {'targetId': second})
+    evaluate("window.savedWorker=window.Worker;window.Worker=class extends window.savedWorker {postMessage(msg){if(msg.args[0]==='view'){this.terminate();queueMicrotask(()=>this.onerror(new Event('error')))}else super.postMessage(msg)}}")
+    evaluate("(()=>{let e=document.querySelector('[data-k=title]');e.value='中断';e.dispatchEvent(new Event('input',{bubbles:true}));})()")
+    wait("document.getElementById('status').textContent.includes('保存できませんでした')", 'worker interruption')
+    if evaluate("localStorage.getItem('itonami.bunsho.candidate.bs1')") != saved: raise ValueError('interrupted render clobbered storage')
+    evaluate("window.Worker=window.savedWorker")
+    pipe.call('Page.reload', {}, session)
+    wait("document.querySelector('[data-k=title]')?.value === '先の変更'", 'reload after interruption')
     evaluate("Storage.prototype.setItem = function(){ throw new Error('quota'); }; (()=>{let e=document.querySelector('[data-k=title]');e.value='失敗';e.dispatchEvent(new Event('input',{bubbles:true}));})()")
     wait("document.getElementById('status').textContent.includes('保存できませんでした')", 'storage failure')
     wait("document.querySelector('[data-k=title]')?.value === '先の変更'", 'restore prior view')
@@ -109,7 +116,7 @@ try:
     requests = [e['params']['request']['url'] for e in pipe.events if e.get('method') == 'Network.requestWillBeSent']
     if not requests or any(not u.startswith(f'http://127.0.0.1:{server.server_port}/') for u in requests):
         raise ValueError('unexpected request ' + repr(requests))
-    (out / 'result.json').write_text(json.dumps({'status': 'PASS', 'checks': ['init', 'edit-save', 'queued-input', 'add', 'preview', 'reload', 'concurrent-write-refusal', 'storage-failure', 'corruption-refusal', 'digest-refusal', 'loopback-only']}, indent=2) + '\n')
+    (out / 'result.json').write_text(json.dumps({'status': 'PASS', 'checks': ['init', 'edit-save', 'queued-input', 'add', 'preview', 'reload', 'concurrent-write-refusal', 'worker-interruption', 'storage-failure', 'corruption-refusal', 'digest-refusal', 'loopback-only']}, indent=2) + '\n')
     print('PASS_BUNSHO_BROWSER_UI: init, edit, reload and failure preservation')
 finally:
     pipe.close()
