@@ -29,7 +29,56 @@
       "local_ui": "PASS after navigation-race retry in scratch harness",
       "local_ime": "PASS",
       "local_unload": "PASS",
-      "ui_harness_sha256": "a7049bb997bd9dff1dbd7c0d65f3112fda4338f3045abd97903bdcf84e876f88"
+      "ui_harness_sha256": "a7049bb997bd9dff1dbd7c0d65f3112fda4338f3045abd97903bdcf84e876f88",
+      "gateway_full_browser": {
+        "chrome": "156.0.8078.74",
+        "tests": {
+          "ui": {
+            "status": "PASS",
+            "checks": [
+              "backup-export-import-cancel-restore",
+              "backup-invalid-and-both-write-failures",
+              "init",
+              "edit-save",
+              "synthetic-composition-with-concurrent-redraw",
+              "queued-input",
+              "add",
+              "preview",
+              "reload",
+              "concurrent-write-refusal",
+              "worker-timeout-and-retry",
+              "hidden-timeout-and-retry",
+              "worker-interruption-and-retry",
+              "storage-failure-and-retry",
+              "multiple-unsaved-fields",
+              "oversized-input-recovery",
+              "corruption-refusal",
+              "digest-refusal",
+              "loopback-only"
+            ],
+            "harness_sha256": "0b32a36da74f4ba3f67a68be80b724c2092f1ac904d5a022b5aace6ff39cf226",
+            "result_sha256": "4e6459e06ad8c4f59aa68aed4d6826d455242311ff72587403a47db3a62a286d"
+          },
+          "ime": {
+            "status": "PASS_CDP_SYNTHETIC_IME",
+            "checks": [],
+            "harness_sha256": "301d56bfee4434f6793145c4eb499d04f729e07c052036ff9504d05fd6bfb821",
+            "result_sha256": "f7631265fb0a2b43063cc5a803aca71cce628c4f3796af4f9f2c7802c6362694"
+          },
+          "unload": {
+            "status": "PASS",
+            "checks": [
+              "activated-dirty-reload-warning",
+              "cancel-retains-input",
+              "retry",
+              "clean-reload-no-warning"
+            ],
+            "harness_sha256": "4989de7f9bd7b638ca077bd83a1b72d1cc0d80c8917ae9ec715b26d5136e1eb7",
+            "result_sha256": "18f4b776ba6e3c77e5923587bdaeb8b8cb223e8fa70678296f1e0af5c27870a9"
+          }
+        },
+        "scope": "synthetic Chrome through isolated local Kubo gateway; no external availability implied"
+      }
     },
     "hyokeisan": {
       "source_head": "6670cb9ddae808994b440b35f9153e4a12ce6798",
@@ -53,7 +102,56 @@
       "local_ui": "PASS after navigation-race retry in scratch harness",
       "local_ime": "PASS",
       "local_unload": "PASS",
-      "ui_harness_sha256": "1e831de56211b6a38c21c6d67b88c509db5f06a31487effe4c799d7e154de8cb"
+      "ui_harness_sha256": "1e831de56211b6a38c21c6d67b88c509db5f06a31487effe4c799d7e154de8cb",
+      "gateway_full_browser": {
+        "chrome": "156.0.8078.74",
+        "tests": {
+          "ui": {
+            "status": "PASS",
+            "checks": [
+              "backup-export-import-cancel-restore",
+              "backup-invalid-both-write-failures-conflict",
+              "grid",
+              "addition",
+              "sum",
+              "recalculate",
+              "cycle",
+              "save-reload",
+              "synthetic-composition-with-concurrent-redraw",
+              "oversized-refusal",
+              "concurrent-tab-refusal",
+              "worker-timeout-retry",
+              "hidden-timeout-retry",
+              "worker-interruption-retry",
+              "storage-failure-retry",
+              "multiple-unsaved-fields",
+              "corrupt-refusal",
+              "digest-refusal",
+              "loopback-only"
+            ],
+            "harness_sha256": "025c362ef1316b5e06e91f8267be9f85f8d1b301b93596d7ccd8bf35c8715470",
+            "result_sha256": "6e48b4055a7b5eb23920e1642ffdbff71cd80bc9d944765e6842271ac210336d"
+          },
+          "ime": {
+            "status": "PASS_CDP_SYNTHETIC_IME",
+            "checks": [],
+            "harness_sha256": "42503fae5cc1275086d94269dbd740b0e64fd4300eb30212642e170f89495978",
+            "result_sha256": "f7631265fb0a2b43063cc5a803aca71cce628c4f3796af4f9f2c7802c6362694"
+          },
+          "unload": {
+            "status": "PASS",
+            "checks": [
+              "activated-dirty-reload-warning",
+              "cancel-retains-input",
+              "retry",
+              "clean-reload-no-warning"
+            ],
+            "harness_sha256": "df2ef213d92669668a8180d079a7820027ca6d01e37119315b66e8a7eb4abcde",
+            "result_sha256": "18f4b776ba6e3c77e5923587bdaeb8b8cb223e8fa70678296f1e0af5c27870a9"
+          }
+        },
+        "scope": "synthetic Chrome through isolated local Kubo gateway; no external availability implied"
+      }
     },
     "zuhyo": {
       "source_head": "e254f459fc298257f6100397836e5f1be792bef9",
@@ -77,7 +175,59 @@
       "local_ui": "first run: CDP Runtime.evaluate timeout during interrupted-restore fixture, cause unconfirmed; independent rerun: PASS. Reliability remains unqualified.",
       "local_ime": "PASS",
       "local_unload": "PASS",
-      "ui_harness_sha256": "8909099b6b3128916504da0ee5e630cb56b85b5037c5de14cdd61be4bac8871b"
+      "ui_harness_sha256": "8909099b6b3128916504da0ee5e630cb56b85b5037c5de14cdd61be4bac8871b",
+      "gateway_full_browser": {
+        "chrome": "156.0.8078.74",
+        "tests": {
+          "ui": {
+            "status": "PASS",
+            "checks": [
+              "backup-export-import-cancel-restore",
+              "backup-invalid-both-write-failures-conflict",
+              "edit",
+              "notes",
+              "add",
+              "remove",
+              "shape",
+              "reorder",
+              "present",
+              "reload",
+              "navigate",
+              "synthetic-composition-with-concurrent-redraw",
+              "oversized-refusal",
+              "concurrent-tab-refusal",
+              "worker-timeout-retry",
+              "hidden-timeout-retry",
+              "worker-interruption-retry",
+              "storage-failure-retry",
+              "multiple-unsaved-fields",
+              "corrupt-refusal",
+              "digest-refusal",
+              "loopback-only"
+            ],
+            "harness_sha256": "c60e2958cb8c9a987bdd58edf2bbc11650a738d738dba131ac7ad0ceefc26df5",
+            "result_sha256": "daad5498740492f5f3dab6132a5b12b46509e73cecd7ff075e7b694d72fd19e0"
+          },
+          "ime": {
+            "status": "PASS_CDP_SYNTHETIC_IME",
+            "checks": [],
+            "harness_sha256": "db700a05b3024ab8b1b0ce71bb12d896b9ceb471bd309d4803bb68c78b4d9f79",
+            "result_sha256": "f7631265fb0a2b43063cc5a803aca71cce628c4f3796af4f9f2c7802c6362694"
+          },
+          "unload": {
+            "status": "PASS",
+            "checks": [
+              "activated-dirty-reload-warning",
+              "cancel-retains-input",
+              "retry",
+              "clean-reload-no-warning"
+            ],
+            "harness_sha256": "d6378584672776bdd9d844dd07f0190028078de44adb639914a108cc7d67312f",
+            "result_sha256": "18f4b776ba6e3c77e5923587bdaeb8b8cb223e8fa70678296f1e0af5c27870a9"
+          }
+        },
+        "scope": "synthetic Chrome through isolated local Kubo gateway; no external availability implied"
+      }
     }
   },
   "limitations": [
