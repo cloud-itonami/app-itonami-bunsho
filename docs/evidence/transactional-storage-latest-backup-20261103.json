@@ -1,0 +1,28 @@
+{
+  "status": "PASS_EXPERIMENTAL_IDB_LATEST_BACKUP",
+  "baseCommit": "79a9c4435a9f2bcea6c24e93e4dfa35822dc49b0",
+  "adapterSha256": "9565d1ee272f994891ead432e3ef112531c66962510aaa8e4e8fd4d77e0ba319",
+  "observerSha256": "29f50cc4368310e78a0b6d32f712caaa8961a85970fd99519163b1f4a4744cec",
+  "resultSha256": "3e09a5113b9209cbc98c1f4da52d3a83dcaf9afffe30c1e8fda9d92e4cc58b76",
+  "result": {
+    "status": "PASS_TRANSACTIONAL_STORAGE_SYNTHETIC",
+    "sourceSha256": "9565d1ee272f994891ead432e3ef112531c66962510aaa8e4e8fd4d77e0ba319",
+    "checks": [
+      "two-tab-competing-writers",
+      "revision-aba-refusal",
+      "transaction-abort-preserves-state-and-backup",
+      "backup-and-state-atomic",
+      "latest-backup-numeric-order",
+      "invalid-unicode-and-oversize",
+      "third-tab-reopen",
+      "clean-browser-process-restart",
+      "legacy-anchor-preserved",
+      "strict-durability-required",
+      "unexpected-schema-refused",
+      "legacy-localstorage-untouched",
+      "corrupt-record-refusal"
+    ],
+    "scope": "synthetic same-origin Chrome tabs; experimental adapter only, not integrated; no old-client coordination, app migration, crash/power-loss, QEMU or release"
+  },
+  "scope": "synthetic Chrome component only; not connected to UI or migration, no crash/power-loss or release"
+}

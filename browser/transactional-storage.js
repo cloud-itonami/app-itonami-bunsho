@@ -115,7 +115,7 @@ export async function openTransactionalStore(name, maximum) {
             }
             if (current.revision === Number.MAX_SAFE_INTEGER) throw Error('revision exhausted');
             const revision = current.revision + 1;
-            if (backup && current.revision > 0) store.add(request.result, 'backup:' + current.revision);
+            if (backup && current.revision > 0) store.add(request.result, 'backup:' + String(current.revision).padStart(16, '0'));
             const legacyAnchor = current.revision === 0 ? initialLegacyAnchor : current.legacyAnchor;
             store.put({ format: FORMAT, revision, value: next, legacyAnchor }, CURRENT);
             outcome = { status: 'committed', current: { revision, value: next, legacyAnchor } };
@@ -128,11 +128,30 @@ export async function openTransactionalStore(name, maximum) {
     });
   }
 
+  function readLatestBackup() {
+    return new Promise((resolve, reject) => {
+      let tx, value;
+      try {
+        tx = db.transaction(STORE, 'readonly');
+        const range = IDBKeyRange.bound('backup:', 'backup;');
+        const request = tx.objectStore(STORE).openCursor(range, 'prev');
+        request.onsuccess = () => { value = request.result?.value; };
+        tx.oncomplete = () => {
+          try { resolve(value === undefined ? null : decodeRecord(value, maximum)); }
+          catch (error) { reject(error); }
+        };
+        tx.onabort = () => reject(Error('storage backup read aborted'));
+        tx.onerror = () => {};
+      } catch (error) { reject(error); }
+    });
+  }
+
   return {
     read: () => readKey(CURRENT),
+    readLatestBackup,
     readBackup: revision => {
       if (!Number.isSafeInteger(revision) || revision < 1) return Promise.reject(Error('invalid backup revision'));
-      return readKey('backup:' + revision);
+      return readKey('backup:' + String(revision).padStart(16, '0'));
     },
     compareAndSwap,
     close: () => db.close(),
