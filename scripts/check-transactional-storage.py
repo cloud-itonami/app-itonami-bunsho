@@ -68,10 +68,24 @@ try:
  c=tab();wait('window.ready===true',c,'third tab');assert ev('window.openStore("itonami.office.bunsho.v1",35000).then(x=>{window.store=x;return true})',c,True)
  assert ev('store.read()',c,True)==committed['current'] and ev('store.readBackup('+str(current['revision'])+')',c,True)==current
  assert ev('localStorage.getItem("legacy")',c)=='legacy preserved'
+ # A normal browser shutdown and fresh process reopen the same persisted
+ # profile; this is not a crash, abrupt power loss or eviction test.
+ pipe.close();pipe=browser.Pipe(str(chrome),out/'profile');a=tab();wait('window.ready===true',a,'browser restart')
+ assert ev('window.openStore("itonami.office.bunsho.v1",35000).then(x=>{window.store=x;return true})',a,True)
+ assert ev('store.read()',a,True)==committed['current'] and ev('store.readBackup('+str(current['revision'])+')',a,True)==current
+ assert ev('localStorage.getItem("legacy")',a)=='legacy preserved';c=a
+ # If a browser cannot report strict durability, no transaction is accepted.
+ ev('''window.__transaction=IDBDatabase.prototype.transaction;IDBDatabase.prototype.transaction=function(...args){const t=window.__transaction.apply(this,args);if(args[1]==="readwrite")Object.defineProperty(t,"durability",{value:"relaxed"});return t}''',a)
+ assert ev('store.compareAndSwap('+json.dumps(committed['current'])+',"unqualified").then(()=>false,()=>true)',a,True)
+ ev('IDBDatabase.prototype.transaction=window.__transaction',a)
+ assert ev('store.read()',a,True)==committed['current']
+ # An unexpected database schema is never silently replaced.
+ ev('''new Promise((resolve,reject)=>{const r=indexedDB.open("itonami.office.hyokeisan.v1",1);r.onupgradeneeded=()=>r.result.createObjectStore("unexpected");r.onsuccess=()=>{r.result.close();resolve(true)};r.onerror=()=>reject(Error("setup"))})''',a,True)
+ assert ev('window.openStore("itonami.office.hyokeisan.v1",35000).then(()=>false,()=>true)',a,True)
  # A malformed database record is rejected and cannot be silently overwritten.
  ev('''new Promise((resolve,reject)=>{const r=indexedDB.open("itonami.office.bunsho.v1",1);r.onsuccess=()=>{const d=r.result,t=d.transaction("records","readwrite");t.objectStore("records").put({format:"bad",revision:5,value:"corrupt"},"current");t.oncomplete=()=>{d.close();resolve(true)};t.onabort=()=>reject(Error("inject"))};r.onerror=()=>reject(Error("open"))})''',a,True)
  assert ev('store.read().then(()=>false,()=>true)',c,True)
  assert ev('store.compareAndSwap('+json.dumps(committed['current'])+',"overwrite").then(()=>false,()=>true)',c,True)
- report={'status':'PASS_TRANSACTIONAL_STORAGE_SYNTHETIC','sourceSha256':hashlib.sha256(source.read_bytes()).hexdigest(),'checks':['two-tab-competing-writers','revision-aba-refusal','transaction-abort-preserves-state-and-backup','backup-and-state-atomic','invalid-unicode-and-oversize','third-tab-reopen','legacy-localstorage-untouched','corrupt-record-refusal'],'scope':'synthetic same-origin Chrome tabs; experimental adapter only, not integrated; no old-client coordination, app migration, crash/power-loss, QEMU or release'}
+ report={'status':'PASS_TRANSACTIONAL_STORAGE_SYNTHETIC','sourceSha256':hashlib.sha256(source.read_bytes()).hexdigest(),'checks':['two-tab-competing-writers','revision-aba-refusal','transaction-abort-preserves-state-and-backup','backup-and-state-atomic','invalid-unicode-and-oversize','third-tab-reopen','clean-browser-process-restart','strict-durability-required','unexpected-schema-refused','legacy-localstorage-untouched','corrupt-record-refusal'],'scope':'synthetic same-origin Chrome tabs; experimental adapter only, not integrated; no old-client coordination, app migration, crash/power-loss, QEMU or release'}
  (out/'result.json').write_text(json.dumps(report,indent=2)+'\n');print(report['status'],flush=True)
 finally:pipe.close();server.shutdown();server.server_close()

@@ -1,0 +1,26 @@
+{
+  "status": "PASS_EXPERIMENTAL_IDB_RESTART",
+  "baseCommit": "9e95e2ca2c1c1906dd115a782057eaa46b790c3e",
+  "adapterSha256": "4a160d4e5a88ed97ce48caa6d50e71d6f9288196f8769112765119296ed125c9",
+  "observerSha256": "6a492ca02e3119d5e48ef28a7e0881e725f354d11d3f4d7d2d81a83191fa0ed8",
+  "resultSha256": "d6da67f0a703e711fc571695a1694e3c6b84640debad8f3849516fb389d8901d",
+  "result": {
+    "status": "PASS_TRANSACTIONAL_STORAGE_SYNTHETIC",
+    "sourceSha256": "4a160d4e5a88ed97ce48caa6d50e71d6f9288196f8769112765119296ed125c9",
+    "checks": [
+      "two-tab-competing-writers",
+      "revision-aba-refusal",
+      "transaction-abort-preserves-state-and-backup",
+      "backup-and-state-atomic",
+      "invalid-unicode-and-oversize",
+      "third-tab-reopen",
+      "clean-browser-process-restart",
+      "strict-durability-required",
+      "unexpected-schema-refused",
+      "legacy-localstorage-untouched",
+      "corrupt-record-refusal"
+    ],
+    "scope": "synthetic same-origin Chrome tabs; experimental adapter only, not integrated; no old-client coordination, app migration, crash/power-loss, QEMU or release"
+  },
+  "scope": "synthetic loopback Chrome; normal process shutdown and restart only, not crash/power-loss; experimental storage is not integrated or migrated"
+}
