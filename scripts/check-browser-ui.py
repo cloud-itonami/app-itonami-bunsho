@@ -300,6 +300,7 @@ try:
     if count != 1: raise ValueError('policy digest mutation anchor')
     policy_bundle.write_text(content)
     pipe.call('Page.navigate', {'url': f'http://127.0.0.1:{server.server_port}/tampered-policy/index.html'}, session)
+    wait("location.pathname === '/tampered-policy/index.html' && document.readyState === 'complete'", 'policy digest page loaded')
     wait("document.getElementById('status')?.textContent.includes('文書を開けません')", 'policy digest refusal')
     if evaluate("document.querySelector('[data-k=title]') !== null || localStorage.getItem('itonami.bunsho.candidate.bs1') !== null"):
         raise ValueError('tampered policy candidate ran or wrote state')
