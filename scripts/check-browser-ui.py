@@ -209,6 +209,7 @@ try:
     if evaluate("document.querySelector('[data-k=title]') !== null || localStorage.getItem('itonami.bunsho.candidate.bs1') !== null"):
         raise ValueError('tampered candidate ran or wrote state')
     requests = [e['params']['request']['url'] for e in pipe.events if e.get('method') == 'Network.requestWillBeSent']
+    if any(u.split('?', 1)[0].endswith('/favicon.ico') for u in requests): raise ValueError('unversioned favicon request')
     if not requests or any(not u.startswith(f'http://127.0.0.1:{server.server_port}/') for u in requests):
         raise ValueError('unexpected request ' + repr(requests))
     (out / 'result.json').write_text(json.dumps({'status': 'PASS', 'checks': ['backup-export-import-cancel-restore', 'backup-invalid-and-both-write-failures', 'init', 'edit-save', 'queued-input', 'add', 'preview', 'reload', 'concurrent-write-refusal', 'worker-timeout', 'worker-interruption', 'storage-failure', 'corruption-refusal', 'digest-refusal', 'loopback-only']}, indent=2) + '\n')
