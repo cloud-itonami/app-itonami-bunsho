@@ -1,0 +1,30 @@
+;; App-owned browser program entry. The build stages this alongside the editor
+;; definitions and exports this `main`; browser state remains local to the host.
+;; argv: init | step SNAPSHOT TARGET KIND VALUE. A successful run writes one
+;; versioned snapshot. Refusals write no snapshot and keep the host's prior one.
+(defn browser-arg [i :string] :string
+  (typed-cap-call :cli/args :string :string i))
+
+(defn browser-emit [s :document] :i64
+  (let [encoded (snap-encode s)]
+    (if (option-some?-of [:option :string] encoded)
+      (let [out (typed-cap-call :io/write :string :string
+                  (string-concat (option-value-of [:option :string] encoded "") "\n"))] 0)
+      2)))
+
+(defn main [] :i64
+  (let [argc (browser-arg "") op (browser-arg "0")]
+    (cond
+      (and (string=? argc "1") (string=? op "init")) (browser-emit (init))
+      (and (string=? argc "5") (string=? op "step"))
+        (let [raw (browser-arg "1") target (browser-arg "2")
+              kind (browser-arg "3") value (browser-arg "4")]
+          (if (or (> (string-byte-length raw) 35000) (> (string-byte-length target) 128)
+                  (> (string-byte-length value) 1024)
+                  (not (or (string=? kind "click") (string=? kind "input"))))
+            3
+            (let [decoded (snap-decode raw)]
+              (if (option-some?-of [:option :document] decoded)
+                (browser-emit (step (option-value-of [:option :document] decoded (init)) target kind value))
+                3))))
+      :else 4)))

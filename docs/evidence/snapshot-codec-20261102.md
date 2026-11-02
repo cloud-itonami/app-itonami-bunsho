@@ -36,3 +36,13 @@ staged native and browser checks and mutation passed again. A separate
 program limit of 5 seconds. The fixture alone returned successfully; this
 does not isolate codec-only execution time. Maximum-size performance remains
 open.
+
+A separate browser-program entry stages the existing editor definitions with a
+`main` that accepts `init` or a state plus one click/input event, and returns
+one new snapshot on the granted local output wire. `scripts/check-browser-entry.py`
+compiled it with the same Amu candidate and exercised Chrome Wasm initialization,
+a Unicode title edit, state handoff to a fresh Worker, corrupt or oversized
+input, invalid arity/kind, and missing local-wire refusals. The staged program
+SHA-256 was `9a9a3c209028835c35afd09880d72a625ec322eaf518017200312132069cb8ce`;
+Wasm SHA-256 was `e23ace0b850d628bebf80924971c1c1820cb0da31fc15c0580e6c10cd53e6156`.
+No durable host storage, browser DOM, external service or QEMU was involved.
