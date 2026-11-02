@@ -6,7 +6,7 @@ This does not establish closed-tab, browser-crash, OS, or power-loss durability.
 """
 import functools,http.server,importlib.util,json,threading,time,sys
 from pathlib import Path
-amu,build,out,chrome=map(lambda s:Path(s).resolve(),sys.argv[1:]);out.mkdir(parents=True,exist_ok=False);profile=out/'profile';profile.mkdir();downloads=out/'downloads';downloads.mkdir()
+amu,build,out,chrome=map(lambda s:Path(s).resolve(),sys.argv[1:]);out.mkdir(parents=True,exist_ok=False);profile=out/'profile';profile.mkdir();downloads=out/'downloads';downloads.mkdir();program_sha=json.loads((build/'build-receipt.json').read_text())['wasmSha256']
 spec=importlib.util.spec_from_file_location('browser',amu/'scripts/seed/check-wasm32-browser.py');browser=importlib.util.module_from_spec(spec);spec.loader.exec_module(browser)
 class Quiet(http.server.SimpleHTTPRequestHandler):
  def log_message(self,*args): pass
@@ -77,7 +77,7 @@ try:
  if not evaluate("document.getElementById('draft-restore').disabled && document.getElementById('app').inert") or evaluate("sessionStorage.getItem('itonami.bunsho.candidate.bs1.session-draft.v1')")!='{bad' or evaluate("localStorage.getItem('itonami.bunsho.candidate.bs1')")!=other_saved: raise ValueError('malformed draft overwritten or applied')
  pipe.send('Runtime.evaluate',{'expression':"document.getElementById('draft-discard').click()"},session);dialog(True,'confirm');wait("document.getElementById('draft-recovery').hidden",'discard malformed draft')
  # The saved snapshot can change after the recovery panel appears.
- evaluate("sessionStorage.setItem('itonami.bunsho.candidate.bs1.session-draft.v1',JSON.stringify({version:1,base:localStorage.getItem('itonami.bunsho.candidate.bs1'),baseState:localStorage.getItem('itonami.bunsho.candidate.bs1'),entries:[['title','表示中の下書き']]}));window.__oldDocument=true")
+ evaluate("sessionStorage.setItem('itonami.bunsho.candidate.bs1.session-draft.v1',JSON.stringify({version:1,program:"+json.dumps(program_sha)+",base:localStorage.getItem('itonami.bunsho.candidate.bs1'),baseState:localStorage.getItem('itonami.bunsho.candidate.bs1'),entries:[['title','表示中の下書き']]}));window.__oldDocument=true")
  pipe.call('Page.reload',{},session);wait('window.__oldDocument !== true','new document for recovery race');wait("!document.getElementById('draft-recovery').hidden && !document.getElementById('draft-restore').disabled",'matching panel before race')
  race_raw=evaluate("sessionStorage.getItem('itonami.bunsho.candidate.bs1.session-draft.v1')")
  racer=pipe.call('Target.createTarget',{'url':url})['targetId'];racer_session=pipe.call('Target.attachToTarget',{'targetId':racer,'flatten':True})['sessionId'];wait("document.querySelector('[data-k=title]') !== null",'racing tab',racer_session)
@@ -100,13 +100,18 @@ try:
  evaluate("Storage.prototype.removeItem=window.originalRemove;window.__oldDocument=true");pipe.call('Page.reload',{},session);wait('window.__oldDocument !== true','new document after cleanup failure');wait("!document.getElementById('draft-recovery').hidden",'quarantine leftover')
  if not evaluate("document.getElementById('draft-restore').disabled") or evaluate("sessionStorage.getItem('itonami.bunsho.candidate.bs1.session-draft.v1')")!=cleanup_raw or evaluate("localStorage.getItem('itonami.bunsho.candidate.bs1')")!=cleanup_saved: raise ValueError('stale leftover not quarantined')
  pipe.send('Runtime.evaluate',{'expression':"document.getElementById('draft-discard').click()"},session);dialog(True,'confirm');wait("document.getElementById('draft-recovery').hidden",'discard leftover')
+ # A journal from different Wasm must not be applied even when saved bytes match.
+ evaluate("sessionStorage.setItem('itonami.bunsho.candidate.bs1.session-draft.v1',JSON.stringify({version:1,program:'0'.repeat(64),base:localStorage.getItem('itonami.bunsho.candidate.bs1'),baseState:localStorage.getItem('itonami.bunsho.candidate.bs1'),entries:[['title','異なる版']]}));window.__oldDocument=true")
+ pipe.call('Page.reload',{},session);wait('window.__oldDocument !== true','new document for program mismatch');wait("!document.getElementById('draft-recovery').hidden",'program mismatch')
+ if not evaluate("document.getElementById('draft-restore').disabled") or evaluate("localStorage.getItem('itonami.bunsho.candidate.bs1')")!=cleanup_saved: raise ValueError('different program journal accepted')
+ pipe.send('Runtime.evaluate',{'expression':"document.getElementById('draft-discard').click()"},session);dialog(True,'confirm');wait("document.getElementById('draft-recovery').hidden",'discard different-program draft')
  # A new unsaved document must match the exact initialized state, not just a null storage key.
- evaluate("localStorage.removeItem('itonami.bunsho.candidate.bs1');sessionStorage.setItem('itonami.bunsho.candidate.bs1.session-draft.v1',JSON.stringify({version:1,base:null,baseState:'別の初期状態',entries:[['title','未保存新規']]}));window.__oldDocument=true")
+ evaluate("localStorage.removeItem('itonami.bunsho.candidate.bs1');sessionStorage.setItem('itonami.bunsho.candidate.bs1.session-draft.v1',JSON.stringify({version:1,program:"+json.dumps(program_sha)+",base:null,baseState:'別の初期状態',entries:[['title','未保存新規']]}));window.__oldDocument=true")
  pipe.call('Page.reload',{},session);wait('window.__oldDocument !== true','new document for initial-state mismatch');wait("!document.getElementById('draft-recovery').hidden",'initial-state mismatch')
  if not evaluate("document.getElementById('draft-restore').disabled") or evaluate("localStorage.getItem('itonami.bunsho.candidate.bs1')") is not None: raise ValueError('different initialized state accepted')
  pipe.send('Runtime.evaluate',{'expression':"document.getElementById('draft-discard').click()"},session);dialog(True,'confirm');wait("document.getElementById('draft-recovery').hidden",'discard mismatched initial draft')
  requests=[e['params']['request']['url'] for e in pipe.events if e.get('method')=='Network.requestWillBeSent']
  if not requests or any(not u.startswith(f'http://127.0.0.1:{server.server_port}/') for u in requests): raise ValueError('unexpected request')
- (out/'result.json').write_text(json.dumps({'status':'PASS','checks':['same-tab-reload','explicit-recovery-and-retry','stale-draft-refusal','raw-export','explicit-discard','malformed-draft-refusal','recovery-selection-race-refusal','journal-quota-and-retry','journal-cleanup-failure','initial-state-mismatch','loopback-only'],'limitations':['sessionStorage only','not crash or closed-tab durability','synthetic data']},indent=2)+'\n');print('PASS_BROWSER_SESSION_DRAFT')
+ (out/'result.json').write_text(json.dumps({'status':'PASS','checks':['same-tab-reload','explicit-recovery-and-retry','stale-draft-refusal','raw-export','explicit-discard','malformed-draft-refusal','recovery-selection-race-refusal','journal-quota-and-retry','journal-cleanup-failure','initial-state-mismatch','program-digest-mismatch','loopback-only'],'limitations':['sessionStorage only','not crash or closed-tab durability','synthetic data']},indent=2)+'\n');print('PASS_BROWSER_SESSION_DRAFT')
 finally:
  pipe.close();server.shutdown();server.server_close()

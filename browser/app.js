@@ -36,7 +36,7 @@ function writeDraft() {
   try {
     if (!edits.size) sessionStorage.removeItem(DRAFT_KEY);
     else {
-      const raw = JSON.stringify({ version: 1, base: persisted, baseState: snapshot, entries: [...edits].map(([key, edit]) => [key, edit.value]) });
+      const raw = JSON.stringify({ version: 1, program: wasmSha256, base: persisted, baseState: snapshot, entries: [...edits].map(([key, edit]) => [key, edit.value]) });
       if (raw.length > 1000000) throw Error('draft bounds');
       sessionStorage.setItem(DRAFT_KEY, raw);
     }
@@ -56,13 +56,13 @@ function offerDraft(raw, allowRestore) {
   try { if (raw.length <= 1000000) data = JSON.parse(raw); } catch (_) {}
   const seen = new Set();
   const inputs = new Set([...mount.querySelectorAll('input[data-k]')].map(el => el.dataset.k));
-  const valid = data && data.version === 1 && (data.base === null || typeof data.base === 'string') &&
+  const valid = data && data.version === 1 && typeof data.program === 'string' && /^[0-9a-f]{64}$/.test(data.program) && (data.base === null || typeof data.base === 'string') &&
     typeof data.baseState === 'string' && data.baseState.length <= LIMIT && Array.isArray(data.entries) && data.entries.length > 0 && data.entries.length <= 33 &&
     data.entries.every(entry => Array.isArray(entry) && entry.length === 2 && typeof entry[0] === 'string' &&
       typeof entry[1] === 'string' && entry[0].length <= 128 && entry[1].length <= 65536 &&
       !seen.has(entry[0]) && (seen.add(entry[0]), true));
   if (valid) recoveryItems = data.entries;
-  const matches = !!(allowRestore && valid && data.base === persisted && data.baseState === snapshot && data.entries.every(entry => inputs.has(entry[0])));
+  const matches = !!(allowRestore && valid && data.program === wasmSha256 && data.base === persisted && data.baseState === snapshot && data.entries.every(entry => inputs.has(entry[0])));
   draftRestore.disabled = !matches;
   document.getElementById('draft-message').textContent = matches
     ? '前回の未保存入力です。内容を確認して画面に戻し、再保存してください。'
