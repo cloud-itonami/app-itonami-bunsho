@@ -82,6 +82,12 @@
     (cond
       (and (string=? argc "1") (string=? op "init")) (browser-emit (init))
       (and (string=? argc "2") (string=? op "view")) (browser-render (browser-arg "1"))
+      (and (string=? argc "2") (string=? op "protect"))
+        (let [raw (browser-arg "1")]
+          (if (> (string-byte-length raw) 35000) 3
+            (let [decoded (browser-decode raw)]
+              (if (option-some?-of [:option :document] decoded)
+                (browser-emit (option-value-of [:option :document] decoded (document-null))) 3))))
       (and (string=? argc "2") (string=? op "legacy-import"))
         (let [raw (browser-arg "1")]
           (if (> (string-byte-length raw) 35000) 3

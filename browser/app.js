@@ -310,6 +310,9 @@ async function previewBackup(candidate, label) {
     if (encoder.encode(candidate).length > LIMIT) throw Error('converted size');
     notice = ' 旧文書 JSON: 元データは原文で保存します。未対応の属性は編集画面に反映されません。';
   }
+  const protectedState = await run(['protect', candidate]);
+  if (!protectedState.endsWith('\n')) throw Error('protect refusal');
+  candidate = protectedState.slice(0, -1);
   const tree = parseTree(await run(['view', candidate]));
   proposedBackup = candidate;
   document.getElementById('backup-label').textContent = label + notice;
@@ -384,7 +387,24 @@ async function start() {
   if (saved !== null) {
     if (encoder.encode(saved).length > LIMIT) throw Error('saved state size');
     snapshot = saved;
-    await draw(snapshot);
+    // Protect old multiline data before exposing an editable view. A BS2
+    // provenance field can contain a newline without editable multiline text,
+    // in which case the validated encoder returns the original bytes.
+    if ((saved.startsWith('BS1|') || saved.startsWith('BS2|')) && /[\r\n]/.test(saved)) {
+      const output = await run(['protect', saved]);
+      if (!output.endsWith('\n')) throw Error('protect refusal');
+      const next = output.slice(0, -1);
+      const tree = parseTree(await run(['view', next]));
+      if (next !== saved) {
+        if (!navigator.locks) throw Error('local locking unavailable');
+        await navigator.locks.request(KEY, async () => {
+          if (localStorage.getItem(KEY) !== saved) throw Error('concurrent change');
+          localStorage.setItem(KEY, next);
+          persisted = next; snapshot = next;
+        });
+      }
+      render(tree);
+    } else await draw(snapshot);
     fail('保存済みの文書を開きました');
     inspectDraft(true);
   } else {
