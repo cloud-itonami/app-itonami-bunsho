@@ -1,0 +1,119 @@
+(ns moji.legacy-snapshot
+  (:export [legacy-snapshot-encode legacy-snapshot-decode])
+  (:require [moji.legacy-document :as legacy]))
+
+;; Provisional BS2 model codec. The original legacy response is immutable
+;; provenance; current blocks carry their original element ID or an empty ID
+;; for a newly created block. It is not connected to browser storage yet.
+;; Entire encoding <= 35000 bytes; the original response must still validate.
+(defn ls-get [d :document k :keyword] :document
+  (option-value-of [:option :document] (document-get d k) (document-null)))
+(defn ls-str [d :document] :string
+  (option-value-of [:option :string] (document-string-value d) ""))
+(defn ls-at [v :document i :i64] :document
+  (option-value-of [:option :document] (document-vector-at v i) (document-null)))
+(defn ls-kind? [s :string] :bool
+  (or (string=? s "p") (string=? s "h1") (string=? s "h2") (string=? s "li")))
+(defn ls-frame [s :string] :string
+  (string-concat (string-from-i64 (string-byte-length s)) (string-concat ":" s)))
+(defn ls-id [block :document] :string (ls-str (ls-get block :legacy-id)))
+(defn ls-has-id [blocks :document id :string i :i64 end :i64] :bool
+  (if (>= i end) false
+    (if (string=? (ls-id (ls-at blocks i)) id) true
+      (ls-has-id blocks id (+ i 1) end))))
+(defn ls-encode-blocks [v :document original :document i :i64 n :i64 acc :string] [:option :string]
+  (if (= i n) (option-some-of [:option :string] acc)
+    (let [b (ls-at v i)]
+      (if (not (map? b)) (option-none-of [:option :string])
+       (let [kind (ls-get b :kind) text (ls-get b :text)
+          id (ls-get b :legacy-id) has-id (= (document-count b) 3)
+          ident (if has-id (ls-str id) "")]
+      (if (and (map? b) (or (= (document-count b) 2) has-id)
+               (string? kind) (string? text) (ls-kind? (ls-str kind))
+               (<= (string-byte-length (ls-str text)) 1024)
+               (or (not has-id) (and (string? id) (> (string-byte-length ident) 0)
+                                     (<= (string-byte-length ident) 1024)
+                                     (ls-has-id original ident 0 (document-count original))
+                                     (not (ls-has-id v ident 0 i)))))
+        (ls-encode-blocks v original (+ i 1) n
+          (string-concat acc (string-concat (ls-frame (ls-str kind))
+            (string-concat (ls-frame (ls-str text)) (ls-frame ident)))))
+        (option-none-of [:option :string])))))))
+(defn legacy-snapshot-encode [state :document] [:option :string]
+  (if (not (map? state)) (option-none-of [:option :string])
+    (let [title (ls-get state :title) mode (ls-get state :mode)
+          blocks (ls-get state :blocks) raw (ls-get state :legacy-original)]
+      (if (and (= (document-count state) 4) (string? title) (string? mode)
+               (string? raw) (vector? blocks) (<= (document-count blocks) 32)
+               (<= (string-byte-length (ls-str title)) 1024)
+               (or (string=? (ls-str mode) "edit") (string=? (ls-str mode) "preview")))
+        (let [source (legacy/legacy-convert (ls-str raw))]
+          (if (not (option-some?-of [:option :document] source)) (option-none-of [:option :string])
+            (let [original (ls-get (option-value-of [:option :document] source (document-null)) :blocks)
+                  prefix (string-concat "BS2|" (string-concat (ls-frame (ls-str raw))
+                    (string-concat (ls-frame (ls-str title)) (string-concat (ls-frame (ls-str mode))
+                      (ls-frame (string-from-i64 (document-count blocks)))))))
+                  encoded (ls-encode-blocks blocks original 0 (document-count blocks) prefix)]
+              (if (and (option-some?-of [:option :string] encoded)
+                       (<= (string-byte-length (option-value-of [:option :string] encoded "")) 35000))
+                encoded (option-none-of [:option :string])))))
+        (option-none-of [:option :string])))))
+(defn ls-utf8-end? [s :string i :i64 end :i64] :bool
+  (loop [at i]
+    (if (= at end) true
+      (if (> at end) false
+        (let [c (string-code-point-at s at)
+              w (cond (< c 128) 1 (< c 2048) 2 (< c 65536) 3 :else 4)]
+          (recur (+ at w)))))))
+(defn ls-header [s :string i :i64 n :i64 value :i64 digits :i64 zero :bool] :vector-i64
+  (if (>= i n) [-1 -1 -1]
+    (let [c (string-code-point-at s i)]
+      (cond (= c 58) (let [begin (+ i 1) end (+ begin value)]
+                       (if (and (> digits 0) (<= value 35000) (<= end n) (ls-utf8-end? s begin end))
+                         [begin end end] [-1 -1 -1]))
+            (or (< c 48) (> c 57) (>= digits 5) (and zero (> digits 0))) [-1 -1 -1]
+            :else (ls-header s (+ i 1) n (+ (* value 10) (- c 48)) (+ digits 1) (and (= digits 0) (= c 48)))))))
+(defn ls-read [s :string i :i64] :vector-i64 (ls-header s i (string-byte-length s) 0 0 false))
+(defn ls-text [s :string r :vector-i64] :string (string-substring s (vector-at r 0) (vector-at r 1)))
+(defn ls-number [s :string i :i64] :i64
+  (if (> i 32) -1 (if (string=? s (string-from-i64 i)) i (ls-number s (+ i 1)))))
+(defn ls-read-blocks [s :string i :i64 left :i64 acc :document] [:option :document]
+  (if (= left 0)
+    (if (= i (string-byte-length s)) (option-some-of [:option :document] acc) (option-none-of [:option :document]))
+    (let [k (ls-read s i)]
+      (if (< (vector-at k 0) 0) (option-none-of [:option :document])
+        (let [t (ls-read s (vector-at k 2))]
+          (if (< (vector-at t 0) 0) (option-none-of [:option :document])
+            (let [id (ls-read s (vector-at t 2))]
+              (if (< (vector-at id 0) 0) (option-none-of [:option :document])
+                (let [kind (ls-text s k) text (ls-text s t) ident (ls-text s id)]
+                  (if (or (not (ls-kind? kind)) (> (string-byte-length text) 1024) (> (string-byte-length ident) 1024))
+                    (option-none-of [:option :document])
+                    (let [b (if (= (string-byte-length ident) 0)
+                              (document-map :kind (document-string kind) :text (document-string text))
+                              (document-map :kind (document-string kind) :text (document-string text) :legacy-id (document-string ident)))]
+                      (ls-read-blocks s (vector-at id 2) (- left 1) (document-vector-conj acc b)))))))))))))
+(defn legacy-snapshot-decode [s :string] [:option :document]
+  (let [n (string-byte-length s)]
+    (if (or (< n 4) (> n 35000) (not (= (string-code-point-at s 0) 66)) (not (= (string-code-point-at s 1) 83))
+            (not (= (string-code-point-at s 2) 50)) (not (= (string-code-point-at s 3) 124)))
+      (option-none-of [:option :document])
+      (let [raw (ls-read s 4)]
+        (if (< (vector-at raw 0) 0) (option-none-of [:option :document])
+          (let [title (ls-read s (vector-at raw 2))]
+            (if (< (vector-at title 0) 0) (option-none-of [:option :document])
+              (let [mode (ls-read s (vector-at title 2))]
+                (if (< (vector-at mode 0) 0) (option-none-of [:option :document])
+                  (let [count-frame (ls-read s (vector-at mode 2))]
+                    (if (< (vector-at count-frame 0) 0) (option-none-of [:option :document])
+                      (let [count (ls-number (ls-text s count-frame) 0)]
+                        (if (< count 0) (option-none-of [:option :document])
+                          (let [v (ls-read-blocks s (vector-at count-frame 2) count (document-vector))]
+                            (if (not (option-some?-of [:option :document] v)) (option-none-of [:option :document])
+                              (let [state (document-map :title (document-string (ls-text s title))
+                                :mode (document-string (ls-text s mode)) :blocks (option-value-of [:option :document] v (document-vector))
+                                :legacy-original (document-string (ls-text s raw)))
+                                    check (legacy-snapshot-encode state)]
+                                (if (and (option-some?-of [:option :string] check)
+                                         (string=? (option-value-of [:option :string] check "") s))
+                                  (option-some-of [:option :document] state) (option-none-of [:option :document]))))))))))))))))))
