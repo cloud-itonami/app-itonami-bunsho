@@ -94,6 +94,16 @@ try:
  pipe.call('DOM.setFileInputFiles',{'nodeId':node,'files':[str(backup)]},session);wait("document.getElementById('backup-dialog').open",'BS2 backup preview')
  ev("document.getElementById('status').textContent='確認待ち';document.getElementById('backup-confirm').click()");wait("document.getElementById('status').textContent === 'バックアップから復元しました。'",'BS2 backup import')
  if ev('localStorage.getItem('+json.dumps(key)+')')!=imported:raise ValueError('BS2 backup not protected')
+ # A saved same-tab edit invalidates a previously shown backup preview.
+ ev("document.getElementById('backup-file').value=''")
+ doc=pipe.call('DOM.getDocument',{},session)['root']['nodeId'];node=pipe.call('DOM.querySelector',{'nodeId':doc,'selector':'#backup-file'},session)['nodeId']
+ pipe.call('DOM.setFileInputFiles',{'nodeId':node,'files':[str(backup)]},session);wait("document.getElementById('backup-dialog').open",'stale backup preview')
+ changed='編集中の新しい文';input_('b0',changed)
+ wait("localStorage.getItem("+json.dumps(key)+")?.includes("+json.dumps(changed,ensure_ascii=False)+") && document.getElementById('status').textContent==='保存しました'",'same-tab edit saved')
+ newer=ev('localStorage.getItem('+json.dumps(key)+')');ev("document.getElementById('status').textContent='確認待ち';document.getElementById('backup-confirm').click()")
+ wait("document.getElementById('status').textContent.includes('復元できませんでした') || document.getElementById('status').textContent === 'バックアップから復元しました。'",'stale backup result')
+ if not ev("document.getElementById('status').textContent.includes('復元できませんでした')"):raise ValueError('stale preview accepted')
+ if ev('localStorage.getItem('+json.dumps(key)+')')!=newer:raise ValueError('stale backup overwrote same-tab edit')
  # Newlines only in the original JSON provenance must not force a rewrite.
  pretty=json.dumps({'found':True,'document':{'documentId':'old','title':'旧','revisionId':'r1','body':[{'elementId':'e1','kind':'paragraph','text':'一行'}]}},ensure_ascii=False,indent=2)
  pretty_file=out/'pretty.json';pretty_file.write_text(pretty)
@@ -108,7 +118,7 @@ try:
  pipe.call('Page.removeScriptToEvaluateOnNewDocument',{'identifier':quota},session)
  requests=[e['params']['request']['url'] for e in pipe.events if e.get('method')=='Network.requestWillBeSent']
  if not requests or any(not x.startswith(base) for x in requests):raise ValueError('unexpected request')
- (out/'result.json').write_text(json.dumps({'status':'PASS','checks':['BS3 old editor refuses without write','new editor reopens exact text','BS1 auto-protection, conflict and failed write','CR normalization refusal','legacy provenance, BS2 auto-protection and backup','provenance-only newline no rewrite','loopback only'],'scope':'synthetic candidate, no real-user migration or release'},ensure_ascii=False,indent=2)+'\n')
+ (out/'result.json').write_text(json.dumps({'status':'PASS','checks':['BS3 old editor refuses without write','new editor reopens exact text','BS1 auto-protection, conflict and failed write','CR normalization refusal','legacy provenance, BS2 auto-protection and backup','stale same-tab preview refusal','provenance-only newline no rewrite','loopback only'],'scope':'synthetic candidate, no real-user migration or release'},ensure_ascii=False,indent=2)+'\n')
  print('PASS_BUNSHO_MULTILINE_COMPAT')
 finally:
  pipe.close();server.shutdown();server.server_close()

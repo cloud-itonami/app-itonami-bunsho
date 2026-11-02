@@ -21,7 +21,7 @@ const BACKUP_PREFIX = KEY + '.preimport.';
 const backupFile = document.getElementById('backup-file');
 const backupDialog = document.getElementById('backup-dialog');
 const backupPreview = document.getElementById('backup-preview');
-let proposedBackup = null;
+let proposedBackup = null, proposedBase = null, proposedPersisted = null;
 const encoder = new TextEncoder();
 const decoder = new TextDecoder('utf-8', { fatal: true });
 let bytes, compiledModule, snapshot, persisted;
@@ -301,6 +301,7 @@ function exportBackup() {
   fail('バックアップのダウンロードを開始しました。');
 }
 async function previewBackup(candidate, label) {
+  const base = snapshot, basePersisted = persisted;
   if (typeof candidate !== 'string' || encoder.encode(candidate).length > LIMIT) throw Error('invalid backup');
   let notice = '';
   if (!candidate.startsWith('BS1|') && !candidate.startsWith('BS2|') && !candidate.startsWith('BS3|')) {
@@ -314,7 +315,8 @@ async function previewBackup(candidate, label) {
   if (!protectedState.endsWith('\n')) throw Error('protect refusal');
   candidate = protectedState.slice(0, -1);
   const tree = parseTree(await run(['view', candidate]));
-  proposedBackup = candidate;
+  if (edits.size || snapshot !== base || persisted !== basePersisted) throw Error('preview changed');
+  proposedBackup = candidate; proposedBase = base; proposedPersisted = basePersisted;
   document.getElementById('backup-label').textContent = label + notice;
   backupPreview.replaceChildren(tree);
   backupDialog.showModal();
@@ -343,16 +345,16 @@ async function restoreBackup() {
   } catch (_) { fail('バックアップを読み込めません。現在の文書は変更していません。'); }
 }
 document.getElementById('backup-cancel').addEventListener('click', () => backupDialog.close());
-backupDialog.addEventListener('close', () => { proposedBackup = null; backupPreview.replaceChildren(); });
+backupDialog.addEventListener('close', () => { proposedBackup = null; proposedBase = null; proposedPersisted = null; backupPreview.replaceChildren(); });
 document.getElementById('backup-confirm').addEventListener('click', () => {
-  const next = proposedBackup;
+  const next = proposedBackup, base = proposedBase, basePersisted = proposedPersisted;
   if (next === null) return;
   backupDialog.close();
   pending = pending.then(async () => {
     try {
       if (!navigator.locks) throw Error('local locking unavailable');
       await navigator.locks.request(KEY, async () => {
-        if (localStorage.getItem(KEY) !== persisted) throw Error('concurrent change');
+        if (snapshot !== base || persisted !== basePersisted || localStorage.getItem(KEY) !== persisted) throw Error('concurrent change');
         const tree = parseTree(await run(['view', next]));
         if (edits.size) throw Error('unsaved input');
         let stamp = Date.now();
