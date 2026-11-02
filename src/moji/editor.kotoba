@@ -33,7 +33,7 @@
   ;;     route.
   ;;
   ;; `main` and the `test-*` functions are the module's own checks: `main`
-  ;; returns how many of them pass (`amu run` prints 13 when all do).
+  ;; returns how many of them pass (`amu run` prints 17 when all do).
   (:export [init view step main
             test-index-core test-indices test-add test-add-limit test-input
             test-title test-kind test-move-down test-move-up test-remove
@@ -323,6 +323,108 @@
             (block "h1" "itonami Bunsho")
             (block "p" "Write here."))))
 
+;; --- bounded local snapshot codec -----------------------------------------
+;; BS1| followed by netstrings: title, mode, block-count, then kind and text
+;; for each block. Lengths are UTF-8 bytes; reject noncanonical lengths,
+;; oversized values, incomplete code points, extra bytes and unknown kinds.
+;; This is a model codec, not an atomic host-storage implementation.
+
+(defn snap-kind? [s :string] :bool
+  (or (string=? s "h1") (string=? s "h2") (string=? s "p") (string=? s "li")))
+
+(defn snap-blocks-valid? [v :document i :i64 n :i64] :bool
+  (if (= i n) true
+    (let [b (dat v i)]
+      (if (not (map? b)) false
+        (let [kind (dget b :kind) text (dget b :text)]
+          (and (= (document-count b) 2) (string? kind) (string? text)
+               (snap-kind? (dstr kind)) (<= (string-byte-length (dstr text)) 1024)
+               (snap-blocks-valid? v (+ i 1) n)))))))
+
+(defn snap-state-valid? [s :document] :bool
+  (if (not (map? s)) false
+    (let [title (dget s :title) mode (dget s :mode) v (dget s :blocks)]
+      (and (= (document-count s) 3) (string? title) (string? mode) (vector? v)
+           (<= (string-byte-length (dstr title)) 1024)
+           (or (string=? (dstr mode) "edit") (string=? (dstr mode) "preview"))
+           (<= (document-count v) 32) (snap-blocks-valid? v 0 (document-count v))))))
+
+(defn snap-frame [s :string] :string
+  (string-concat (string-from-i64 (string-byte-length s)) (string-concat ":" s)))
+
+(defn snap-encode-blocks [s :document i :i64 n :i64 acc :string] :string
+  (if (= i n) acc
+    (snap-encode-blocks s (+ i 1) n
+      (string-concat acc (string-concat (snap-frame (block-kind s i)) (snap-frame (block-text s i)))))))
+
+(defn snap-encode [s :document] [:option :string]
+  (if (not (snap-state-valid? s)) (option-none-of [:option :string])
+    (option-some-of [:option :string]
+      (snap-encode-blocks s 0 (block-count s)
+        (string-concat "BS1|" (string-concat (snap-frame (dstr (dget s :title)))
+          (string-concat (snap-frame (dstr (dget s :mode))) (snap-frame (string-from-i64 (block-count s))))))))))
+
+;; Return [begin end next] or [-1 -1 -1]. Scan code points to ensure the
+;; advertised byte length never ends inside a UTF-8 character.
+(defn snap-end [s :string i :i64 end :i64] :bool
+  (if (= i end) true
+    (if (> i end) false
+      (let [c (string-code-point-at s i)
+            w (cond (< c 128) 1 (< c 2048) 2 (< c 65536) 3 :else 4)]
+        (snap-end s (+ i w) end)))))
+
+(defn snap-header [s :string i :i64 n :i64 value :i64 digits :i64 zero :bool] :vector-i64
+  (if (>= i n) [-1 -1 -1]
+    (let [c (string-code-point-at s i)]
+      (cond
+        (= c 58) (let [begin (+ i 1) end (+ begin value)]
+          (if (and (> digits 0) (<= value 1024) (<= end n) (snap-end s begin end))
+            [begin end end] [-1 -1 -1]))
+        (or (< c 48) (> c 57) (>= digits 4) (and zero (> digits 0))) [-1 -1 -1]
+        :else (snap-header s (+ i 1) n (+ (* value 10) (- c 48)) (+ digits 1) (and (= digits 0) (= c 48)))))))
+
+(defn snap-read [s :string i :i64] :vector-i64
+  (snap-header s i (string-byte-length s) 0 0 false))
+
+(defn snap-text [s :string r :vector-i64] :string
+  (string-substring s (vector-at r 0) (vector-at r 1)))
+
+(defn snap-number [s :string i :i64] :i64
+  (if (> i 32) -1
+    (if (string=? s (string-from-i64 i)) i (snap-number s (+ i 1)))))
+
+(defn snap-read-blocks [s :string i :i64 left :i64 acc :document] [:option :document]
+  (if (= left 0)
+    (if (= i (string-byte-length s)) (option-some-of [:option :document] acc) (option-none-of [:option :document]))
+    (let [k (snap-read s i)]
+      (if (< (vector-at k 0) 0) (option-none-of [:option :document])
+        (let [t (snap-read s (vector-at k 2)) kind (snap-text s k)]
+          (if (or (< (vector-at t 0) 0) (not (snap-kind? kind))) (option-none-of [:option :document])
+            (snap-read-blocks s (vector-at t 2) (- left 1)
+              (document-vector-conj acc (block kind (snap-text s t))))))))))
+
+(defn snap-decode [s :string] [:option :document]
+  (if (or (< (string-byte-length s) 4) (not (string=? (string-substring s 0 4) "BS1|")))
+    (option-none-of [:option :document])
+    (let [a (snap-read s 4)]
+      (if (< (vector-at a 0) 0) (option-none-of [:option :document])
+        (let [m (snap-read s (vector-at a 2))]
+          (if (< (vector-at m 0) 0) (option-none-of [:option :document])
+            (let [c (snap-read s (vector-at m 2)) mode (snap-text s m)]
+              (if (or (< (vector-at c 0) 0) (not (or (string=? mode "edit") (string=? mode "preview"))))
+                (option-none-of [:option :document])
+                (let [n (snap-number (snap-text s c) 0)]
+                  (if (< n 0) (option-none-of [:option :document])
+                    (let [v (snap-read-blocks s (vector-at c 2) n (document-vector))]
+                      (if (option-some?-of [:option :document] v)
+                        (option-some-of [:option :document]
+                          (document-map :title (document-string (snap-text s a)) :mode (document-string mode)
+                                        :blocks (option-value-of [:option :document] v (document-vector))))
+                        (option-none-of [:option :document])))))))))))))
+
+(defn snap-restore [current :document text :string] :document
+  (option-value-of [:option :document] (snap-decode text) current))
+
 ;; --- checks (1 = pass) ----------------------------------------------------
 
 (defn click [state :document target :string] :document
@@ -395,7 +497,45 @@
              (= (document-count (dget (dat children 2) :children)) 2))
       1 0)))
 
+(defn test-snapshot-roundtrip [] :i64
+  (let [s (step (step (click (init) "add-li") "title" "input" "議事:録\n😀") "b2" "input" "x: 😀\nend")
+        encoded (snap-encode s)
+        decoded (snap-decode (option-value-of [:option :string] encoded ""))]
+    (if (and (option-some?-of [:option :string] encoded) (option-some?-of [:option :document] decoded)
+             (document-equal? s (option-value-of [:option :document] decoded (document-null)))) 1 0)))
+
+(defn test-snapshot-refuse [] :i64
+  (let [s (init) bytes (option-value-of [:option :string] (snap-encode s) "")]
+    (if (and (not (option-some?-of [:option :document] (snap-decode (string-concat bytes "x"))))
+             (not (option-some?-of [:option :document] (snap-decode "BS2|0:4:edit1:0")))
+             (not (option-some?-of [:option :document] (snap-decode "BS1|01:a4:edit1:0")))
+             (not (option-some?-of [:option :document] (snap-decode "BS1|1:😀4:edit1:0")))
+             (not (option-some?-of [:option :document] (snap-decode "BS1|0:4:edit2:33")))
+             (document-equal? s (snap-restore s (string-concat bytes "x")))) 1 0)))
+
+(defn test-snapshot-empty [] :i64
+  (let [s (document-map :title (document-string "") :mode (document-string "edit") :blocks (document-vector))
+        bytes (option-value-of [:option :string] (snap-encode s) "")]
+    (if (and (string=? bytes "BS1|0:4:edit1:0")
+             (document-equal? s (snap-restore (init) bytes))
+             (not (option-some?-of [:option :string] (snap-encode (document-null))))
+             (not (option-some?-of [:option :string]
+                    (snap-encode (document-assoc s :blocks (document-vector (document-string "bad"))))))) 1 0)))
+
+(defn test-snapshot-boundaries [] :i64
+  (let [maxtext "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界x"
+        too-long "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+        full (step (add-n (init) 30) "b31" "input" maxtext)
+        encoded (snap-encode full)
+        restored (snap-decode (option-value-of [:option :string] encoded ""))
+        invalid (step (init) "title" "input" too-long)]
+    (if (and (option-some?-of [:option :string] encoded) (option-some?-of [:option :document] restored)
+             (document-equal? full (option-value-of [:option :document] restored (document-null)))
+             (not (option-some?-of [:option :string] (snap-encode invalid)))
+             (not (option-some?-of [:option :document] (snap-decode "BS1|0:4:edit1:11:q0:")))) 1 0)))
+
 (defn main [] :i64
   (+ (test-index-core) (test-indices) (test-add) (test-add-limit) (test-input)
      (test-title) (test-kind) (test-move-down) (test-move-up) (test-remove)
-     (test-mode) (test-unknown) (test-view)))
+     (test-mode) (test-unknown) (test-view)
+     (test-snapshot-roundtrip) (test-snapshot-refuse) (test-snapshot-empty) (test-snapshot-boundaries)))
