@@ -9,10 +9,12 @@ import http.server
 import importlib.util
 import json
 import os
+import re
 import sys
 import threading
 import time
 from pathlib import Path
+from urllib.parse import urlsplit
 
 amu, build, out, chrome = map(lambda s: Path(s).resolve(), sys.argv[1:])
 out.mkdir(parents=True, exist_ok=False)
@@ -27,6 +29,17 @@ class Quiet(http.server.SimpleHTTPRequestHandler):
     def log_message(self, *args): pass
 server = http.server.ThreadingHTTPServer(('127.0.0.1', 0), functools.partial(Quiet, directory=str(build)))
 threading.Thread(target=server.serve_forever, daemon=True).start()
+# Optional isolated CID gateway. Never let a test option direct synthetic user
+# input or localStorage to a remote host, and allow requests only under this CID.
+base = os.environ.get('BUNSHO_TEST_CID_BASE')
+if base:
+    parsed = urlsplit(base)
+    if (parsed.scheme != 'http' or parsed.hostname != '127.0.0.1' or parsed.port is None
+            or parsed.username is not None or parsed.password is not None
+            or parsed.query or parsed.fragment or not re.fullmatch(r'/ipfs/b[a-z2-7]+/', parsed.path)):
+        raise ValueError('CID test base must be a loopback HTTP CID directory')
+else:
+    base = f'http://127.0.0.1:{server.server_port}/'
 pipe = browser.Pipe(str(chrome), profile)
 key = 'itonami.bunsho.candidate.bs1'
 legacy = {'found': True, 'document': {'documentId': 'old-doc', 'title': '旧文書😀', 'revisionId': 'rev-8',
@@ -47,7 +60,7 @@ try:
     target = pipe.call('Target.createTarget', {'url': 'about:blank'})['targetId']
     session = pipe.call('Target.attachToTarget', {'targetId': target, 'flatten': True})['sessionId']
     pipe.call('Network.enable', {}, session)
-    pipe.call('Page.navigate', {'url': f'http://127.0.0.1:{server.server_port}/index.html'}, session)
+    pipe.call('Page.navigate', {'url': base + 'index.html'}, session)
     pipe.call('Browser.setDownloadBehavior', {'behavior': 'allow', 'downloadPath': str(download)})
     def evaluate(expr):
         r = pipe.call('Runtime.evaluate', {'expression': expr, 'returnByValue': True}, session)
@@ -137,8 +150,8 @@ try:
     while time.time() < deadline and not f.exists(): time.sleep(.2)
     if not f.exists() or f.read_text(encoding='utf-8') != edited: raise ValueError('BS2 export mismatch')
     requests = [e['params']['request']['url'] for e in pipe.events if e.get('method') == 'Network.requestWillBeSent']
-    if not requests or any(not u.startswith(f'http://127.0.0.1:{server.server_port}/') for u in requests): raise ValueError('unexpected network request')
-    (out / 'result.json').write_text(json.dumps({'status': 'PASS', 'checks': ['BS1 baseline', 'unsupported refusal', 'preview cancel', 'failed backup preserves BS1', 'failed write preserves BS1', 'explicit BS2 import', 'provenance and IDs', 'edit reorder reopen', 'BS2 export', 'loopback only'], 'limitations': ['synthetic data', 'unsupported legacy kinds refused', 'unknown metadata is provenance only', 'no old-origin fetch', 'no crash/QEMU/publication qualification']}, indent=2) + '\n')
+    if not requests or any(not u.startswith(base) for u in requests): raise ValueError('unexpected network request')
+    (out / 'result.json').write_text(json.dumps({'status': 'PASS', 'checks': ['BS1 baseline', 'unsupported refusal', 'preview cancel', 'failed backup preserves BS1', 'failed write preserves BS1', 'explicit BS2 import', 'provenance and IDs', 'edit reorder reopen', 'BS2 export', 'loopback CID only' if os.environ.get('BUNSHO_TEST_CID_BASE') else 'loopback only'], 'limitations': ['synthetic data', 'unsupported legacy kinds refused', 'unknown metadata is provenance only', 'no old-origin fetch', 'no crash/QEMU/publication qualification']}, indent=2) + '\n')
     print('PASS_LEGACY_BROWSER synthetic explicit import, preservation and reopen')
 finally:
     pipe.close()
