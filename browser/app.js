@@ -91,8 +91,10 @@ async function dispatch(event) {
       }
       fail('保存しました');
     });
-  } catch (_) {
-    fail('保存できませんでした。前の内容を保持しています。');
+  } catch (error) {
+    const reason = error?.message === 'worker timeout' ? '処理が時間内に完了しませんでした。' :
+      error?.message === 'concurrent change' ? '別のタブで変更されています。再読込してください。' : '';
+    fail('保存できませんでした。' + reason + '前の内容を保持しています。');
     try { await draw(snapshot, focus); } catch (_) { /* leave the previous view */ }
   }
 }

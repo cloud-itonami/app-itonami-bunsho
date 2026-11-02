@@ -84,9 +84,17 @@ try:
     end = time.time() + 90
     while time.time() < end and not second_eval("document.getElementById('status')?.textContent.includes('保存できませんでした')"): time.sleep(.2)
     if not second_eval("document.getElementById('status')?.textContent.includes('保存できませんでした')"): raise TimeoutError('conflicting tab refusal')
+    if not second_eval("document.getElementById('status')?.textContent.includes('別のタブ')"): raise ValueError('conflict reason not shown')
     saved = evaluate("localStorage.getItem('itonami.bunsho.candidate.bs1')")
     if '先の変更' not in saved or '後の変更' in saved: raise ValueError('concurrent write clobbered state')
     pipe.call('Target.closeTarget', {'targetId': second})
+    evaluate("window.savedTimer=window.setTimeout;window.setTimeout=(f,n)=>window.savedTimer(f,n===30000?1:n)")
+    evaluate("(()=>{let e=document.querySelector('[data-k=title]');e.value='時間切れ';e.dispatchEvent(new Event('input',{bubbles:true}));})()")
+    wait("document.getElementById('status').textContent.includes('時間内に完了しませんでした')", 'worker timeout')
+    if evaluate("localStorage.getItem('itonami.bunsho.candidate.bs1')") != saved: raise ValueError('timeout clobbered storage')
+    evaluate("window.setTimeout=window.savedTimer")
+    pipe.call('Page.reload', {}, session)
+    wait("document.querySelector('[data-k=title]')?.value === '先の変更'", 'reload after timeout')
     evaluate("window.savedWorker=window.Worker;window.Worker=class extends window.savedWorker {postMessage(msg){if(msg.args[0]==='view'){this.terminate();queueMicrotask(()=>this.onerror(new Event('error')))}else super.postMessage(msg)}}")
     evaluate("(()=>{let e=document.querySelector('[data-k=title]');e.value='中断';e.dispatchEvent(new Event('input',{bubbles:true}));})()")
     wait("document.getElementById('status').textContent.includes('保存できませんでした')", 'worker interruption')
@@ -120,7 +128,7 @@ try:
     requests = [e['params']['request']['url'] for e in pipe.events if e.get('method') == 'Network.requestWillBeSent']
     if not requests or any(not u.startswith(f'http://127.0.0.1:{server.server_port}/') for u in requests):
         raise ValueError('unexpected request ' + repr(requests))
-    (out / 'result.json').write_text(json.dumps({'status': 'PASS', 'checks': ['init', 'edit-save', 'queued-input', 'add', 'preview', 'reload', 'concurrent-write-refusal', 'worker-interruption', 'storage-failure', 'corruption-refusal', 'digest-refusal', 'loopback-only']}, indent=2) + '\n')
+    (out / 'result.json').write_text(json.dumps({'status': 'PASS', 'checks': ['init', 'edit-save', 'queued-input', 'add', 'preview', 'reload', 'concurrent-write-refusal', 'worker-timeout', 'worker-interruption', 'storage-failure', 'corruption-refusal', 'digest-refusal', 'loopback-only']}, indent=2) + '\n')
     print('PASS_BUNSHO_BROWSER_UI: init, edit, reload and failure preservation')
 finally:
     pipe.close()
