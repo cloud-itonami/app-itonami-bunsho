@@ -74,7 +74,7 @@
       "gateway_session_draft": "PASS: synthetic matching, stale, digest mismatch, malformed, storage failures, export/discard and recovery race",
       "gateway_draft_harness_sha256": "7ed551ff6b709e1773a977d27b936b651b37a3302a0823dbd84142afd7adeef7",
       "local_session_draft": "PASS",
-      "local_ui": "CDP Runtime.evaluate timeout during interrupted-restore fixture; incomplete",
+      "local_ui": "first run: CDP Runtime.evaluate timeout during interrupted-restore fixture, cause unconfirmed; independent rerun: PASS. Reliability remains unqualified.",
       "local_ime": "PASS",
       "local_unload": "PASS",
       "ui_harness_sha256": "8909099b6b3128916504da0ee5e630cb56b85b5037c5de14cdd61be4bac8871b"
