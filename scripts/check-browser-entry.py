@@ -55,11 +55,15 @@ def frame(s):
     return str(len(s.encode('utf-8'))) + ':' + s
 initial = 'BS1|' + ''.join(map(frame, ['無題の文書', 'edit', '2', 'h1', 'itonami Bunsho', 'p', 'Write here.']))
 changed = 'BS1|' + ''.join(map(frame, ['議事😀', 'edit', '2', 'h1', 'itonami Bunsho', 'p', 'Write here.']))
+preview = 'BS1|' + ''.join(map(frame, ['議事😀', 'preview', '2', 'h1', 'itonami Bunsho', 'p', 'Write here.']))
 allowed = [37, 38]
 a = call('init', [('init', {'allow': allowed, 'args': ['init']})])
 expect(a['init'], 0, initial + '\n')
 batch = call('trace', [
     ('edit', {'allow': allowed, 'args': ['step', initial, 'title', 'input', '議事😀']}),
+    ('view', {'allow': allowed, 'fuel': 10000000, 'args': ['view', changed]}),
+    ('preview', {'allow': allowed, 'fuel': 10000000, 'args': ['view', preview]}),
+    ('view-corrupt', {'allow': allowed, 'args': ['view', initial + 'x']}),
     ('reload', {'allow': allowed, 'args': ['step', changed, 'unused', 'click', '']}),
     ('corrupt', {'allow': allowed, 'args': ['step', initial + 'x', 'title', 'input', 'loss']}),
     ('oversized', {'allow': allowed, 'args': ['step', initial, 'title', 'input', 'x' * 1025]}),
@@ -71,7 +75,32 @@ batch = call('trace', [
 ])
 expect(batch['edit'], 0, changed + '\n')
 expect(batch['reload'], 0, changed + '\n')
-for name, result in [('corrupt', 3), ('oversized', 3), ('oversized-state', 3), ('badargc', 4), ('badkind', 3)]:
+view = batch['view']
+if view.get('exit') != 0 or view.get('wasmTrap') is not None or not re.search(r'\{:status :ok :result 0(?:\s|\})', view.get('report') or ''):
+    raise ValueError(repr(view))
+wire = (view.get('output') or '').encode('utf-8')
+if not wire.startswith(b'BV1|') or not wire.endswith(b'\n'):
+    raise ValueError('invalid view wire')
+pos, nodes = 4, []
+def field():
+    global pos
+    end = wire.index(b':', pos)
+    count = int(wire[pos:end])
+    pos = end + 1
+    value = wire[pos:pos + count].decode('utf-8', errors='strict')
+    pos += count
+    return value
+def node():
+    fields = [field() for _ in range(7)]
+    nodes.append(fields)
+    for _ in range(int(fields[6])):
+        node()
+node()
+if pos != len(wire) - 1 or nodes[0][0] != 'div' or not any(n[3] == 'title' and n[4] == '議事😀' for n in nodes):
+    raise ValueError('view does not match edited state')
+if batch['preview'].get('exit') != 0 or 'page preview' not in (batch['preview'].get('output') or '') or '3:k10' in (batch['preview'].get('output') or ''):
+    raise ValueError('preview view missing or still contains editing controls')
+for name, result in [('view-corrupt', 3), ('corrupt', 3), ('oversized', 3), ('oversized-state', 3), ('badargc', 4), ('badkind', 3)]:
     expect(batch[name], result, '')
 for name, wire in [('no-write', 37), ('no-args', 38)]:
     item = batch[name]

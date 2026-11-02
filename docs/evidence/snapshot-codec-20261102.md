@@ -46,3 +46,12 @@ input, invalid arity/kind, and missing local-wire refusals. The staged program
 SHA-256 was `9a9a3c209028835c35afd09880d72a625ec322eaf518017200312132069cb8ce`;
 Wasm SHA-256 was `e23ace0b850d628bebf80924971c1c1820cb0da31fc15c0580e6c10cd53e6156`.
 No durable host storage, browser DOM, external service or QEMU was involved.
+
+A follow-up adds a `view` request: the same Kotoba editor builds the tree and
+serializes nodes as length-prefixed tag, attributes, text and child-count fields.
+Chrome Wasm verified the edited Unicode title in the resulting tree, preview
+mode, and corrupt-state refusal. The test grants 10 million fuel for view; a
+separate initial-view probe used about 840,000 of a 1 million budget. The staged
+source SHA-256 was `e5890ad06534141c6a4f401edb1a66d05752621b6e5663c5b38e18fba562be8e`
+and Wasm SHA-256 was `bbcb9043d7f35e47b2a5e36ef2e3636fe39b1300dc11060fb608ba0272d9e774`.
+This validates the serialized tree, not a rendered browser UI or storage.
