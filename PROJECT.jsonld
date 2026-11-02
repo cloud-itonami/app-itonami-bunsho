@@ -1,10 +1,10 @@
 {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
-  "@id": "https://moji.itonami.app",
+  "@id": "https://bunsho.itonami.app",
   "name": "itonami-bunsho",
   "description": "itonami Bunsho（文書）: Google Docs v1 (structural) + Microsoft Graph Word (content) compatible document API over kotoba datomic (graph docs-v1). Fourth build vertical of the workspace-compat program (ADR-2606010500).",
-  "url": "https://moji.itonami.app",
+  "url": "https://bunsho.itonami.app",
   "applicationCategory": "Productivity",
   "operatingSystem": "Kubernetes",
   "author": { "@type": "Organization", "name": "itonami", "url": "https://itonami.app" },
@@ -24,7 +24,7 @@
       "description": "Cloudflare Worker edge serving Google Docs v1 (structural /v1/documents) and Microsoft Graph Word (content /v1.0/me/drive/.../content) REST skins, translating to canonical XRPC.",
       "applicationCategory": "Edge",
       "programmingLanguage": "TypeScript",
-      "runtimePlatform": "Cloudflare Worker (moji.itonami.app)"
+      "runtimePlatform": "Cloudflare Worker (bunsho.itonami.app)"
     }
   ],
   "isBasedOn": "90-docs/adr/2606010500-workspace-compat-datomic-schema.md"
