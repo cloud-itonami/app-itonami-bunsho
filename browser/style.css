@@ -1,0 +1,12 @@
+:root { color-scheme: light; font-family: system-ui, sans-serif; color: #20242a; background: #f2f4f7; }
+body { margin: 0; }
+#status { margin: 0; padding: .5rem 1rem; background: #fff; }
+.moji { max-width: 70rem; margin: auto; }
+.bar, .tools, .block { display: flex; flex-wrap: wrap; gap: .5rem; padding: .75rem; }
+.bar, .tools { background: white; }
+.title, .text { min-width: 12rem; flex: 1; padding: .45rem; }
+button { padding: .4rem .6rem; cursor: pointer; }
+.page { background: white; min-height: 20rem; margin: 1rem; padding: 1rem; }
+.preview { padding: 2rem; }
+.stats { padding: 1rem; color: #525a64; }
+.kind.on { font-weight: bold; }

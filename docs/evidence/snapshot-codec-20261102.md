@@ -55,3 +55,31 @@ separate initial-view probe used about 840,000 of a 1 million budget. The staged
 source SHA-256 was `e5890ad06534141c6a4f401edb1a66d05752621b6e5663c5b38e18fba562be8e`
 and Wasm SHA-256 was `bbcb9043d7f35e47b2a5e36ef2e3636fe39b1300dc11060fb608ba0272d9e774`.
 This validates the serialized tree, not a rendered browser UI or storage.
+
+## Local browser UI candidate
+
+A local-only build stages the program with Amu selfhost, the existing browser
+Worker and the exact `kotoba-lang/wasm-webcomponent` broker revision
+`e00ae75e1c589f76b4f53a88a5e3256c98c9e162` (SHA-256
+`7f760128c3a58098123c31ec3dd34b9c871932e3933f2c952facc4ab0e647212`).
+The product-specific adapter validates the descriptor, checks the generated
+Wasm digest, decodes the Kotoba-produced view into allowlisted DOM nodes, and
+stores one candidate BS1 state in origin-local localStorage. It uses Web Locks
+and a stored-value check to refuse a concurrent tab's stale write; it refuses
+writes when Web Locks is unavailable. This is a candidate schema, not an old
+origin migration format. No server-side application logic is used.
+
+On macOS ARM64 / Chrome 156, the loopback browser test passed initial render,
+Unicode and queued input, add paragraph, preview, reload, two-tab stale-write
+refusal, injected storage failure, corrupt-state refusal and mutated Wasm digest
+refusal. Main-page network observations contained loopback URLs only. The
+candidate Wasm and compiler hashes are recorded above; Worker SHA-256 was
+`58d606d0b3f22766a1b7288fe911c106aea9606fecfe59a2adb66a4bac8923ab`.
+
+Reproduce with `python3 scripts/build-browser.py AMU_DIR BROKER_REPO NEW_BUILD`
+and `python3 scripts/check-browser-ui.py AMU_DIR NEW_BUILD NEW_OUTPUT CHROME`.
+The broker is copied from the named local Git revision, not a product-local
+reimplementation. The digest in the generated bundle is produced alongside
+its Wasm, not an independent release attestation. Cross-browser, accessibility,
+maximum-size performance, crash and interrupted-write recovery, real old data,
+OS/QEMU and deployment remain unqualified. No publication is implied.
