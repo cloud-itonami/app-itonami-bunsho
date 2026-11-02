@@ -1,0 +1,68 @@
+(ns moji.json-string
+  (:export [json-unquote]))
+
+;; Decode one complete JSON string token. Indices are UTF-8 byte offsets.
+;; Tokens are capped at 8192 UTF-8 bytes. This is a migration building block,
+;; not an old-document parser or importer.
+(defn json-hex [c :i64] :i64
+  (cond (and (>= c 48) (<= c 57)) (- c 48)
+        (and (>= c 65) (<= c 70)) (+ 10 (- c 65))
+        (and (>= c 97) (<= c 102)) (+ 10 (- c 97))
+        :else -1))
+
+(defn json-hex4-from [s :string i :i64 end :i64 left :i64 acc :i64] :i64
+  (if (= left 0) acc
+    (if (>= i end) -1
+      (let [digit (json-hex (string-code-point-at s i))]
+        (if (< digit 0) -1
+          (json-hex4-from s (+ i 1) end (- left 1) (+ (* acc 16) digit)))))))
+
+(defn json-hex4 [s :string i :i64 end :i64] :i64
+  (json-hex4-from s i end 4 0))
+
+(defn json-codepoint [cp :i64] :string
+  (string-from-utf8
+    (bytes-from-vector-i64
+      (cond (< cp 128) [cp]
+            (< cp 2048) [(+ 192 (quot cp 64)) (+ 128 (bit-and cp 63))]
+            (< cp 65536) [(+ 224 (quot cp 4096)) (+ 128 (bit-and (quot cp 64) 63)) (+ 128 (bit-and cp 63))]
+            :else [(+ 240 (quot cp 262144)) (+ 128 (bit-and (quot cp 4096) 63))
+                   (+ 128 (bit-and (quot cp 64) 63)) (+ 128 (bit-and cp 63))]))))
+
+(defn json-unquote-from [s :string i :i64 end :i64 acc :string] [:option :string]
+  (if (>= i end) (option-none-of [:option :string])
+    (let [c (string-code-point-at s i)]
+      (cond
+        (= c 34) (if (= (+ i 1) end) (option-some-of [:option :string] acc) (option-none-of [:option :string]))
+        (< c 32) (option-none-of [:option :string])
+        (= c 92)
+          (if (>= (+ i 1) end) (option-none-of [:option :string])
+            (let [e (string-code-point-at s (+ i 1))]
+              (if (= e 117)
+                (let [u (json-hex4 s (+ i 2) end)]
+                  (cond
+                    (< u 0) (option-none-of [:option :string])
+                    (and (>= u 55296) (<= u 56319))
+                      (if (or (> (+ i 12) end)
+                              (not (= (string-code-point-at s (+ i 6)) 92))
+                              (not (= (string-code-point-at s (+ i 7)) 117)))
+                        (option-none-of [:option :string])
+                        (let [v (json-hex4 s (+ i 8) end)]
+                          (if (or (< v 56320) (> v 57343)) (option-none-of [:option :string])
+                            (json-unquote-from s (+ i 12) end
+                              (string-concat acc (json-codepoint (+ 65536 (* (- u 55296) 1024) (- v 56320))))))))
+                    (and (>= u 56320) (<= u 57343)) (option-none-of [:option :string])
+                    :else (json-unquote-from s (+ i 6) end (string-concat acc (json-codepoint u)))))
+                (let [cp (cond (= e 34) 34 (= e 92) 92 (= e 47) 47 (= e 98) 8 (= e 102) 12
+                               (= e 110) 10 (= e 114) 13 (= e 116) 9 :else -1)]
+                  (if (< cp 0) (option-none-of [:option :string])
+                    (json-unquote-from s (+ i 2) end (string-concat acc (json-codepoint cp))))))))
+        :else (let [width (cond (< c 128) 1 (< c 2048) 2 (< c 65536) 3 :else 4)]
+                (json-unquote-from s (+ i width) end
+                  (string-concat acc (string-substring s i (+ i width)))))))))
+
+(defn json-unquote [s :string] [:option :string]
+  (let [n (string-byte-length s)]
+    (if (or (< n 2) (> n 8192) (not (= (string-code-point-at s 0) 34)))
+      (option-none-of [:option :string])
+      (json-unquote-from s 1 n ""))))
