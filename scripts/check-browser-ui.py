@@ -46,6 +46,10 @@ try:
             if evaluate(expr): return
             time.sleep(.2)
         raise TimeoutError(label + ': ' + str(evaluate('document.body.innerText')))
+    def reload_page():
+        evaluate("window.__reloadMarker = true")
+        pipe.call('Page.reload', {}, session)
+        wait("window.__reloadMarker !== true", 'new document after reload')
     wait("document.querySelector('[data-k=title]') !== null", 'initial UI')
     if evaluate("document.querySelector('[data-k=title]').getAttribute('aria-label')") != '文書タイトル': raise ValueError('title lacks accessible name')
     if evaluate("document.querySelector('[data-k=b0]').getAttribute('aria-label')") != '本文ブロック 1': raise ValueError('block lacks accessible name')
@@ -79,7 +83,7 @@ try:
     evaluate("document.querySelector('[data-k=mode]').click()")
     wait("document.querySelector('[data-k=b2]') !== null", 'edit mode')
     saved = evaluate("localStorage.getItem('itonami.bunsho.candidate.bs1')")
-    pipe.call('Page.reload', {}, session)
+    reload_page()
     wait("document.querySelector('[data-k=title]')?.value === '連続入力'", 'reload')
     # A downloaded BS1 can be explicitly reviewed and restored; invalid input
     # and storage failure must never replace the current document.
@@ -215,7 +219,7 @@ try:
     wait("localStorage.getItem('itonami.bunsho.candidate.bs1')?.includes('背景の入力') && document.getElementById('retry-save').hidden", 'hidden edit retry')
     evaluate("(()=>{let e=document.querySelector('[data-k=title]');e.value='先の変更';e.dispatchEvent(new Event('input',{bubbles:true}));})()")
     wait("localStorage.getItem('itonami.bunsho.candidate.bs1') === " + json.dumps(saved,ensure_ascii=False), 'restore fixture after hidden retry')
-    pipe.call('Page.reload', {}, session)
+    reload_page()
     wait("document.querySelector('[data-k=title]')?.value === '先の変更'", 'reload after timeout')
     evaluate("window.savedWorker=window.Worker;window.Worker=class extends window.savedWorker {postMessage(msg){if(msg.args[0]==='view'){this.terminate();queueMicrotask(()=>this.onerror(new Event('error')))}else super.postMessage(msg)}}")
     evaluate("(()=>{let e=document.querySelector('[data-k=title]');e.value='中断';e.dispatchEvent(new Event('input',{bubbles:true}));})()")
@@ -226,7 +230,7 @@ try:
     wait("localStorage.getItem('itonami.bunsho.candidate.bs1')?.includes('中断') && document.getElementById('retry-save').hidden", 'interrupted edit retry')
     evaluate("(()=>{let e=document.querySelector('[data-k=title]');e.value='先の変更';e.dispatchEvent(new Event('input',{bubbles:true}));})()")
     wait("localStorage.getItem('itonami.bunsho.candidate.bs1') === " + json.dumps(saved,ensure_ascii=False), 'restore fixture after interruption')
-    pipe.call('Page.reload', {}, session)
+    reload_page()
     wait("document.querySelector('[data-k=title]')?.value === '先の変更'", 'reload after interruption')
     evaluate("window.quotaSetter=Storage.prototype.setItem;Storage.prototype.setItem = function(){ throw new Error('quota'); }; (()=>{let e=document.querySelector('[data-k=title]');e.value='失敗';e.dispatchEvent(new Event('input',{bubbles:true}));})()")
     wait("document.getElementById('status').textContent.includes('保存できませんでした')", 'storage failure')
@@ -251,10 +255,10 @@ try:
     evaluate("(()=>{let e=document.querySelector('[data-k=title]');e.value='先の変更';e.dispatchEvent(new Event('input',{bubbles:true}));})()")
     wait("localStorage.getItem('itonami.bunsho.candidate.bs1') === " + json.dumps(saved,ensure_ascii=False) + " && document.getElementById('retry-save').hidden && document.getElementById('status').textContent === '保存しました'", 'correct oversized input')
     # Use the saved original setter from a new realm after reload for corruption injection.
-    pipe.call('Page.reload', {}, session)
+    reload_page()
     wait("document.querySelector('[data-k=title]')?.value === '先の変更'", 'reload before corrupt')
     evaluate("localStorage.setItem('itonami.bunsho.candidate.bs1','BS1|bad')")
-    pipe.call('Page.reload', {}, session)
+    reload_page()
     wait("document.getElementById('status').textContent.includes('文書を開けません')", 'corruption refusal')
     if evaluate("localStorage.getItem('itonami.bunsho.candidate.bs1')") != 'BS1|bad': raise ValueError('corrupt input overwritten')
     evaluate("localStorage.removeItem('itonami.bunsho.candidate.bs1')")
