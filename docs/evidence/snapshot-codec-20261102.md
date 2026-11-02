@@ -17,15 +17,22 @@ Local experiment on macOS ARM64 with Chrome 156.0.8078.74 used the Amu
 selfhost candidate in kotoba-lang/amu PR #1779, head `da321093e9557b811cce5129dacd453e300f63a3`,
 compiler image SHA-256 `2c551579c06a0228029bb06bae177e93126ecbbc37d636d693c471dbac8d1536`.
 Editor source SHA-256 was
-`e8c1b03ea391f42a2006f8a45b923e8a0861545c8b13257bcd72b3e2b99175c0`.
+`68821c04bfc2687ba6075d6c05c5264d6880cf4ffaaa98c841b64449a86b4ceb`.
 Its namespace exports were narrowed to `main` for this experiment. Native
 Amu and Chrome Wasm returned 17, covering the original 13 editor checks plus
 four codec checks for Unicode, empty state, malformed/version/trailing input,
 unchanged state on failure, 32 blocks and a 1024-byte field. A mutation that
 refuses 32 blocks returned 16 on both targets. The candidate Wasm SHA-256 was
-`943cac0bf73d0c04fa6584d3b3d3190d0e67b1e0cbe1b65d10f99317e8195a82`.
+`8c9d735bc91bdba1693e81177b06f2da31c2832f4ae4799ea5297e167c65ca8f`.
 
 Run `python3 scripts/check-snapshot-wasm.py /path/to/amu /new/output /path/to/Chrome`.
 The Amu candidate is not merged at this writing. This experiment does not
 qualify the original document-valued UI exports, persistence on restart,
 interrupted writes, maximum aggregate payload, QEMU, migration or a release.
+
+After combining block validation and encoding into one traversal, the same
+staged native and browser checks and mutation passed again. A separate
+32 × 1024-byte prebuilt fixture plus encode still exceeded the native CLI
+program limit of 5 seconds. The fixture alone returned successfully; this
+does not isolate codec-only execution time. Maximum-size performance remains
+open.

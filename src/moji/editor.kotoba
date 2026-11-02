@@ -332,37 +332,33 @@
 (defn snap-kind? [s :string] :bool
   (or (string=? s "h1") (string=? s "h2") (string=? s "p") (string=? s "li")))
 
-(defn snap-blocks-valid? [v :document i :i64 n :i64] :bool
-  (if (= i n) true
-    (let [b (dat v i)]
-      (if (not (map? b)) false
-        (let [kind (dget b :kind) text (dget b :text)]
-          (and (= (document-count b) 2) (string? kind) (string? text)
-               (snap-kind? (dstr kind)) (<= (string-byte-length (dstr text)) 1024)
-               (snap-blocks-valid? v (+ i 1) n)))))))
-
-(defn snap-state-valid? [s :document] :bool
-  (if (not (map? s)) false
-    (let [title (dget s :title) mode (dget s :mode) v (dget s :blocks)]
-      (and (= (document-count s) 3) (string? title) (string? mode) (vector? v)
-           (<= (string-byte-length (dstr title)) 1024)
-           (or (string=? (dstr mode) "edit") (string=? (dstr mode) "preview"))
-           (<= (document-count v) 32) (snap-blocks-valid? v 0 (document-count v))))))
-
 (defn snap-frame [s :string] :string
   (string-concat (string-from-i64 (string-byte-length s)) (string-concat ":" s)))
 
-(defn snap-encode-blocks [s :document i :i64 n :i64 acc :string] :string
-  (if (= i n) acc
-    (snap-encode-blocks s (+ i 1) n
-      (string-concat acc (string-concat (snap-frame (block-kind s i)) (snap-frame (block-text s i)))))))
+;; Validate and encode each block in one pass over the document vector.  A
+;; rejected block never produces a successful partial snapshot.
+(defn snap-encode-blocks [v :document i :i64 n :i64 acc :string] [:option :string]
+  (if (= i n) (option-some-of [:option :string] acc)
+    (let [b (dat v i)]
+      (if (not (map? b)) (option-none-of [:option :string])
+        (let [kind (dget b :kind) text (dget b :text)]
+          (if (and (= (document-count b) 2) (string? kind) (string? text)
+                   (snap-kind? (dstr kind)) (<= (string-byte-length (dstr text)) 1024))
+            (snap-encode-blocks v (+ i 1) n
+              (string-concat acc (string-concat (snap-frame (dstr kind)) (snap-frame (dstr text)))))
+            (option-none-of [:option :string])))))))
 
 (defn snap-encode [s :document] [:option :string]
-  (if (not (snap-state-valid? s)) (option-none-of [:option :string])
-    (option-some-of [:option :string]
-      (snap-encode-blocks s 0 (block-count s)
-        (string-concat "BS1|" (string-concat (snap-frame (dstr (dget s :title)))
-          (string-concat (snap-frame (dstr (dget s :mode))) (snap-frame (string-from-i64 (block-count s))))))))))
+  (if (not (map? s)) (option-none-of [:option :string])
+    (let [title (dget s :title) mode (dget s :mode) v (dget s :blocks)]
+      (if (and (= (document-count s) 3) (string? title) (string? mode) (vector? v)
+               (<= (string-byte-length (dstr title)) 1024)
+               (or (string=? (dstr mode) "edit") (string=? (dstr mode) "preview"))
+               (<= (document-count v) 32))
+        (snap-encode-blocks v 0 (document-count v)
+          (string-concat "BS1|" (string-concat (snap-frame (dstr title))
+            (string-concat (snap-frame (dstr mode)) (snap-frame (string-from-i64 (document-count v)))))))
+        (option-none-of [:option :string])))))
 
 ;; Return [begin end next] or [-1 -1 -1]. Scan code points to ensure the
 ;; advertised byte length never ends inside a UTF-8 character.
