@@ -47,6 +47,8 @@ try:
             time.sleep(.2)
         raise TimeoutError(label + ': ' + str(evaluate('document.body.innerText')))
     wait("document.querySelector('[data-k=title]') !== null", 'initial UI')
+    if evaluate("document.querySelector('[data-k=title]').getAttribute('aria-label')") != '文書タイトル': raise ValueError('title lacks accessible name')
+    if evaluate("document.querySelector('[data-k=b0]').getAttribute('aria-label')") != '本文ブロック 1': raise ValueError('block lacks accessible name')
     evaluate("document.querySelector('[data-k=title]').click()")
     time.sleep(1)
     if evaluate("localStorage.getItem('itonami.bunsho.candidate.bs1')") is not None: raise ValueError('focusing input wrote state')
@@ -75,7 +77,9 @@ try:
     while time.time() < end and second_eval("document.querySelector('[data-k=title]')?.value") != '連続入力': time.sleep(.2)
     if second_eval("document.querySelector('[data-k=title]')?.value") != '連続入力': raise TimeoutError('second tab')
     evaluate("(()=>{let e=document.querySelector('[data-k=title]');e.value='先の変更';e.dispatchEvent(new Event('input',{bubbles:true}));})()")
-    wait("localStorage.getItem('itonami.bunsho.candidate.bs1')?.includes('先の変更')", 'first tab write')
+    wait("localStorage.getItem('itonami.bunsho.candidate.bs1')?.includes('先の変更') || document.getElementById('status').textContent.includes('保存できませんでした')", 'first tab write')
+    if not evaluate("localStorage.getItem('itonami.bunsho.candidate.bs1')?.includes('先の変更')"):
+        raise ValueError('first tab write refused: ' + str(evaluate("document.getElementById('status').textContent")))
     second_eval("(()=>{let e=document.querySelector('[data-k=title]');e.value='後の変更';e.dispatchEvent(new Event('input',{bubbles:true}));})()")
     end = time.time() + 90
     while time.time() < end and not second_eval("document.getElementById('status')?.textContent.includes('保存できませんでした')"): time.sleep(.2)

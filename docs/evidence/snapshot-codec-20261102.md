@@ -83,3 +83,12 @@ reimplementation. The digest in the generated bundle is produced alongside
 its Wasm, not an independent release attestation. Cross-browser, accessibility,
 maximum-size performance, crash and interrupted-write recovery, real old data,
 OS/QEMU and deployment remain unqualified. No publication is implied.
+
+A follow-up carries accessible names for the title and block inputs from the
+Kotoba view through the versioned `BV2|` view protocol. Chrome verified the
+names in the DOM; native/Wasm model tests and their mutation passed. One full
+browser run failed waiting for a first-tab save; the same candidate passed
+three subsequent sequential runs. The cause remains unknown. This narrow DOM
+check is not screen-reader or complete accessibility qualification.
+The follow-up browser Wasm SHA-256 is
+`e321a6ad7c458f5783741a670a307daf74bac1c1e8e6f00b272be21849de03a2`.

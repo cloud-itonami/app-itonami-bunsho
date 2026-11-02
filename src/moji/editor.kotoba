@@ -169,6 +169,7 @@
          (kind-button "li" kind k)
          (leaf "input"
                (document-map :data-k (document-string (string-concat "b" k))
+                             :aria-label (document-string (string-concat "本文ブロック " (string-from-i64 (+ i 1))))
                              :type (document-string "text")
                              :class (document-string "text")
                              :value (document-string (block-text state i)))
@@ -209,6 +210,7 @@
              (document-vector
               (leaf "input"
                     (document-map :data-k (document-string "title")
+                                  :aria-label (document-string "文書タイトル")
                                   :type (document-string "text")
                                   :class (document-string "title")
                                   :value (document-string (dstr (dget state :title))))

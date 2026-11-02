@@ -79,7 +79,7 @@ view = batch['view']
 if view.get('exit') != 0 or view.get('wasmTrap') is not None or not re.search(r'\{:status :ok :result 0(?:\s|\})', view.get('report') or ''):
     raise ValueError(repr(view))
 wire = (view.get('output') or '').encode('utf-8')
-if not wire.startswith(b'BV1|') or not wire.endswith(b'\n'):
+if not wire.startswith(b'BV2|') or not wire.endswith(b'\n'):
     raise ValueError('invalid view wire')
 pos, nodes = 4, []
 def field():
@@ -91,12 +91,12 @@ def field():
     pos += count
     return value
 def node():
-    fields = [field() for _ in range(7)]
+    fields = [field() for _ in range(8)]
     nodes.append(fields)
-    for _ in range(int(fields[6])):
+    for _ in range(int(fields[7])):
         node()
 node()
-if pos != len(wire) - 1 or nodes[0][0] != 'div' or not any(n[3] == 'title' and n[4] == '議事😀' for n in nodes):
+if pos != len(wire) - 1 or nodes[0][0] != 'div' or not any(n[3] == 'title' and n[4] == '議事😀' and n[6] == '文書タイトル' for n in nodes):
     raise ValueError('view does not match edited state')
 if batch['preview'].get('exit') != 0 or 'page preview' not in (batch['preview'].get('output') or '') or '3:k10' in (batch['preview'].get('output') or ''):
     raise ValueError('preview view missing or still contains editing controls')
