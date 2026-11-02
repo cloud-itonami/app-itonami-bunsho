@@ -1,0 +1,28 @@
+{
+  "date": "2026-11-02",
+  "scope": "synthetic local Chrome and native tests; not release or actual-user migration",
+  "sourceSha256": {
+    "src/moji/legacy_document.kotoba": "47f2284471707dfbd15a1eafe894f49a0248174dbbf78c74347f7623a51851ac",
+    "scripts/check-legacy-browser.py": "4709b18e39d388f6b2098f5816f944f59a48781736e5badd5885981db1c5affa"
+  },
+  "build": {
+    "wasmSha256": "56a202b30205dab99d202690b3f1c402dccf22cdeec89050d7a89296a72988e7",
+    "compilerSha256": "2c551579c06a0228029bb06bae177e93126ecbbc37d636d693c471dbac8d1536",
+    "sourceSha256": "0cc2c6714dc67656464a7e6e41fbc690e5d9a27293faa82f227b0153e7fd40a7",
+    "brokerRevision": "e00ae75e1c589f76b4f53a88a5e3256c98c9e162",
+    "brokerSha256": "7f760128c3a58098123c31ec3dd34b9c871932e3933f2c952facc4ab0e647212",
+    "workerSha256": "58d606d0b3f22766a1b7288fe911c106aea9606fecfe59a2adb66a4bac8923ab"
+  },
+  "tests": {
+    "legacy_document": "native and Wasm conversion and duplicate-id mutant pass",
+    "browser_normal": "PASS",
+    "browser_32_blocks": "PASS",
+    "older_bs2_candidate_refuses_list_and_new_candidate_reopens": "PASS"
+  },
+  "limitations": [
+    "synthetic data only; actual legacy export and origins unverified",
+    "unsupported kinds still refused; source metadata retained as provenance",
+    "older BS2 candidate cannot open this newly accepted legacy kind",
+    "no QEMU, fleet sync or live publication"
+  ]
+}

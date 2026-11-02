@@ -21,6 +21,7 @@
 
 (defn legacy-kind [object :string kind :string] :string
   (cond (string=? kind "paragraph") "p"
+        (string=? kind "listItem") "li"
         (string=? kind "heading")
           (let [level (json/json-object-field object "headingLevel")]
             (if (option-some?-of [:option :string] level)

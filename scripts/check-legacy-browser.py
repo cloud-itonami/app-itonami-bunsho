@@ -45,10 +45,11 @@ key = 'itonami.bunsho.candidate.bs1'
 legacy = {'found': True, 'document': {'documentId': 'old-doc', 'title': '旧文書😀', 'revisionId': 'rev-8',
           'ownerDid': 'did:key:fixture', 'createdAtMs': 1700000000000, 'unknown': {'keep': True},
           'body': [{'elementId': 'e-one', 'kind': 'heading', 'headingLevel': 2, 'text': '見出し😀'},
-                   {'elementId': 'e-two', 'kind': 'paragraph', 'text': '本文'}]}}
+                   {'elementId': 'e-two', 'kind': 'paragraph', 'text': '本文'},
+                   {'elementId': 'e-list', 'kind': 'listItem', 'text': '項目😀'}]}}
 if os.environ.get('BUNSHO_MAX_TEST') == '1':
     wide = os.environ.get('BUNSHO_WIDE_TEST') == '1'
-    legacy['document']['body'].extend({'elementId': 'e-' + str(i), 'kind': 'paragraph', 'text': ('x' * 540 if wide else '行' + str(i))} for i in range(2, 32))
+    legacy['document']['body'].extend({'elementId': 'e-' + str(i), 'kind': 'paragraph', 'text': ('x' * 540 if wide else '行' + str(i))} for i in range(3, 32))
 raw = json.dumps(legacy, ensure_ascii=True, separators=(',', ':'))
 valid = out / 'legacy.json'
 valid.write_text(raw, encoding='utf-8')
@@ -130,8 +131,9 @@ try:
     wait("document.getElementById('status').textContent === 'バックアップから復元しました。'", 'import commit')
     imported = stored()
     f = frames(imported)
-    extras = [part for item in legacy['document']['body'][2:] for part in ('p', item['text'], item['elementId'])]
+    extras = [part for item in legacy['document']['body'][2:] for part in ('li' if item['kind'] == 'listItem' else 'p', item['text'], item['elementId'])]
     if f[:4] != [raw, '旧文書😀', 'edit', str(len(legacy['document']['body']))] or f[4:] != ['h2', '見出し😀', 'e-one', 'p', '本文', 'e-two'] + extras: raise ValueError('import did not preserve origin and identities')
+    if evaluate("document.querySelector('[data-k=kl2]')?.classList.contains('on')") is not True or evaluate("document.querySelector('[data-k=b2]')?.value") != '項目😀': raise ValueError('list item did not render as a list item')
     evaluate("(()=>{let e=document.querySelector('[data-k=b0]');e.value='編集😀';e.dispatchEvent(new Event('input',{bubbles:true}));})()")
     wait("document.getElementById('status').textContent === '保存しました' && localStorage.getItem('" + key + "')?.includes('編集😀')", 'BS2 edit')
     evaluate("document.querySelector('[data-k=dn0]').click()")
@@ -144,6 +146,7 @@ try:
     wait('window.__oldDocument !== true', 'new document')
     wait("document.querySelector('[data-k=b1]')?.value === '編集😀'", 'BS2 reopen')
     if stored() != edited: raise ValueError('reopen changed state')
+    if evaluate("document.querySelector('[data-k=kl2]')?.classList.contains('on')") is not True or evaluate("document.querySelector('[data-k=b2]')?.value") != '項目😀': raise ValueError('list item did not survive reopen')
     evaluate("document.querySelector('[data-k=backup-export]').click()")
     f = download / 'bunsho-backup.bs2'
     deadline = time.time() + 90
