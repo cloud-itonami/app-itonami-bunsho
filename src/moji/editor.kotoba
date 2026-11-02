@@ -151,13 +151,12 @@
           (if (string=? kind current) "kind on" "kind")
           (kind-label kind)))
 
-(defn index-label [state :document i :i64] :string
+(defn index-label-at [start :i64 end :i64] :string
   (string-concat "["
-                 (string-concat (string-from-i64 (start-index state i))
-                                (string-concat "–"
-                                               (string-concat (string-from-i64 (end-index state i)) "]")))))
+                 (string-concat (string-from-i64 start)
+                                (string-concat "–" (string-concat (string-from-i64 end) "]")))))
 
-(defn edit-row [state :document i :i64] :document
+(defn edit-row [state :document i :i64 start :i64 text :string] :document
   (let [k (key-at i)
         kind (block-kind state i)]
     (el "div"
@@ -172,9 +171,9 @@
                              :aria-label (document-string (string-concat "本文ブロック " (string-from-i64 (+ i 1))))
                              :type (document-string "text")
                              :class (document-string "text")
-                             :value (document-string (block-text state i)))
+                             :value (document-string text))
                "")
-         (leaf "span" (document-map :class (document-string "index")) (index-label state i))
+         (leaf "span" (document-map :class (document-string "index")) (index-label-at start (span-end start (string-byte-length text))))
          (button (string-concat "up" k) "move" "↑")
          (button (string-concat "dn" k) "move" "↓")
          (button (string-concat "rm" k) "remove" "削除")))))
@@ -188,13 +187,15 @@
       (string=? kind "li") (el "ul" (document-map) (document-vector (leaf "li" (document-map) text)))
       :else (leaf "p" (document-map) text))))
 
-(defn rows-from [state :document i :i64 n :i64 preview :bool acc :document] :document
+(defn rows-from [state :document i :i64 n :i64 preview :bool acc :document start :i64] :document
   (if (>= i n)
     acc
-    (rows-from state (+ i 1) n preview
-               (document-vector-conj acc (if preview
-                                           (preview-node state i)
-                                           (edit-row state i))))))
+    (let [text (block-text state i)]
+      (rows-from state (+ i 1) n preview
+                 (document-vector-conj acc (if preview
+                                             (preview-node state i)
+                                             (edit-row state i start text)))
+                 (next-start start (string-byte-length text))))))
 
 (defn preview? [state :document] :bool
   (string=? (dstr (dget state :mode)) "preview"))
@@ -228,7 +229,7 @@
               (button "backup-restore" "add" "読み込み前に戻す")))
          (el "main"
              (document-map :class (document-string (if preview "page preview" "page edit")))
-             (rows-from state 0 n preview (document-vector)))
+             (rows-from state 0 n preview (document-vector) 1))
          (leaf "footer"
                (document-map :class (document-string "stats"))
                (string-concat (string-from-i64 n)

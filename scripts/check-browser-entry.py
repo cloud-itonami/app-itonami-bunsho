@@ -16,16 +16,8 @@ if len(sys.argv) != 4:
 amu, out, chrome = [Path(v).resolve() for v in sys.argv[1:]]
 out.mkdir(parents=True, exist_ok=False)
 root = Path(__file__).resolve().parents[1]
-editor = (root / 'src/moji/editor.kotoba').read_text(encoding='utf-8')
-entry = (root / 'src/moji/browser-entry.kotoba').read_text(encoding='utf-8')
-editor, count = re.subn(r'\A\(ns\s+moji\.editor[\s\S]*?\(:export \[[^\]]*\]\)\)',
-                         '(ns moji.editor (:export [main]))', editor, count=1)
-if count != 1:
-    raise SystemExit('unexpected editor namespace')
-anchor = '(defn main [] :i64\n  (+ (test-index-core)'
-if editor.count(anchor) != 1:
-    raise SystemExit('unexpected editor test entry')
-source = editor[:editor.index(anchor)] + entry
+from browser_source import stage
+source = stage(root)
 (out / 'program.kotoba').write_text(source, encoding='utf-8')
 def load(name, path):
     spec = importlib.util.spec_from_file_location(name, path)

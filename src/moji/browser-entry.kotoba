@@ -5,8 +5,21 @@
 (defn browser-arg [i :string] :string
   (typed-cap-call :cli/args :string :string i))
 
+(defn browser-encode [s :document] [:option :string]
+  (if (and (map? s) (= (document-count s) 4)) (legacy-snapshot-encode s) (snap-encode s)))
+
+;; Check ASCII prefix byte-by-byte so malformed UTF-8-aligned text never
+;; creates a substring ending inside a multibyte character.
+(defn browser-prefix? [s :string v :i64] :bool
+  (and (>= (string-byte-length s) 4) (= (string-code-point-at s 0) 66)
+       (= (string-code-point-at s 1) 83) (= (string-code-point-at s 2) v)
+       (= (string-code-point-at s 3) 124)))
+(defn browser-decode [s :string] [:option :document]
+  (cond (browser-prefix? s 49) (snap-decode s)
+        (browser-prefix? s 50) (legacy-snapshot-decode s)
+        :else (option-none-of [:option :document])))
 (defn browser-emit [s :document] :i64
-  (let [encoded (snap-encode s)]
+  (let [encoded (browser-encode s)]
     (if (option-some?-of [:option :string] encoded)
       (let [out (typed-cap-call :io/write :string :string
                   (string-concat (option-value-of [:option :string] encoded "") "\n"))] 0)
@@ -34,7 +47,7 @@
 
 (defn browser-render [raw :string] :i64
   (if (> (string-byte-length raw) 35000) 3
-    (let [decoded (snap-decode raw)]
+    (let [decoded (browser-decode raw)]
       (if (option-some?-of [:option :document] decoded)
         (let [state (option-value-of [:option :document] decoded (init))
               result (browser-view-node (view state) "BV2|")
@@ -46,6 +59,12 @@
     (cond
       (and (string=? argc "1") (string=? op "init")) (browser-emit (init))
       (and (string=? argc "2") (string=? op "view")) (browser-render (browser-arg "1"))
+      (and (string=? argc "2") (string=? op "legacy-import"))
+        (let [raw (browser-arg "1")]
+          (if (> (string-byte-length raw) 35000) 3
+            (let [converted (legacy-convert raw)]
+              (if (option-some?-of [:option :document] converted)
+                (browser-emit (option-value-of [:option :document] converted (document-null))) 3))))
       (and (string=? argc "5") (string=? op "step"))
         (let [raw (browser-arg "1") target (browser-arg "2")
               kind (browser-arg "3") value (browser-arg "4")]
@@ -53,7 +72,7 @@
                   (> (string-byte-length value) 1024)
                   (not (or (string=? kind "click") (string=? kind "input"))))
             3
-            (let [decoded (snap-decode raw)]
+            (let [decoded (browser-decode raw)]
               (if (option-some?-of [:option :document] decoded)
                 (browser-emit (step (option-value-of [:option :document] decoded (init)) target kind value))
                 3))))

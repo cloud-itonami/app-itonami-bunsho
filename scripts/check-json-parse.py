@@ -20,7 +20,7 @@ parse_source = (root / 'src/moji/json_parse.kotoba').read_text(encoding='utf-8')
 fixture = (root / 'tests/json-parse-cases.kotoba').read_text(encoding='utf-8')
 extract_fixture = (root / 'tests/json-extract-cases.kotoba').read_text(encoding='utf-8')
 string_code, n1 = re.subn(r'^\(ns\s+moji\.json-string\s*\(:export \[json-unquote\]\)\)', '(ns json-test (:export [main]))', string_source, count=1)
-parse_code, n2 = re.subn(r'^\(ns\s+moji\.json-parse\s*\(:export \[json-parse json-object-field json-array-item\]\)\s*\(:require \[moji\.json-string :as js\]\)\)', '', parse_source, count=1)
+parse_code, n2 = re.subn(r'^\(ns\s+moji\.json-parse\s*\(:export \[json-parse json-object-field json-array-item json-array-tokens\]\)\s*\(:require \[moji\.json-string :as js\]\)\)', '', parse_source, count=1)
 parse_code = parse_code.replace('(js/json-unquote ', '(json-unquote ')
 anchor = '(jp-contains-key keys key 0)'
 if n1 != 1 or n2 != 1 or parse_code.count(anchor) != 1:
@@ -29,7 +29,7 @@ spec = importlib.util.spec_from_file_location('mac', amu / 'scripts/seed/check-a
 mac = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(mac)
 results = {}
-for name, code, cases, expected in [('validator', parse_code, fixture, 39), ('mutant', parse_code.replace(anchor, '(= 0 1)'), fixture, 35), ('extract', parse_code, extract_fixture, 14), ('extract-mutant', parse_code.replace(anchor, '(= 0 1)'), extract_fixture, 13)]:
+for name, code, cases, expected in [('validator', parse_code, fixture, 39), ('mutant', parse_code.replace(anchor, '(= 0 1)'), fixture, 35), ('extract', parse_code, extract_fixture, 17), ('extract-mutant', parse_code.replace(anchor, '(= 0 1)'), extract_fixture, 16)]:
     path = out / (name + '.kotoba')
     path.write_text(string_code + '\n' + code + '\n' + cases, encoding='utf-8')
     native = subprocess.run([str(amu / 'bin/amu'), 'run', str(path)], cwd=out,

@@ -1,5 +1,5 @@
 (ns moji.json-parse
-  (:export [json-parse json-object-field json-array-item])
+  (:export [json-parse json-object-field json-array-item json-array-tokens])
   (:require [moji.json-string :as js]))
 
 ;; Strict bounded JSON validation for legacy import. Successful output preserves
@@ -152,3 +152,24 @@
     (if (or (< index 0) (not (option-some?-of [:option :string] valid)) (>= start n)
             (not (= (string-code-point-at s start) 91))) (option-none-of [:option :string])
       (jp-array-item-from s (+ start 1) n index 0))))
+
+;; Validate the complete array once and return exact item tokens. The flat
+;; vector avoids repeating a full-array validation for every legacy block.
+(defn jp-array-tokens-from [s :string i :i64 n :i64 acc :document] [:option :document]
+  (let [start (jp-space s i n)]
+    (if (>= start n) (option-none-of [:option :document])
+      (if (= (string-code-point-at s start) 93) (option-some-of [:option :document] acc)
+        (let [stop (jp-value s start n 1)]
+          (if (< stop 0) (option-none-of [:option :document])
+            (let [next (jp-space s stop n)
+                  items (document-vector-conj acc (document-string (string-substring s start stop)))]
+              (if (>= next n) (option-none-of [:option :document])
+                (cond (= (string-code-point-at s next) 93) (option-some-of [:option :document] items)
+                      (= (string-code-point-at s next) 44) (jp-array-tokens-from s (+ next 1) n items)
+                      :else (option-none-of [:option :document]))))))))))
+(defn json-array-tokens [s :string] [:option :document]
+  (if (not (option-some?-of [:option :string] (json-parse s))) (option-none-of [:option :document])
+    (let [n (string-byte-length s) start (jp-space s 0 n)]
+      (if (>= start n) (option-none-of [:option :document])
+        (if (not (= (string-code-point-at s start) 91)) (option-none-of [:option :document])
+          (jp-array-tokens-from s (+ start 1) n (document-vector)))))))

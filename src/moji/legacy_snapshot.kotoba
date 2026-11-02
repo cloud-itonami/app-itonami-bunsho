@@ -93,6 +93,15 @@
                               (document-map :kind (document-string kind) :text (document-string text))
                               (document-map :kind (document-string kind) :text (document-string text) :legacy-id (document-string ident)))]
                       (ls-read-blocks s (vector-at id 2) (- left 1) (document-vector-conj acc b)))))))))))))
+;; Decoding already checks canonical frame lengths and text bounds. Validate
+;; source identity directly rather than serializing the entire snapshot again.
+(defn ls-decoded-ids-valid? [blocks :document original :document i :i64] :bool
+  (if (>= i (document-count blocks)) true
+    (let [b (ls-at blocks i) id (ls-id b)]
+      (if (= (string-byte-length id) 0) (ls-decoded-ids-valid? blocks original (+ i 1))
+        (and (ls-has-id original id 0 (document-count original))
+             (not (ls-has-id blocks id 0 i))
+             (ls-decoded-ids-valid? blocks original (+ i 1)))))))
 (defn legacy-snapshot-decode [s :string] [:option :document]
   (let [n (string-byte-length s)]
     (if (or (< n 4) (> n 35000) (not (= (string-code-point-at s 0) 66)) (not (= (string-code-point-at s 1) 83))
@@ -110,10 +119,15 @@
                         (if (< count 0) (option-none-of [:option :document])
                           (let [v (ls-read-blocks s (vector-at count-frame 2) count (document-vector))]
                             (if (not (option-some?-of [:option :document] v)) (option-none-of [:option :document])
-                              (let [state (document-map :title (document-string (ls-text s title))
-                                :mode (document-string (ls-text s mode)) :blocks (option-value-of [:option :document] v (document-vector))
-                                :legacy-original (document-string (ls-text s raw)))
-                                    check (legacy-snapshot-encode state)]
-                                (if (and (option-some?-of [:option :string] check)
-                                         (string=? (option-value-of [:option :string] check "") s))
-                                  (option-some-of [:option :document] state) (option-none-of [:option :document]))))))))))))))))))
+                              (let [raw-text (ls-text s raw) title-text (ls-text s title) mode-text (ls-text s mode)
+                                    blocks (option-value-of [:option :document] v (document-vector))
+                                    source (legacy/legacy-convert raw-text)]
+                                (if (and (<= (string-byte-length title-text) 1024)
+                                         (or (string=? mode-text "edit") (string=? mode-text "preview"))
+                                         (option-some?-of [:option :document] source)
+                                         (ls-decoded-ids-valid? blocks
+                                           (ls-get (option-value-of [:option :document] source (document-null)) :blocks) 0))
+                                  (option-some-of [:option :document]
+                                    (document-map :title (document-string title-text) :mode (document-string mode-text)
+                                      :blocks blocks :legacy-original (document-string raw-text)))
+                                  (option-none-of [:option :document]))))))))))))))))))

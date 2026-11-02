@@ -50,18 +50,17 @@
           text (option-value-of [:option :string] (document-string-value value) "")]
       (if (string=? text id) true (legacy-duplicate-id? blocks id (+ i 1))))))
 
-(defn legacy-blocks [body :string i :i64 acc :document] [:option :document]
-  (let [item (json/json-array-item body i)]
-    (if (not (option-some?-of [:option :string] item))
-      (option-some-of [:option :document] acc)
-      (if (>= i 32) (option-none-of [:option :document])
-        (let [parsed (legacy-block (option-value-of [:option :string] item ""))]
-          (if (not (option-some?-of [:option :document] parsed)) (option-none-of [:option :document])
-            (let [b (option-value-of [:option :document] parsed (document-null))
-                  ident (option-value-of [:option :string]
-                    (document-string-value (option-value-of [:option :document] (document-get b :legacy-id) (document-null))) "")]
-              (if (legacy-duplicate-id? acc ident 0) (option-none-of [:option :document])
-                (legacy-blocks body (+ i 1) (document-vector-conj acc b))))))))))
+(defn legacy-blocks [tokens :document i :i64 acc :document] [:option :document]
+  (if (>= i (document-count tokens)) (option-some-of [:option :document] acc)
+    (let [token (option-value-of [:option :document] (document-vector-at tokens i) (document-null))
+          raw (option-value-of [:option :string] (document-string-value token) "")
+          parsed (legacy-block raw)]
+      (if (not (option-some?-of [:option :document] parsed)) (option-none-of [:option :document])
+        (let [b (option-value-of [:option :document] parsed (document-null))
+              ident (option-value-of [:option :string]
+                (document-string-value (option-value-of [:option :document] (document-get b :legacy-id) (document-null))) "")]
+          (if (legacy-duplicate-id? acc ident 0) (option-none-of [:option :document])
+            (legacy-blocks tokens (+ i 1) (document-vector-conj acc b))))))))
 
 (defn legacy-convert [raw :string] [:option :document]
   (let [valid (json/json-parse raw)
@@ -84,7 +83,10 @@
                 start (legacy-space body (string-byte-length body))]
             (if (or (>= start (string-byte-length body)) (not (= (string-code-point-at body start) 91)))
               (option-none-of [:option :document])
-              (let [blocks (legacy-blocks body 0 (document-vector))]
+              (let [tokens (json/json-array-tokens body)
+                    blocks (if (option-some?-of [:option :document] tokens)
+                             (legacy-blocks (option-value-of [:option :document] tokens (document-vector)) 0 (document-vector))
+                             (option-none-of [:option :document]))]
                 (if (option-some?-of [:option :document] blocks)
                   (option-some-of [:option :document]
                     (document-map :title (document-string (option-value-of [:option :string] title ""))

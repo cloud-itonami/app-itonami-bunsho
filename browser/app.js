@@ -176,7 +176,8 @@ function run(args) {
       else resolve(data.output);
     };
     worker.onerror = () => { clearTimeout(timer); worker.terminate(); reject(Error('worker failed')); };
-    worker.postMessage({ module: compiledModule, fuel: 25000000, allow: [37, 38], args });
+    const fuel = args[0] === 'legacy-import' || (typeof args[1] === 'string' && args[1].startsWith('BS2|')) ? 100000000 : 25000000;
+    worker.postMessage({ module: compiledModule, fuel, allow: [37, 38], args });
   });
 }
 function refreshRetry() { retrySave.hidden = ![...edits.values()].some(edit => edit.failed); }
@@ -292,15 +293,23 @@ function exportBackup() {
   if (typeof snapshot !== 'string') return;
   const url = URL.createObjectURL(new Blob([snapshot], { type: 'application/octet-stream' }));
   const link = document.createElement('a');
-  link.href = url; link.download = 'bunsho-backup.bs1'; link.click();
+  link.href = url; link.download = snapshot.startsWith('BS2|') ? 'bunsho-backup.bs2' : 'bunsho-backup.bs1'; link.click();
   setTimeout(() => URL.revokeObjectURL(url), 60000);
   fail('バックアップのダウンロードを開始しました。');
 }
 async function previewBackup(candidate, label) {
-  if (typeof candidate !== 'string' || !candidate.startsWith('BS1|') || encoder.encode(candidate).length > LIMIT) throw Error('invalid backup');
+  if (typeof candidate !== 'string' || encoder.encode(candidate).length > LIMIT) throw Error('invalid backup');
+  let notice = '';
+  if (!candidate.startsWith('BS1|') && !candidate.startsWith('BS2|')) {
+    const converted = await run(['legacy-import', candidate]);
+    if (!converted.endsWith('\n') || !converted.startsWith('BS2|')) throw Error('legacy refusal');
+    candidate = converted.slice(0, -1);
+    if (encoder.encode(candidate).length > LIMIT) throw Error('converted size');
+    notice = ' 旧文書 JSON: 元データは原文で保存します。未対応の属性は編集画面に反映されません。';
+  }
   const tree = parseTree(await run(['view', candidate]));
   proposedBackup = candidate;
-  document.getElementById('backup-label').textContent = label;
+  document.getElementById('backup-label').textContent = label + notice;
   backupPreview.replaceChildren(tree);
   backupDialog.showModal();
 }

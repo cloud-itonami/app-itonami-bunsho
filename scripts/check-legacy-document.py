@@ -25,7 +25,7 @@ if a != 1 or editor.count(anchor) != 1:
     raise SystemExit('editor namespace or entry changed')
 editor = editor[:editor.index(anchor)]
 string, a = re.subn(r'^\(ns\s+moji\.json-string\s*\(:export \[json-unquote\]\)\)', '', string, count=1)
-parser, b = re.subn(r'^\(ns\s+moji\.json-parse\s*\(:export \[json-parse json-object-field json-array-item\]\)\s*\(:require \[moji\.json-string :as js\]\)\)', '', parser, count=1)
+parser, b = re.subn(r'^\(ns\s+moji\.json-parse\s*\(:export \[json-parse json-object-field json-array-item json-array-tokens\]\)\s*\(:require \[moji\.json-string :as js\]\)\)', '', parser, count=1)
 legacy, c = re.subn(r'^\(ns\s+moji\.legacy-document\s*\(:export \[legacy-convert\]\)\s*\(:require \[moji\.json-string :as js\]\s*\[moji\.json-parse :as json\]\)\)', '', legacy, count=1)
 if (a, b, c) != (1, 1, 1):
     raise SystemExit('unexpected migration module namespace')

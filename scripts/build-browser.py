@@ -28,13 +28,8 @@ if hashlib.sha256(raw).hexdigest() != pin['sha256']:
 for name in ('index.html', 'style.css', 'app.js'):
     shutil.copyfile(root / 'browser' / name, out / name)
 shutil.copyfile(amu / 'runtime/wasm32-browser-static-host.js', out / 'worker.js')
-source = (root / 'src/moji/editor.kotoba').read_text(encoding='utf-8')
-source, n = re.subn(r'\A\(ns\s+moji\.editor[\s\S]*?\(:export \[[^\]]*\]\)\)',
-                    '(ns moji.editor (:export [main]))', source, count=1)
-anchor = '(defn main [] :i64\n  (+ (test-index-core)'
-if n != 1 or source.count(anchor) != 1:
-    raise SystemExit('unexpected editor source')
-source = source[:source.index(anchor)] + (root / 'src/moji/browser-entry.kotoba').read_text(encoding='utf-8')
+from browser_source import stage
+source = stage(root)
 (out / 'program.kotoba').write_text(source, encoding='utf-8')
 spec = importlib.util.spec_from_file_location('mac', amu / 'scripts/seed/check-aiueos-user-macos-native.py')
 mac = importlib.util.module_from_spec(spec)
@@ -43,7 +38,7 @@ compiler = amu / 'seed/bootstrap/aarch64-macos/amu-full-root.macho'
 mac.native_run(compiler, out, 'compile', 'program.kotoba', '--target', 'wasm32-browser', '--output', 'program.wasm')
 wasm = (out / 'program.wasm').read_bytes()
 desc = {'schema': 'kotoba.app.client-runtime.v1', 'target': 'browser', 'profile': 'trusted-page-v1',
-        'entry': 'index.html', 'local-state': {'adapter': 'localstorage', 'schema': 'itonami.bunsho.candidate.bs1', 'version': 1},
+        'entry': 'index.html', 'local-state': {'adapter': 'localstorage', 'schema': 'itonami.bunsho.candidate.bs1-bs2', 'version': 2},
         'workers': [{'id': 'bunsho-worker', 'entry': 'worker.js', 'protocol': 'wasm32-browser-static.v1'}], 'operations': []}
 (out / 'client-runtime.json').write_text(json.dumps(desc, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
 config = ('export const descriptor = ' + json.dumps(desc, ensure_ascii=False) + ';\n'

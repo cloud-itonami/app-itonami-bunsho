@@ -15,4 +15,13 @@
              (string=? (jx item "headingLevel") "2")
              (string=? (jx doc "unknown") "{\"preserve\":[1,2]}")) 1 0)))
 
-(defn main [] :i64 (+ (legacy-extract-test) (if (string=? (jx " { \"k\" : null } " "k") "null") 1 0) (if (string=? (jx "{\"k\":1,\"x\":2}" "absent") "<missing>") 1 0) (if (string=? (jx "{\"k\":1,\"k\":2}" "k") "<missing>") 1 0) (if (string=? (jx "{\"k\":1}garbage" "k") "<missing>") 1 0) (if (string=? (jx "{\"\\u0078\":-0.25e+3}" "x") "-0.25e+3") 1 0) (if (string=? (ja " [ 0 , {\"a\":true}, null ] " 1) "{\"a\":true}") 1 0) (if (string=? (ja "[0,null]" 1) "null") 1 0) (if (string=? (ja "[]" 0) "<missing>") 1 0) (if (string=? (ja "[0]" -1) "<missing>") 1 0) (if (string=? (ja "[0,]" 0) "<missing>") 1 0) (if (string=? (ja "[0]" 1) "<missing>") 1 0) (if (string=? (jx "[]" "x") "<missing>") 1 0) (if (string=? (ja "{}" 0) "<missing>") 1 0)))
+(defn tokens-check [] :i64
+  (let [values (json-array-tokens " [ 1, {\"x\":2}, null ] ")]
+    (if (not (option-some?-of [:option :document] values)) 0
+      (let [v (option-value-of [:option :document] values (document-null))]
+        (if (and (= (document-count v) 3) (string=? (jp-key v 0) "1")
+                 (string=? (jp-key v 1) "{\"x\":2}") (string=? (jp-key v 2) "null")) 1 0)))))
+
+(defn main [] :i64 (+ (legacy-extract-test) (tokens-check)
+ (if (option-some?-of [:option :document] (json-array-tokens "[1,]")) 0 1)
+ (if (option-some?-of [:option :document] (json-array-tokens "{}")) 0 1) (if (string=? (jx " { \"k\" : null } " "k") "null") 1 0) (if (string=? (jx "{\"k\":1,\"x\":2}" "absent") "<missing>") 1 0) (if (string=? (jx "{\"k\":1,\"k\":2}" "k") "<missing>") 1 0) (if (string=? (jx "{\"k\":1}garbage" "k") "<missing>") 1 0) (if (string=? (jx "{\"\\u0078\":-0.25e+3}" "x") "-0.25e+3") 1 0) (if (string=? (ja " [ 0 , {\"a\":true}, null ] " 1) "{\"a\":true}") 1 0) (if (string=? (ja "[0,null]" 1) "null") 1 0) (if (string=? (ja "[]" 0) "<missing>") 1 0) (if (string=? (ja "[0]" -1) "<missing>") 1 0) (if (string=? (ja "[0,]" 0) "<missing>") 1 0) (if (string=? (ja "[0]" 1) "<missing>") 1 0) (if (string=? (jx "[]" "x") "<missing>") 1 0) (if (string=? (ja "{}" 0) "<missing>") 1 0)))
