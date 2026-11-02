@@ -126,7 +126,7 @@ try:
    idb=json.loads((builds[name]/'client-runtime.json').read_text())['local-state']['adapter']=='indexeddb'
    def read_saved():
     if not idb:return ev('localStorage.getItem('+json.dumps(key)+')')
-    return ev('new Promise((resolve,reject)=>{const r=indexedDB.open("itonami.office.bunsho.v2",1);r.onsuccess=()=>{const d=r.result,t=d.transaction("records","readonly"),g=t.objectStore("records").get("current");g.onsuccess=()=>resolve(g.result?.value??null);g.onerror=()=>reject(Error("read"));t.oncomplete=()=>d.close()};r.onerror=()=>reject(Error("open"))})',True)
+    return ev('new Promise((resolve,reject)=>{const r=indexedDB.open('+json.dumps('itonami.office.'+name+'.v2')+',1);r.onsuccess=()=>{const d=r.result,t=d.transaction("records","readonly"),g=t.objectStore("records").get("current");g.onsuccess=()=>resolve(g.result?.value??null);g.onerror=()=>reject(Error("read"));t.oncomplete=()=>d.close()};r.onerror=()=>reject(Error("open"))})',True)
    wait("document.getElementById('status').textContent==='保存しました'",'save')
    saved=read_saved()
    if not isinstance(saved,str) or value not in saved:raise ValueError(name+' saved value missing')
