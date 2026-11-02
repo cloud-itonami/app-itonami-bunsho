@@ -11,7 +11,7 @@ if len(sys.argv)!=5:raise SystemExit(__doc__)
 builds=dict(zip(('bunsho','hyokeisan','zuhyo'),map(lambda s:Path(s).resolve(),sys.argv[1:4])))
 out=Path(sys.argv[4]).resolve();out.mkdir(parents=True,exist_ok=False)
 for name,build in builds.items():
- receipt=validate(build,name);assert len(candidate_files(build))==(15 if name=='bunsho' and 'managedStorageSha256' in receipt else 13)
+ receipt=validate(build,name);assert len(candidate_files(build))==(15 if 'managedStorageSha256' in receipt else 13)
  assert hashlib.sha256((build/'.well-known/did.json').read_bytes()).hexdigest()==receipt['didSha256']
 # Alterations are isolated copies. A receipt edited along with the wrong ID
 # must not bypass the independent app/hostname binding.

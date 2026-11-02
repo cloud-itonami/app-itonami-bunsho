@@ -37,7 +37,7 @@ def validate(build, name):
     adapter = descriptor.get('local-state', {}).get('adapter')
     actual = frozenset(p.relative_to(build).as_posix() for p in candidate_files(build))
     if adapter == 'indexeddb':
-        if name != 'bunsho' or actual != FILES | IDB_FILES:
+        if actual != FILES | IDB_FILES:
             raise ValueError('unexpected indexeddb candidate')
         for filename, key in (('transactional-storage.js', 'transactionalStorageSha256'),
                               ('managed-storage.js', 'managedStorageSha256')):
