@@ -18,8 +18,10 @@ root = Path(__file__).resolve().parents[1]
 string_source = (root / 'src/moji/json_string.kotoba').read_text(encoding='utf-8')
 parse_source = (root / 'src/moji/json_parse.kotoba').read_text(encoding='utf-8')
 fixture = (root / 'tests/json-parse-cases.kotoba').read_text(encoding='utf-8')
+extract_fixture = (root / 'tests/json-extract-cases.kotoba').read_text(encoding='utf-8')
 string_code, n1 = re.subn(r'^\(ns\s+moji\.json-string\s*\(:export \[json-unquote\]\)\)', '(ns json-test (:export [main]))', string_source, count=1)
-parse_code, n2 = re.subn(r'^\(ns\s+moji\.json-parse\s*\(:export \[json-parse\]\)\)', '', parse_source, count=1)
+parse_code, n2 = re.subn(r'^\(ns\s+moji\.json-parse\s*\(:export \[json-parse json-object-field json-array-item\]\)\s*\(:require \[moji\.json-string :as js\]\)\)', '', parse_source, count=1)
+parse_code = parse_code.replace('(js/json-unquote ', '(json-unquote ')
 anchor = '(jp-contains-key keys key 0)'
 if n1 != 1 or n2 != 1 or parse_code.count(anchor) != 1:
     raise SystemExit('unexpected module or mutation anchor')
@@ -27,9 +29,9 @@ spec = importlib.util.spec_from_file_location('mac', amu / 'scripts/seed/check-a
 mac = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(mac)
 results = {}
-for name, code, expected in [('validator', parse_code, 39), ('mutant', parse_code.replace(anchor, '(= 0 1)'), 35)]:
+for name, code, cases, expected in [('validator', parse_code, fixture, 39), ('mutant', parse_code.replace(anchor, '(= 0 1)'), fixture, 35), ('extract', parse_code, extract_fixture, 14), ('extract-mutant', parse_code.replace(anchor, '(= 0 1)'), extract_fixture, 13)]:
     path = out / (name + '.kotoba')
-    path.write_text(string_code + '\n' + code + '\n' + fixture, encoding='utf-8')
+    path.write_text(string_code + '\n' + code + '\n' + cases, encoding='utf-8')
     native = subprocess.run([str(amu / 'bin/amu'), 'run', str(path)], cwd=out,
                             capture_output=True, text=True, timeout=120, check=True)
     if native.stdout.strip() != str(expected):
@@ -46,5 +48,6 @@ for name, code, expected in [('validator', parse_code, 39), ('mutant', parse_cod
     results[name] = {'result': expected, 'wasmSha256': hashlib.sha256((out / (name + '.wasm')).read_bytes()).hexdigest()}
 (out / 'receipt.json').write_text(json.dumps({'stringSourceSha256': hashlib.sha256(string_source.encode()).hexdigest(),
     'parseSourceSha256': hashlib.sha256(parse_source.encode()).hexdigest(),
-    'fixtureSha256': hashlib.sha256(fixture.encode()).hexdigest(), 'results': results}, indent=2) + '\n')
+    'fixtureSha256': hashlib.sha256(fixture.encode()).hexdigest(),
+    'extractFixtureSha256': hashlib.sha256(extract_fixture.encode()).hexdigest(), 'results': results}, indent=2) + '\n')
 print('PASS_JSON_PARSE native and synthetic browser, including duplicate-key mutant')

@@ -1,9 +1,10 @@
 (ns moji.json-parse
-  (:export [json-parse]))
+  (:export [json-parse json-object-field json-array-item])
+  (:require [moji.json-string :as js]))
 
 ;; Strict bounded JSON validation for legacy import. Successful output preserves
 ;; the exact input text, including unknown fields and original number lexemes.
-;; This module requires moji.json-string/json-unquote, staged by the build.
+;; The module imports moji.json-string; the native/browser fixture stages it.
 ;; Limits are provisional and refusal is not a successful migration.
 (defn jp-width [c :i64] :i64
   (cond (< c 128) 1 (< c 2048) 2 (< c 65536) 3 :else 4))
@@ -26,7 +27,7 @@
 (defn jp-string [s :string i :i64 n :i64] :i64
   (let [end (jp-string-end s (+ i 1) n i)]
     (if (< end 0) -1
-      (if (option-some?-of [:option :string] (json-unquote (string-substring s i end))) end -1))))
+      (if (option-some?-of [:option :string] (js/json-unquote (string-substring s i end))) end -1))))
 (defn jp-digit? [c :i64] :bool (and (>= c 48) (<= c 57)))
 (defn jp-digits [s :string i :i64 n :i64] :i64
   (loop [at i]
@@ -74,7 +75,7 @@
           (if (or (not (= c 34)) (>= (document-count keys) 32)) -1
             (let [end (jp-string s at n)]
               (if (< end 0) -1
-                (let [key-opt (json-unquote (string-substring s at end))
+                (let [key-opt (js/json-unquote (string-substring s at end))
                       key (option-value-of [:option :string] key-opt "")
                       colon (jp-space s end n)]
                   (if (or (jp-contains-key keys key 0) (>= colon n) (not (= (string-code-point-at s colon) 58))) -1
@@ -112,3 +113,42 @@
       (let [start (jp-space s 0 n) end (jp-value s start n 0)]
         (if (or (< end 0) (not (= (jp-space s end n) n)))
           (option-none-of [:option :string]) (option-some-of [:option :string] s))))))
+
+;; These accessors first validate the entire input, including duplicate keys.
+;; A returned token is an exact slice; null is the token "null", distinct from
+;; an absent key or index. Nested containers may be passed back to an accessor.
+(defn jp-object-field-from [s :string i :i64 n :i64 key :string] [:option :string]
+  (let [at (jp-space s i n)]
+    (if (or (>= at n) (not (= (string-code-point-at s at) 34))) (option-none-of [:option :string])
+      (let [end (jp-string s at n)]
+        (if (< end 0) (option-none-of [:option :string])
+          (let [decoded (js/json-unquote (string-substring s at end))
+                colon (jp-space s end n)]
+            (if (or (not (option-some?-of [:option :string] decoded)) (>= colon n)
+                    (not (= (string-code-point-at s colon) 58))) (option-none-of [:option :string])
+              (let [start (jp-space s (+ colon 1) n) stop (jp-value s start n 1)]
+                (if (< stop 0) (option-none-of [:option :string])
+                  (if (string=? (option-value-of [:option :string] decoded "") key)
+                    (option-some-of [:option :string] (string-substring s start stop))
+                    (let [next (jp-space s stop n)]
+                      (if (and (< next n) (= (string-code-point-at s next) 44))
+                        (jp-object-field-from s (+ next 1) n key) (option-none-of [:option :string])))))))))))))
+(defn json-object-field [s :string key :string] [:option :string]
+  (let [valid (json-parse s) n (string-byte-length s) start (jp-space s 0 n)]
+    (if (or (not (option-some?-of [:option :string] valid)) (>= start n)
+            (not (= (string-code-point-at s start) 123))) (option-none-of [:option :string])
+      (jp-object-field-from s (+ start 1) n key))))
+(defn jp-array-item-from [s :string i :i64 n :i64 wanted :i64 index :i64] [:option :string]
+  (let [start (jp-space s i n)]
+    (if (or (>= start n) (= (string-code-point-at s start) 93)) (option-none-of [:option :string])
+      (let [stop (jp-value s start n 1)]
+        (if (< stop 0) (option-none-of [:option :string])
+          (if (= index wanted) (option-some-of [:option :string] (string-substring s start stop))
+            (let [next (jp-space s stop n)]
+              (if (and (< next n) (= (string-code-point-at s next) 44))
+                (jp-array-item-from s (+ next 1) n wanted (+ index 1)) (option-none-of [:option :string])))))))))
+(defn json-array-item [s :string index :i64] [:option :string]
+  (let [valid (json-parse s) n (string-byte-length s) start (jp-space s 0 n)]
+    (if (or (< index 0) (not (option-some?-of [:option :string] valid)) (>= start n)
+            (not (= (string-code-point-at s start) 91))) (option-none-of [:option :string])
+      (jp-array-item-from s (+ start 1) n index 0))))

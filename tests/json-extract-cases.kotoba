@@ -1,0 +1,18 @@
+;; Synthetic legacy response and strict extraction checks.
+
+(defn jx [s :string key :string] :string (option-value-of [:option :string] (json-object-field s key) "<missing>"))
+(defn ja [s :string i :i64] :string (option-value-of [:option :string] (json-array-item s i) "<missing>"))
+(defn xu [s :string] :string (option-value-of [:option :string] (json-unquote s) "<invalid>"))
+(defn legacy-extract-test [] :i64
+  (let [root "{\"found\":true,\"document\":{\"documentId\":\"doc-id\",\"title\":\"\\u8868\\u984c\\ud83d\\ude00\",\"revisionId\":\"rev-9\",\"ownerDid\":\"did:key:test\",\"createdAtMs\":1700000000000,\"body\":[{\"elementId\":\"e-1\",\"kind\":\"heading\",\"headingLevel\":2,\"text\":\"\\u65e5\\u672c\\ud83d\\ude00\"}],\"unknown\":{\"preserve\":[1,2]}}}" doc (jx root "document") body (jx doc "body") item (ja body 0)]
+    (if (and (string=? (xu (jx doc "documentId")) "doc-id")
+             (string=? (xu (jx doc "revisionId")) "rev-9")
+             (string=? (xu (jx doc "ownerDid")) "did:key:test")
+             (string=? (jx doc "createdAtMs") "1700000000000")
+             (string=? (xu (jx doc "title")) "表題😀")
+             (string=? (xu (jx item "elementId")) "e-1")
+             (string=? (xu (jx item "text")) "日本😀")
+             (string=? (jx item "headingLevel") "2")
+             (string=? (jx doc "unknown") "{\"preserve\":[1,2]}")) 1 0)))
+
+(defn main [] :i64 (+ (legacy-extract-test) (if (string=? (jx " { \"k\" : null } " "k") "null") 1 0) (if (string=? (jx "{\"k\":1,\"x\":2}" "absent") "<missing>") 1 0) (if (string=? (jx "{\"k\":1,\"k\":2}" "k") "<missing>") 1 0) (if (string=? (jx "{\"k\":1}garbage" "k") "<missing>") 1 0) (if (string=? (jx "{\"\\u0078\":-0.25e+3}" "x") "-0.25e+3") 1 0) (if (string=? (ja " [ 0 , {\"a\":true}, null ] " 1) "{\"a\":true}") 1 0) (if (string=? (ja "[0,null]" 1) "null") 1 0) (if (string=? (ja "[]" 0) "<missing>") 1 0) (if (string=? (ja "[0]" -1) "<missing>") 1 0) (if (string=? (ja "[0,]" 0) "<missing>") 1 0) (if (string=? (ja "[0]" 1) "<missing>") 1 0) (if (string=? (jx "[]" "x") "<missing>") 1 0) (if (string=? (ja "{}" 0) "<missing>") 1 0)))
