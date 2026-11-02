@@ -235,7 +235,7 @@ try:
     wait("document.getElementById('status').textContent.includes('入力が長すぎます')", 'oversized unsaved input')
     if evaluate("document.querySelector('[data-k=title]')?.value.length") != 1025 or evaluate("document.getElementById('retry-save').hidden") or evaluate("localStorage.getItem('itonami.bunsho.candidate.bs1')") != saved: raise ValueError('oversized edit discarded or saved')
     evaluate("(()=>{let e=document.querySelector('[data-k=title]');e.value='先の変更';e.dispatchEvent(new Event('input',{bubbles:true}));})()")
-    wait("localStorage.getItem('itonami.bunsho.candidate.bs1') === " + json.dumps(saved,ensure_ascii=False) + " && document.getElementById('retry-save').hidden", 'correct oversized input')
+    wait("localStorage.getItem('itonami.bunsho.candidate.bs1') === " + json.dumps(saved,ensure_ascii=False) + " && document.getElementById('retry-save').hidden && document.getElementById('status').textContent === '保存しました'", 'correct oversized input')
     # Use the saved original setter from a new realm after reload for corruption injection.
     pipe.call('Page.reload', {}, session)
     wait("document.querySelector('[data-k=title]')?.value === '先の変更'", 'reload before corrupt')
