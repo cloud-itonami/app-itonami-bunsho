@@ -38,7 +38,7 @@ spec = importlib.util.spec_from_file_location('mac', amu / 'scripts/seed/check-a
 mac = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(mac)
 results = {}
-for name, code, expected in [('conversion', legacy, 14), ('duplicate-mutant', legacy.replace(mutation, '(= 0 1)'), 13)]:
+for name, code, expected in [('conversion', legacy, 15), ('duplicate-mutant', legacy.replace(mutation, '(= 0 1)'), 14)]:
     source = out / (name + '.kotoba')
     source.write_text('\n'.join([editor, string, parser, code, fixture]), encoding='utf-8')
     native = subprocess.run([str(amu / 'bin/amu'), 'run', str(source)], cwd=out,

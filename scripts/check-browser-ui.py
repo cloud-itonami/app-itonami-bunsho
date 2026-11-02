@@ -74,6 +74,26 @@ try:
     evaluate("window.Worker=window.originalWorker")
     evaluate("(()=>{for(const [k,v] of [['title','議事😀'],['b0',"+json.dumps(original_block,ensure_ascii=False)+"]]){let e=document.querySelector('[data-k='+k+']');e.value=v;e.dispatchEvent(new Event('input',{bubbles:true}));}})()")
     wait("localStorage.getItem('itonami.bunsho.candidate.bs1') === "+json.dumps(saved,ensure_ascii=False)+" && document.getElementById('status').textContent === '保存しました'", 'restore after composition')
+    for level in range(3, 7):
+        index = level - 1
+        evaluate(f"document.querySelector('[data-k=add-h{level}]').click()")
+        wait(f"document.querySelector('[data-k=k{level}{index}]')?.classList.contains('on') && document.getElementById('status').textContent === '保存しました'", 'add heading ' + str(level))
+        evaluate(f"(()=>{{let e=document.querySelector('[data-k=b{index}]');e.value='新見出し{level}';e.dispatchEvent(new Event('input',{{bubbles:true}}));}})()")
+        wait(f"localStorage.getItem('itonami.bunsho.candidate.bs1')?.includes('新見出し{level}') && document.getElementById('status').textContent === '保存しました'", 'save heading ' + str(level))
+    evaluate("document.querySelector('[data-k=k62]').click()")
+    wait("document.querySelector('[data-k=k62]')?.classList.contains('on') && document.getElementById('status').textContent === '保存しました'", 'change heading level')
+    reload_page()
+    wait("document.querySelector('[data-k=k62]')?.classList.contains('on') && document.querySelector('[data-k=b2]')?.value === '新見出し3'", 'heading reload')
+    evaluate("document.querySelector('[data-k=mode]').click()")
+    wait("document.querySelector('main.preview h6')?.textContent === '新見出し3'", 'heading preview')
+    for level in range(4, 7):
+        if evaluate(f"[...document.querySelectorAll('main.preview h{level}')].some(e=>e.textContent==='新見出し{level}')") is not True: raise ValueError('heading preview mismatch')
+    evaluate("document.querySelector('[data-k=mode]').click()")
+    wait("document.querySelector('[data-k=rm5]') !== null", 'heading edit')
+    for index in range(5, 1, -1):
+        evaluate(f"document.querySelector('[data-k=rm{index}]').click()")
+        wait(f"document.querySelector('[data-k=rm{index}]') === null && document.getElementById('status').textContent === '保存しました'", 'remove heading')
+    if evaluate("localStorage.getItem('itonami.bunsho.candidate.bs1')") != saved: raise ValueError('heading test did not restore state')
     evaluate("(() => {let e=document.querySelector('[data-k=title]');for(const v of ['連','連続','連続入力']){e.value=v;e.dispatchEvent(new Event('input',{bubbles:true}));}})()")
     wait("document.querySelector('[data-k=title]')?.value === '連続入力' && localStorage.getItem('itonami.bunsho.candidate.bs1')?.includes('連続入力')", 'queued inputs')
     evaluate("document.querySelector('[data-k=add-p]').click()")

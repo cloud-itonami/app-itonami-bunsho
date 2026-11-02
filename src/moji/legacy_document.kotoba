@@ -26,7 +26,9 @@
           (let [level (json/json-object-field object "headingLevel")]
             (if (option-some?-of [:option :string] level)
               (let [n (option-value-of [:option :string] level "")]
-                (cond (string=? n "1") "h1" (string=? n "2") "h2" :else "")) ""))
+                (cond (string=? n "1") "h1" (string=? n "2") "h2"
+                      (string=? n "3") "h3" (string=? n "4") "h4"
+                      (string=? n "5") "h5" (string=? n "6") "h6" :else "")) ""))
         :else ""))
 
 (defn legacy-block [raw :string] [:option :document]

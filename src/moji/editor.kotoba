@@ -136,6 +136,10 @@
   (cond
     (string=? kind "h1") "見出し1"
     (string=? kind "h2") "見出し2"
+    (string=? kind "h3") "見出し3"
+    (string=? kind "h4") "見出し4"
+    (string=? kind "h5") "見出し5"
+    (string=? kind "h6") "見出し6"
     (string=? kind "li") "箇条書き"
     :else "本文"))
 
@@ -143,6 +147,10 @@
   (cond
     (string=? kind "h1") "k1"
     (string=? kind "h2") "k2"
+    (string=? kind "h3") "k3"
+    (string=? kind "h4") "k4"
+    (string=? kind "h5") "k5"
+    (string=? kind "h6") "k6"
     (string=? kind "li") "kl"
     :else "kp"))
 
@@ -164,6 +172,10 @@
         (document-vector
          (kind-button "h1" kind k)
          (kind-button "h2" kind k)
+         (kind-button "h3" kind k)
+         (kind-button "h4" kind k)
+         (kind-button "h5" kind k)
+         (kind-button "h6" kind k)
          (kind-button "p" kind k)
          (kind-button "li" kind k)
          (leaf "input"
@@ -184,6 +196,10 @@
     (cond
       (string=? kind "h1") (leaf "h1" (document-map) text)
       (string=? kind "h2") (leaf "h2" (document-map) text)
+      (string=? kind "h3") (leaf "h3" (document-map) text)
+      (string=? kind "h4") (leaf "h4" (document-map) text)
+      (string=? kind "h5") (leaf "h5" (document-map) text)
+      (string=? kind "h6") (leaf "h6" (document-map) text)
       (string=? kind "li") (el "ul" (document-map) (document-vector (leaf "li" (document-map) text)))
       :else (leaf "p" (document-map) text))))
 
@@ -222,6 +238,10 @@
              (document-vector
               (button "add-h1" "add" "+ 見出し1")
               (button "add-h2" "add" "+ 見出し2")
+              (button "add-h3" "add" "+ 見出し3")
+              (button "add-h4" "add" "+ 見出し4")
+              (button "add-h5" "add" "+ 見出し5")
+              (button "add-h6" "add" "+ 見出し6")
               (button "add-p" "add" "+ 本文")
               (button "add-li" "add" "+ 箇条書き")
               (button "backup-export" "add" "バックアップ")
@@ -288,6 +308,10 @@
       (cond
         (string=? op "k1") (set-kind state i "h1")
         (string=? op "k2") (set-kind state i "h2")
+        (string=? op "k3") (set-kind state i "h3")
+        (string=? op "k4") (set-kind state i "h4")
+        (string=? op "k5") (set-kind state i "h5")
+        (string=? op "k6") (set-kind state i "h6")
         (string=? op "kp") (set-kind state i "p")
         (string=? op "kl") (set-kind state i "li")
         (string=? op "up") (swap state (- i 1) i)
@@ -300,6 +324,10 @@
     (string=? target "mode") (toggle-mode state)
     (string=? target "add-h1") (add-block state "h1")
     (string=? target "add-h2") (add-block state "h2")
+    (string=? target "add-h3") (add-block state "h3")
+    (string=? target "add-h4") (add-block state "h4")
+    (string=? target "add-h5") (add-block state "h5")
+    (string=? target "add-h6") (add-block state "h6")
     (string=? target "add-p") (add-block state "p")
     (string=? target "add-li") (add-block state "li")
     :else (on-block state target)))
@@ -336,7 +364,8 @@
 ;; This is a model codec, not an atomic host-storage implementation.
 
 (defn snap-kind? [s :string] :bool
-  (or (string=? s "h1") (string=? s "h2") (string=? s "p") (string=? s "li")))
+  (or (string=? s "h1") (string=? s "h2") (string=? s "h3") (string=? s "h4")
+      (string=? s "h5") (string=? s "h6") (string=? s "p") (string=? s "li")))
 
 (defn snap-frame [s :string] :string
   (string-concat (string-from-i64 (string-byte-length s)) (string-concat ":" s)))

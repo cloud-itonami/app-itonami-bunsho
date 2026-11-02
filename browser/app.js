@@ -146,7 +146,7 @@ function parseTree(wire) {
     if (!Number.isSafeInteger(n) || n > MAX_VIEW || pos + n > data.length) throw Error('field bounds');
     const text = decoder.decode(data.slice(pos, pos + n)); pos += n; return text;
   }
-  const tags = new Set(['div', 'header', 'main', 'footer', 'input', 'button', 'span', 'h1', 'h2', 'p', 'ul', 'li']);
+  const tags = new Set(['div', 'header', 'main', 'footer', 'input', 'button', 'span', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'ul', 'li']);
   function node(depth) {
     if (++nodes > 512 || depth > 12) throw Error('view bounds');
     const [tag, css, type, key, value, text, label, count] = Array.from({ length: 8 }, field);

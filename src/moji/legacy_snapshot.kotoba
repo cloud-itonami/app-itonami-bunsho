@@ -13,7 +13,8 @@
 (defn ls-at [v :document i :i64] :document
   (option-value-of [:option :document] (document-vector-at v i) (document-null)))
 (defn ls-kind? [s :string] :bool
-  (or (string=? s "p") (string=? s "h1") (string=? s "h2") (string=? s "li")))
+  (or (string=? s "p") (string=? s "h1") (string=? s "h2")
+      (string=? s "h3") (string=? s "h4") (string=? s "h5") (string=? s "h6") (string=? s "li")))
 (defn ls-frame [s :string] :string
   (string-concat (string-from-i64 (string-byte-length s)) (string-concat ":" s)))
 (defn ls-id [block :document] :string (ls-str (ls-get block :legacy-id)))

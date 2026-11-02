@@ -1,0 +1,41 @@
+{
+  "date": "2026-11-02",
+  "scope": "synthetic local Chrome and native tests; not release or actual-user migration",
+  "sourceSha256": {
+    "browser/app.js": "29e507699e4cab87f6c5d4be57c14479b52f2eea02a147abf25369e69236149e",
+    "src/moji/editor.kotoba": "41b2fc721a68c00aa2d4a5a41b650d73df2e48e694bdf7eea1e015687872ec43",
+    "src/moji/legacy_document.kotoba": "2515affc65244e7df08c5d9ddd31a7d24c4943a16d8a3af1cfc1a0386da45b8f",
+    "src/moji/legacy_snapshot.kotoba": "47737dbdeec93965b7516f2e73a8644a5ddcf1cc2324f560f6265f3e24b342f9",
+    "tests/legacy-document-cases.kotoba": "2c67db4760c87711dad4e75a8c41b7dfe93d1f36943d8290b7a2b78b30a1c3e6",
+    "scripts/check-legacy-document.py": "5bb965c72ea441843b3cbe2ea581c1a51366a48ee62b424ec01a741a8e147b0f",
+    "scripts/check-legacy-browser.py": "7811132be7d248ec4ccd6255f2555072e9fc060a45aa1a8607b6cdb535eda36e",
+    "scripts/check-browser-ui.py": "e9035b47fdf8ef1ab32ee0c3da951fb8f64422a3dfe5f551c756fd4cc40a9876"
+  },
+  "build": {
+    "wasmSha256": "aa9d138b8c86a6aefd35abe94669e0bc328c8755861b8ddc1f8bbfe20491acd9",
+    "compilerSha256": "2c551579c06a0228029bb06bae177e93126ecbbc37d636d693c471dbac8d1536",
+    "sourceSha256": "2bec89690f267bce9fe5a8617f0fdffe2600c6cb621888c1c66814e357162a27",
+    "brokerRevision": "e00ae75e1c589f76b4f53a88a5e3256c98c9e162",
+    "brokerSha256": "7f760128c3a58098123c31ec3dd34b9c871932e3933f2c952facc4ab0e647212",
+    "workerSha256": "58d606d0b3f22766a1b7288fe911c106aea9606fecfe59a2adb66a4bac8923ab"
+  },
+  "tests": {
+    "legacy_native_and_wasm": "PASS: levels 3-6 conversion, ID and source, BS1 edit and roundtrip; duplicate-ID mutant detected",
+    "legacy_snapshot_native_and_wasm": "PASS including duplicate-ID mutant",
+    "legacy_browser": "PASS: levels 3-6, original ID and source, preview, edit/reorder, reload and export",
+    "legacy_32_blocks": "PASS",
+    "legacy_32_blocks_wide": {
+      "status": "PASS",
+      "exportBytes": 34036
+    },
+    "browser_ui_isolated": "PASS: add, change, save, reload, preview h3-h6 and existing backup/concurrency/failure checks",
+    "older_bs2_candidate": "PASS: refuses h3-h6 snapshot without write; new candidate reopens"
+  },
+  "observed_failure": "A concurrently running Chrome UI test timed out on a background-tab Worker after 30 seconds; the isolated rerun passed. Root cause is unconfirmed.",
+  "limitations": [
+    "synthetic data only; actual old data and origin unverified",
+    "unrecognized headings and kinds refused; unknown metadata remains provenance",
+    "older candidate refuses new heading kinds; no general rollback or power-loss qualification",
+    "no QEMU, fleet sync or live publication"
+  ]
+}
