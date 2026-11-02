@@ -1,5 +1,5 @@
 (ns moji.editor
-  ;; itonami Moji（文字）— a document editor written only in Kotoba.
+  ;; itonami Bunsho（文書）— a document editor written only in Kotoba.
   ;;
   ;; The three app exports are the contract `kotoba-lang/amu`'s
   ;; `runtime/dom-driver.mjs` drives (the same shape as `examples/todo-app`):
@@ -320,7 +320,7 @@
    :title (document-string "無題の文書")
    :mode (document-string "edit")
    :blocks (document-vector
-            (block "h1" "itonami Moji")
+            (block "h1" "itonami Bunsho")
             (block "p" "Write here."))))
 
 ;; --- checks (1 = pass) ----------------------------------------------------
@@ -336,11 +336,11 @@
   (if (= (+ (span-end 0 5) (next-start 0 5) (span-end 10 3)) 24) 1 0))
 
 (defn test-indices [] :i64
-  ;; "itonami Moji" is 12 bytes: [1–13], then "Write here." (11) starts at 14
+  ;; "itonami Bunsho" is 14 bytes: [1–15], then "Write here." (11) starts at 16
   (let [s (init)]
-    (if (and (= (start-index s 0) 1) (= (end-index s 0) 13)
-             (= (start-index s 1) 14) (= (end-index s 1) 25)
-             (= (body-end s) 25))
+    (if (and (= (start-index s 0) 1) (= (end-index s 0) 15)
+             (= (start-index s 1) 16) (= (end-index s 1) 27)
+             (= (body-end s) 27))
       1 0)))
 
 (defn test-add [] :i64
@@ -353,7 +353,7 @@
 
 (defn test-input [] :i64
   (let [s (step (init) "b1" "input" "hello")]
-    (if (and (string=? (block-text s 1) "hello") (= (end-index s 1) 19)) 1 0)))
+    (if (and (string=? (block-text s 1) "hello") (= (end-index s 1) 21)) 1 0)))
 
 (defn test-title [] :i64
   (if (string=? (dstr (dget (step (init) "title" "input" "議事録") :title)) "議事録") 1 0))
@@ -369,7 +369,7 @@
 (defn test-move-up [] :i64
   ;; moving the first block up, or the last block down, changes nothing
   (let [s (click (click (init) "up0") "dn1")]
-    (if (and (string=? (block-text s 0) "itonami Moji") (string=? (block-text s 1) "Write here.")) 1 0)))
+    (if (and (string=? (block-text s 0) "itonami Bunsho") (string=? (block-text s 1) "Write here.")) 1 0)))
 
 (defn test-remove [] :i64
   (let [s (click (init) "rm0")]
@@ -385,7 +385,7 @@
   ;; event kind all leave the document unchanged
   (let [s (click (click (click (init) "zz") "x") "rm9")
         t (step s "add-p" "submit" "")]
-    (if (and (= (block-count t) 2) (string=? (block-text t 0) "itonami Moji")) 1 0)))
+    (if (and (= (block-count t) 2) (string=? (block-text t 0) "itonami Bunsho")) 1 0)))
 
 (defn test-view [] :i64
   (let [v (view (init))

@@ -1,4 +1,4 @@
-# itonami Moji（文字）— Kotoba 製の文書エディタ
+# itonami Bunsho（文書）— Kotoba 製の文書エディタ
 
 状態: 最初のスライス（2026-10-31、Linear JUN-703、親 JUN-702）。正本はこの文書。
 

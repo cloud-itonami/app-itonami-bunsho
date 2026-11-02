@@ -1,1 +1,1 @@
-{:schema "etzhayyim.repository/readme-v1" :name "itonami-moji" :title "itonami Moji（文字）" :kind :application :source "etzhayyim/root/60-apps/etzhayyim-project-docs"}
+{:schema "etzhayyim.repository/readme-v1" :name "itonami-bunsho" :title "itonami Bunsho（文書）" :kind :application :source "etzhayyim/root/60-apps/etzhayyim-project-docs"}
