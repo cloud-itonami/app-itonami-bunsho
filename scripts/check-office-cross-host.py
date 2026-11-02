@@ -82,10 +82,13 @@ try:
   peers=value.splitlines()
   if len(peers)!=1 or not peers[0].startswith('/ip4/'+addr+'/') or not peers[0].endswith('/p2p/'+expected):raise ValueError(('unexpected peers',peers))
  forward=port();tunnel=subprocess.Popen(ssh[:-1]+['-o','ExitOnForwardFailure=yes','-N','-L',f'127.0.0.1:{forward}:127.0.0.1:{rg}',host],stdout=subprocess.DEVNULL,stderr=subprocess.PIPE)
- for _ in range(100):
+ # The first remote gateway read also fetches the root from the provider over
+ # the tailnet and traverses a new SSH tunnel. One-second requests can
+ # cancel slow cold fetches before they finish; preserve the byte checks.
+ for _ in range(6):
   if tunnel.poll() is not None:raise RuntimeError('ssh tunnel stopped')
   try:
-   with urllib.request.urlopen(f'http://127.0.0.1:{forward}/ipfs/{results["bunsho"]["cid"]}/index.html',timeout=1) as r:r.read()
+   with urllib.request.urlopen(f'http://127.0.0.1:{forward}/ipfs/{results["bunsho"]["cid"]}/index.html',timeout=20) as r:r.read()
    break
   except Exception:time.sleep(.1)
  else:raise RuntimeError('gateway not ready')
