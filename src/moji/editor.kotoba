@@ -222,7 +222,10 @@
               (button "add-h1" "add" "+ 見出し1")
               (button "add-h2" "add" "+ 見出し2")
               (button "add-p" "add" "+ 本文")
-              (button "add-li" "add" "+ 箇条書き")))
+              (button "add-li" "add" "+ 箇条書き")
+              (button "backup-export" "add" "バックアップ")
+              (button "backup-import" "add" "読み込む")
+              (button "backup-restore" "add" "読み込み前に戻す")))
          (el "main"
              (document-map :class (document-string (if preview "page preview" "page edit")))
              (rows-from state 0 n preview (document-vector)))

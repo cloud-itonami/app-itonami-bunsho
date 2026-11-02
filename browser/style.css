@@ -10,3 +10,7 @@ button { padding: .4rem .6rem; cursor: pointer; }
 .preview { padding: 2rem; }
 .stats { padding: 1rem; color: #525a64; }
 .kind.on { font-weight: bold; }
+
+dialog { width: min(52rem, 90vw); max-height: 85vh; border: 1px solid #808891; }
+dialog::backdrop { background: #0008; }
+#backup-preview { max-height: 50vh; overflow: auto; border: 1px solid #aab2bc; margin: 1rem 0; }

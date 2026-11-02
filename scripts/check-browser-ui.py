@@ -67,6 +67,66 @@ try:
     saved = evaluate("localStorage.getItem('itonami.bunsho.candidate.bs1')")
     pipe.call('Page.reload', {}, session)
     wait("document.querySelector('[data-k=title]')?.value === '連続入力'", 'reload')
+    # A downloaded BS1 can be explicitly reviewed and restored; invalid input
+    # and storage failure must never replace the current document.
+    download = out / 'downloads'
+    download.mkdir()
+    pipe.call('Browser.setDownloadBehavior', {'behavior': 'allow', 'downloadPath': str(download)})
+    evaluate("document.querySelector('[data-k=backup-export]').click()")
+    end = time.time() + 90
+    while time.time() < end and not (download / 'bunsho-backup.bs1').exists(): time.sleep(.2)
+    exported = download / 'bunsho-backup.bs1'
+    if not exported.exists() or exported.read_text() != saved: raise ValueError('backup download mismatch')
+    evaluate("(()=>{let e=document.querySelector('[data-k=title]');e.value='復元前';e.dispatchEvent(new Event('input',{bubbles:true}));})()")
+    wait("localStorage.getItem('itonami.bunsho.candidate.bs1')?.includes('復元前')", 'edit before import')
+    prior = evaluate("localStorage.getItem('itonami.bunsho.candidate.bs1')")
+    def select_file(path):
+        pipe.call('DOM.enable', {}, session)
+        root = pipe.call('DOM.getDocument', {}, session)['root']['nodeId']
+        node = pipe.call('DOM.querySelector', {'nodeId': root, 'selector': '#backup-file'}, session)['nodeId']
+        pipe.call('DOM.setFileInputFiles', {'nodeId': node, 'files': [str(path)]}, session)
+    select_file(exported)
+    wait("document.getElementById('backup-dialog').open", 'backup preview')
+    if evaluate("document.querySelector('#backup-preview [data-k=title]')?.value") != '連続入力': raise ValueError('preview mismatch')
+    evaluate("document.getElementById('backup-cancel').click()")
+    if evaluate("localStorage.getItem('itonami.bunsho.candidate.bs1')") != prior: raise ValueError('cancel changed storage')
+    # Reset the input, as the user action does before selecting a file again.
+    evaluate("document.getElementById('backup-file').value=''")
+    select_file(exported)
+    wait("document.getElementById('backup-dialog').open", 'backup preview again')
+    evaluate("document.getElementById('backup-confirm').click()")
+    wait("document.getElementById('status').textContent === 'バックアップから復元しました。'", 'restore backup')
+    if evaluate("localStorage.getItem('itonami.bunsho.candidate.bs1')") != saved: raise ValueError('restore mismatch')
+    if not evaluate("Object.keys(localStorage).some(k=>k.startsWith('itonami.bunsho.candidate.bs1.preimport.') && localStorage.getItem(k).includes('復元前'))"): raise ValueError('missing prior backup')
+    evaluate("document.querySelector('[data-k=backup-restore]').click()")
+    wait("document.getElementById('backup-dialog').open", 'prior backup preview')
+    evaluate("document.getElementById('backup-confirm').click()")
+    wait("localStorage.getItem('itonami.bunsho.candidate.bs1')?.includes('復元前')", 'restore prior')
+    bad = out / 'bad.bs1'
+    bad.write_bytes(b'BS1|bad')
+    evaluate("document.getElementById('backup-file').value=''")
+    select_file(bad)
+    wait("document.getElementById('status').textContent.includes('バックアップを読み込めません')", 'bad backup refusal')
+    if evaluate("localStorage.getItem('itonami.bunsho.candidate.bs1')") != prior or evaluate("document.getElementById('backup-dialog').open"): raise ValueError('bad import changed state')
+    for name, contents in [('utf8.bs1', b'BS1|\xff'), ('large.bs1', b'BS1|' + b'x' * 35000), ('unknown.bs1', b'OLD|document')]:
+        invalid = out / name
+        invalid.write_bytes(contents)
+        evaluate("document.getElementById('status').textContent='' ; document.getElementById('backup-file').value=''")
+        select_file(invalid)
+        wait("document.getElementById('status').textContent.includes('バックアップを読み込めません')", name + ' refusal')
+        if evaluate("localStorage.getItem('itonami.bunsho.candidate.bs1')") != prior or evaluate("document.getElementById('backup-dialog').open"): raise ValueError(name + ' changed state')
+    evaluate("document.getElementById('backup-file').value=''")
+    select_file(exported)
+    wait("document.getElementById('backup-dialog').open", 'quota backup preview')
+    evaluate("window.savedSetItem=Storage.prototype.setItem;Storage.prototype.setItem=function(k,v){if(k.includes('.preimport.'))throw Error('quota');return window.savedSetItem.call(this,k,v)};document.getElementById('backup-confirm').click()")
+    wait("document.getElementById('status').textContent.includes('復元できませんでした')", 'backup quota refusal')
+    if evaluate("localStorage.getItem('itonami.bunsho.candidate.bs1')") != prior: raise ValueError('quota import changed state')
+    evaluate("Storage.prototype.setItem=window.savedSetItem")
+    # Return to the preexisting test fixture without modifying the product data path.
+    evaluate("document.querySelector('[data-k=backup-restore]').click()")
+    wait("document.getElementById('backup-dialog').open", 'return backup preview')
+    evaluate("document.getElementById('backup-confirm').click()")
+    wait("localStorage.getItem('itonami.bunsho.candidate.bs1')?.includes('連続入力')", 'return to test state')
     second = pipe.call('Target.createTarget', {'url': url})['targetId']
     second_session = pipe.call('Target.attachToTarget', {'targetId': second, 'flatten': True})['sessionId']
     def second_eval(expr):
@@ -76,10 +136,21 @@ try:
     end = time.time() + 90
     while time.time() < end and second_eval("document.querySelector('[data-k=title]')?.value") != '連続入力': time.sleep(.2)
     if second_eval("document.querySelector('[data-k=title]')?.value") != '連続入力': raise TimeoutError('second tab')
+    pipe.call('DOM.enable', {}, second_session)
+    second_root = pipe.call('DOM.getDocument', {}, second_session)['root']['nodeId']
+    second_file = pipe.call('DOM.querySelector', {'nodeId': second_root, 'selector': '#backup-file'}, second_session)['nodeId']
+    pipe.call('DOM.setFileInputFiles', {'nodeId': second_file, 'files': [str(exported)]}, second_session)
+    end = time.time() + 90
+    while time.time() < end and not second_eval("document.getElementById('backup-dialog').open"): time.sleep(.2)
+    if not second_eval("document.getElementById('backup-dialog').open"): raise TimeoutError('second tab backup preview')
     evaluate("(()=>{let e=document.querySelector('[data-k=title]');e.value='先の変更';e.dispatchEvent(new Event('input',{bubbles:true}));})()")
     wait("localStorage.getItem('itonami.bunsho.candidate.bs1')?.includes('先の変更') || document.getElementById('status').textContent.includes('保存できませんでした')", 'first tab write')
     if not evaluate("localStorage.getItem('itonami.bunsho.candidate.bs1')?.includes('先の変更')"):
         raise ValueError('first tab write refused: ' + str(evaluate("document.getElementById('status').textContent")))
+    second_eval("document.getElementById('backup-confirm').click()")
+    end = time.time() + 90
+    while time.time() < end and not second_eval("document.getElementById('status')?.textContent.includes('復元できませんでした')"): time.sleep(.2)
+    if not second_eval("document.getElementById('status')?.textContent.includes('別のタブ')") or not evaluate("localStorage.getItem('itonami.bunsho.candidate.bs1')?.includes('先の変更')"): raise ValueError('conflicting import clobbered state')
     second_eval("(()=>{let e=document.querySelector('[data-k=title]');e.value='後の変更';e.dispatchEvent(new Event('input',{bubbles:true}));})()")
     end = time.time() + 90
     while time.time() < end and not second_eval("document.getElementById('status')?.textContent.includes('保存できませんでした')"): time.sleep(.2)
@@ -128,7 +199,7 @@ try:
     requests = [e['params']['request']['url'] for e in pipe.events if e.get('method') == 'Network.requestWillBeSent']
     if not requests or any(not u.startswith(f'http://127.0.0.1:{server.server_port}/') for u in requests):
         raise ValueError('unexpected request ' + repr(requests))
-    (out / 'result.json').write_text(json.dumps({'status': 'PASS', 'checks': ['init', 'edit-save', 'queued-input', 'add', 'preview', 'reload', 'concurrent-write-refusal', 'worker-timeout', 'worker-interruption', 'storage-failure', 'corruption-refusal', 'digest-refusal', 'loopback-only']}, indent=2) + '\n')
+    (out / 'result.json').write_text(json.dumps({'status': 'PASS', 'checks': ['backup-export-import-cancel-restore', 'backup-invalid-and-quota', 'init', 'edit-save', 'queued-input', 'add', 'preview', 'reload', 'concurrent-write-refusal', 'worker-timeout', 'worker-interruption', 'storage-failure', 'corruption-refusal', 'digest-refusal', 'loopback-only']}, indent=2) + '\n')
     print('PASS_BUNSHO_BROWSER_UI: init, edit, reload and failure preservation')
 finally:
     pipe.close()
