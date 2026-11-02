@@ -8,7 +8,7 @@ independent network/power failure domains, public availability, DNS or release.
 """
 import hashlib,importlib.util,json,os,re,secrets,shlex,socket,subprocess,sys,time,urllib.request
 from pathlib import Path
-from office_candidate_integrity import validate
+from office_candidate_integrity import validate, candidate_files
 if len(sys.argv)!=11:raise SystemExit(__doc__)
 amu,bunsho,hyokeisan,zuhyo,out,chrome=map(lambda s:Path(s).resolve(),sys.argv[1:7]);host,remote,local_ip,remote_ip=sys.argv[7:]
 if not re.fullmatch(r'[a-zA-Z0-9.-]+',host) or not re.fullmatch(r'/Users/[A-Za-z0-9_-]+/github/workspaces/codex/[A-Za-z0-9_-]+',remote):raise ValueError('unsafe remote')
@@ -52,8 +52,8 @@ try:
  remote_call('python3','-c',configcode,remote,remote_ip,rp,ra,rg)
  builds={'bunsho':bunsho,'hyokeisan':hyokeisan,'zuhyo':zuhyo};results={}
  for name,build in builds.items():
-  receipt=validate(build)
-  cid=local('add','-Qr','--cid-version=1','--raw-leaves=true','--chunker=size-262144','--hash=sha2-256','--pin=true',build).splitlines()[-1]
+  receipt=validate(build,name)
+  cid=local('add','-Qr','--hidden','--cid-version=1','--raw-leaves=true','--chunker=size-262144','--hash=sha2-256','--pin=true',build).splitlines()[-1]
   results[name]={'cid':cid,'build':receipt,'files':{}}
  for _ in range(100):
   if not (out/'provider/repo.lock').exists():break
@@ -92,10 +92,10 @@ try:
  else:raise RuntimeError('gateway not ready')
  for name,build in builds.items():
   base=f'http://127.0.0.1:{forward}/ipfs/{results[name]["cid"]}/'
-  for file in sorted(build.iterdir()):
-   with urllib.request.urlopen(base+file.name,timeout=60) as r:data=r.read()
+  for file in candidate_files(build):
+   with urllib.request.urlopen(base+file.relative_to(build).as_posix(),timeout=60) as r:data=r.read()
    if data!=file.read_bytes():raise ValueError(name+' remote gateway mismatch '+file.name)
-   results[name]['files'][file.name]=sha(data)
+   results[name]['files'][file.relative_to(build).as_posix()]=sha(data)
   results[name]['base']=base
  after=set(remote_ipfs('refs','local').splitlines())
  if any(c not in after for c in rawroots.values()):raise ValueError('remote roots absent')
@@ -145,8 +145,8 @@ try:
  pins=set(x.split()[0] for x in remote_ipfs('pin','ls','--type=recursive').splitlines())
  if any(x['cid'] not in pins for x in results.values()):raise ValueError('remote pin absent')
  for name,build in builds.items():
-  for file in sorted(build.iterdir()):
-   with urllib.request.urlopen(results[name]['base']+file.name,timeout=10) as r:data=r.read()
+  for file in candidate_files(build):
+   with urllib.request.urlopen(results[name]['base']+file.relative_to(build).as_posix(),timeout=10) as r:data=r.read()
    if data!=file.read_bytes():raise ValueError(name+' failover mismatch')
  for item in results.values():item.pop('base',None)
  (out/'receipt.json').write_text(json.dumps({'status':'PASS_PRIVATE_CROSS_HOST_CANDIDATES','observerSha256':sha(Path(__file__).read_bytes()),'kuboBinarySha256':binary_sha,'scope':'two hosts, one tailnet path; private swarm only; not public routing, independent network/power, DNS/TLS, or release','isolation':{'privateSwarm':True,'bootstrap':[],'mdns':False,'routing':'none','telemetry':'off'},'replication':{'bothHostsPinned':True,'providerStopped':True,'allFilesVerifiedAfterStop':True},'apps':results},ensure_ascii=False,indent=2)+'\n')

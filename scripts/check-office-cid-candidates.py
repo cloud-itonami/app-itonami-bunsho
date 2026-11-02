@@ -14,6 +14,7 @@ import sys
 import time
 import urllib.request
 from pathlib import Path
+from office_candidate_integrity import validate, candidate_files
 
 if len(sys.argv) != 7: raise SystemExit(__doc__)
 amu,bunsho,hyokeisan,zuhyo,out,chrome = map(lambda s:Path(s).resolve(),sys.argv[1:])
@@ -33,11 +34,8 @@ cfg['Bootstrap']=[];cfg['Discovery']['MDNS']['Enabled']=False;cfg['Routing']['Ty
 config_file.write_text(json.dumps(cfg))
 builds={'bunsho':bunsho,'hyokeisan':hyokeisan,'zuhyo':zuhyo};results={}
 for name,build in builds.items():
- files=sorted(p for p in build.iterdir() if p.is_file())
- if len(files)!=10 or any(p.is_symlink() for p in files):raise ValueError(name+' unexpected candidate files')
- receipt=json.loads((build/'build-receipt.json').read_text())
- if sha((build/'program.kotoba').read_bytes())!=receipt['sourceSha256'] or sha((build/'program.wasm').read_bytes())!=receipt['wasmSha256']:raise ValueError(name+' stale build receipt')
- cid=run('add','-Qr','--cid-version=1','--raw-leaves=true','--chunker=size-262144','--hash=sha2-256','--pin=false',build).splitlines()[-1]
+ receipt=validate(build,name)
+ cid=run('add','-Qr','--hidden','--cid-version=1','--raw-leaves=true','--chunker=size-262144','--hash=sha2-256','--pin=false',build).splitlines()[-1]
  results[name]={'cid':cid,'build':receipt,'files':{}}
 log=(out/'daemon.log').open('wb');proc=subprocess.Popen(['ipfs','daemon','--offline'],env=env,stdout=log,stderr=subprocess.STDOUT)
 try:
@@ -51,10 +49,10 @@ try:
  else:raise RuntimeError('gateway not ready')
  for name,build in builds.items():
   base=f'http://127.0.0.1:{gateway}/ipfs/{results[name]["cid"]}/'
-  for file in sorted(build.iterdir()):
-   with urllib.request.urlopen(base+file.name,timeout=10) as response:data=response.read()
+  for file in candidate_files(build):
+   with urllib.request.urlopen(base+file.relative_to(build).as_posix(),timeout=10) as response:data=response.read()
    if data!=file.read_bytes():raise ValueError(name+' gateway mismatch '+file.name)
-   results[name]['files'][file.name]=sha(data)
+   results[name]['files'][file.relative_to(build).as_posix()]=sha(data)
   results[name]['base']=base
  spec=importlib.util.spec_from_file_location('browser',amu/'scripts/seed/check-wasm32-browser.py');browser=importlib.util.module_from_spec(spec);spec.loader.exec_module(browser)
  for name in builds:

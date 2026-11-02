@@ -6,7 +6,7 @@ No external peers, public pin, DNS/TLS, independent host, production route or re
 """
 import hashlib, importlib.util, json, os, secrets, socket, subprocess, sys, time, urllib.request
 from pathlib import Path
-from office_candidate_integrity import validate
+from office_candidate_integrity import validate, candidate_files
 if len(sys.argv)!=7: raise SystemExit(__doc__)
 amu,bunsho,hyokeisan,zuhyo,out,chrome=map(lambda s:Path(s).resolve(),sys.argv[1:])
 out.mkdir(parents=True,exist_ok=False)
@@ -31,8 +31,8 @@ try:
   (root/'config').write_text(json.dumps(cfg))
  builds={'bunsho':bunsho,'hyokeisan':hyokeisan,'zuhyo':zuhyo};results={}
  for name,build in builds.items():
-  receipt=validate(build)
-  cid=call('provider','add','-Qr','--cid-version=1','--raw-leaves=true','--chunker=size-262144','--hash=sha2-256','--pin=true',build).splitlines()[-1]
+  receipt=validate(build,name)
+  cid=call('provider','add','-Qr','--hidden','--cid-version=1','--raw-leaves=true','--chunker=size-262144','--hash=sha2-256','--pin=true',build).splitlines()[-1]
   results[name]={'cid':cid,'build':receipt,'files':{}}
  # Wait for standalone commands to release their repo locks before starting.
  for node in nodes:
@@ -63,10 +63,10 @@ try:
   if len(peers)!=1 or not peers[0].startswith('/ip4/127.0.0.1/') or not peers[0].endswith('/p2p/'+peer):raise ValueError((node,peers))
  for name,build in builds.items():
   base=f"http://127.0.0.1:{nodes['gateway']['gateway']}/ipfs/{results[name]['cid']}/"
-  for file in sorted(build.iterdir()):
-   with urllib.request.urlopen(base+file.name,timeout=60) as r:data=r.read()
+  for file in candidate_files(build):
+   with urllib.request.urlopen(base+file.relative_to(build).as_posix(),timeout=60) as r:data=r.read()
    if data!=file.read_bytes():raise ValueError(name+' peer fetch mismatch '+file.name)
-   results[name]['files'][file.name]=sha(data)
+   results[name]['files'][file.relative_to(build).as_posix()]=sha(data)
   results[name]['base']=base
  after=set(call('gateway','refs','local').splitlines())
  if any(cid not in after for cid in roots.values()):raise ValueError('gateway did not retrieve roots')
@@ -117,8 +117,8 @@ try:
  pinned=set(line.split()[0] for line in call('gateway','pin','ls','--type=recursive').splitlines())
  if any(item['cid'] not in pinned for item in results.values()):raise ValueError('local replica is not pinned')
  for name,build in builds.items():
-  for file in sorted(build.iterdir()):
-   with urllib.request.urlopen(results[name]['base']+file.name,timeout=10) as r:data=r.read()
+  for file in candidate_files(build):
+   with urllib.request.urlopen(results[name]['base']+file.relative_to(build).as_posix(),timeout=10) as r:data=r.read()
    if data!=file.read_bytes():raise ValueError(name+' replica mismatch after provider stop')
  for result in results.values():result.pop('base',None)
  (out/'receipt.json').write_text(json.dumps({'status':'PASS_PRIVATE_LOOPBACK_PEER_CANDIDATES','observerSha256':sha(Path(__file__).read_bytes()),'scope':'two local peers and a private swarm; no independent host, public pin, DNS/TLS or release','ipfsVersion':call('gateway','version'),'isolation':{'swarm':'127.0.0.1','bootstrap':[],'mdns':False,'privateSwarm':True,'routing':'none','telemetry':'off'},'replication':{'bothReposPinned':True,'providerStopped':True,'allFilesVerifiedAfterStop':True,'independentHost':False},'apps':results},ensure_ascii=False,indent=2)+'\n')

@@ -8,21 +8,35 @@ from pathlib import Path
 FILES = frozenset(('app.js', 'build-receipt.json', 'bundle.js', 'client-runtime.json',
                    'draft-policy.kotoba', 'draft-policy.wasm', 'index.html',
                    'kotoba-client-runtime.js', 'program.kotoba', 'program.wasm',
-                   'style.css', 'worker.js'))
+                   'style.css', 'worker.js', '.well-known/did.json'))
 
 def sha(raw):
     return hashlib.sha256(raw).hexdigest()
 
-def validate(build):
+def candidate_files(build):
     build = Path(build)
-    files = list(build.iterdir())
-    if any(not p.is_file() or p.is_symlink() for p in files) or {p.name for p in files} != FILES:
+    paths = list(build.rglob('*'))
+    if (any(p.is_symlink() or not (p.is_file() or p.is_dir()) for p in paths)
+            or {p.relative_to(build).as_posix() for p in paths if p.is_dir()} != {'.well-known'}
+            or {p.relative_to(build).as_posix() for p in paths if p.is_file()} != FILES):
         raise ValueError('unexpected candidate files')
+    return sorted((p for p in paths if p.is_file()), key=lambda p: p.relative_to(build).as_posix())
+
+def validate(build, name):
+    build = Path(build)
+    candidate_files(build)
+    expected = {'bunsho', 'hyokeisan', 'zuhyo'}
+    if name not in expected:
+        raise ValueError('unexpected app')
+    did = json.loads((build / '.well-known/did.json').read_text())
+    if did.get('id') != 'did:web:' + name + '.itonami.app' or did.get('@context') != ['https://www.w3.org/ns/did/v1']:
+        raise ValueError('unexpected DID document')
     receipt = json.loads((build / 'build-receipt.json').read_text())
     for filename, key in (('program.kotoba', 'sourceSha256'), ('program.wasm', 'wasmSha256'),
                           ('draft-policy.kotoba', 'draftPolicySourceSha256'),
                           ('draft-policy.wasm', 'draftPolicyWasmSha256'),
-                          ('kotoba-client-runtime.js', 'brokerSha256'), ('worker.js', 'workerSha256')):
+                          ('kotoba-client-runtime.js', 'brokerSha256'), ('worker.js', 'workerSha256'),
+                          ('.well-known/did.json', 'didSha256')):
         if sha((build / filename).read_bytes()) != receipt[key]:
             raise ValueError('candidate digest mismatch: ' + filename)
     if not re.fullmatch(r'[0-9a-f]{40}', receipt['draftPolicyRevision']):
