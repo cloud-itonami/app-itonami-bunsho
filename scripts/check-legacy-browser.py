@@ -51,6 +51,9 @@ legacy = {'found': True, 'document': {'documentId': 'old-doc', 'title': '旧文�
 if os.environ.get('BUNSHO_MAX_TEST') == '1':
     wide = os.environ.get('BUNSHO_WIDE_TEST') == '1'
     legacy['document']['body'].extend({'elementId': 'e-' + str(i), 'kind': 'paragraph', 'text': ('x' * 630 if wide else '行' + str(i))} for i in range(7, 32))
+multiline = os.environ.get('BUNSHO_MULTILINE_TEST') == '1'
+if multiline: legacy['document']['body'][1]['text'] = '本文\n二行目'
+paragraph = legacy['document']['body'][1]['text']
 raw = json.dumps(legacy, ensure_ascii=True, separators=(',', ':'))
 valid = out / 'legacy.json'
 valid.write_text(raw, encoding='utf-8')
@@ -86,8 +89,9 @@ try:
     def stored(): return evaluate('localStorage.getItem(' + json.dumps(key) + ')')
     def frames(wire):
         data = wire.encode('utf-8')
-        if not data.startswith(b'BS2|'): raise ValueError('not BS2')
-        pos, fields = 4, []
+        prefix = b'BS3|2' if multiline else b'BS2|'
+        if not data.startswith(prefix): raise ValueError('unexpected snapshot version')
+        pos, fields = len(prefix), []
         while pos < len(data):
             end = data.index(b':', pos)
             length = int(data[pos:end])
@@ -133,7 +137,7 @@ try:
     imported = stored()
     f = frames(imported)
     extras = [part for item in legacy['document']['body'][2:] for part in ('li' if item['kind'] == 'listItem' else 'h' + str(item['headingLevel']) if item['kind'] == 'heading' else 'p', item['text'], item['elementId'])]
-    if f[:4] != [raw, '旧文書😀', 'edit', str(len(legacy['document']['body']))] or f[4:] != ['h2', '見出し😀', 'e-one', 'p', '本文', 'e-two'] + extras: raise ValueError('import did not preserve origin and identities')
+    if f[:4] != [raw, '旧文書😀', 'edit', str(len(legacy['document']['body']))] or f[4:] != ['h2', '見出し😀', 'e-one', 'p', paragraph, 'e-two'] + extras: raise ValueError('import did not preserve origin and identities')
     if evaluate("document.querySelector('[data-k=kl2]')?.classList.contains('on')") is not True or evaluate("document.querySelector('[data-k=b2]')?.value") != '項目😀': raise ValueError('list item did not render as a list item')
     for i in range(3, 7):
         if evaluate(f"document.querySelector('[data-k=k{i}{i}]')?.classList.contains('on')") is not True or evaluate(f"document.querySelector('[data-k=b{i}]')?.value") != '見出し' + str(i): raise ValueError('heading level did not render')
@@ -143,7 +147,7 @@ try:
     wait("document.getElementById('status').textContent === '保存しました' && document.querySelector('[data-k=b1]')?.value === '編集😀'", 'BS2 reorder')
     edited = stored()
     f = frames(edited)
-    if f[0] != raw or f[4:] != ['p', '本文', 'e-two', 'h2', '編集😀', 'e-one'] + extras: raise ValueError('identity or origin lost after edit/reorder')
+    if f[0] != raw or f[4:] != ['p', paragraph, 'e-two', 'h2', '編集😀', 'e-one'] + extras: raise ValueError('identity or origin lost after edit/reorder')
     evaluate('window.__oldDocument=true')
     pipe.call('Page.reload', {}, session)
     wait('window.__oldDocument !== true', 'new document')
@@ -158,13 +162,13 @@ try:
     wait("document.querySelector('[data-k=b1]')?.value === '編集😀'", 'heading edit mode')
     edited = stored()
     evaluate("document.querySelector('[data-k=backup-export]').click()")
-    f = download / 'bunsho-backup.bs2'
+    f = download / ('bunsho-backup.bs3' if multiline else 'bunsho-backup.bs2')
     deadline = time.time() + 90
     while time.time() < deadline and not f.exists(): time.sleep(.2)
     if not f.exists() or f.read_text(encoding='utf-8') != edited: raise ValueError('BS2 export mismatch')
     requests = [e['params']['request']['url'] for e in pipe.events if e.get('method') == 'Network.requestWillBeSent']
     if not requests or any(not u.startswith(base) for u in requests): raise ValueError('unexpected network request')
-    (out / 'result.json').write_text(json.dumps({'status': 'PASS', 'checks': ['BS1 baseline', 'unsupported refusal', 'preview cancel', 'failed backup preserves BS1', 'failed write preserves BS1', 'explicit BS2 import', 'provenance and IDs', 'edit reorder reopen', 'BS2 export', 'loopback CID only' if os.environ.get('BUNSHO_TEST_CID_BASE') else 'loopback only'], 'limitations': ['synthetic data', 'unsupported legacy kinds refused', 'unknown metadata is provenance only', 'no old-origin fetch', 'no crash/QEMU/publication qualification']}, indent=2) + '\n')
+    (out / 'result.json').write_text(json.dumps({'status': 'PASS', 'checks': ['BS1 baseline', 'unsupported refusal', 'preview cancel', 'failed backup preserves BS1', 'failed write preserves BS1', 'explicit multiline BS3 import' if multiline else 'explicit BS2 import', 'provenance and IDs', 'edit reorder reopen', 'BS3 export' if multiline else 'BS2 export', 'loopback CID only' if os.environ.get('BUNSHO_TEST_CID_BASE') else 'loopback only'], 'limitations': ['synthetic data', 'unsupported legacy kinds refused', 'unknown metadata is provenance only', 'no old-origin fetch', 'no crash/QEMU/publication qualification']}, indent=2) + '\n')
     print('PASS_LEGACY_BROWSER synthetic explicit import, preservation and reopen')
 finally:
     pipe.close()

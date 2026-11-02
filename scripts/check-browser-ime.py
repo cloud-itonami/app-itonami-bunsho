@@ -35,6 +35,19 @@ try:
  if mid['stored'] is not None: raise ValueError('uncommitted composition saved')
  pipe.call('Input.insertText',{'text':'日本語'},session)
  wait("localStorage.getItem('itonami.bunsho.candidate.bs1')?.includes('日本語') && document.getElementById('status').textContent === '保存しました'",'committed IME')
+ # Exercise the multiline editor with CDP composition and an actual Enter key.
+ ev("document.querySelector('[data-k=b0]').focus();document.querySelector('[data-k=b0]').select()")
+ pipe.call('Input.imeSetComposition',{'text':'本文','selectionStart':2,'selectionEnd':2},session)
+ wait("document.querySelector('[data-k=b0]')?.value==='本文'",'textarea composition')
+ if ev("localStorage.getItem('itonami.bunsho.candidate.bs1')?.includes('本文')"): raise ValueError('uncommitted textarea composition saved')
+ pipe.call('Input.insertText',{'text':'本文'},session)
+ wait("localStorage.getItem('itonami.bunsho.candidate.bs1')?.includes('本文') && document.getElementById('status').textContent==='保存しました'",'textarea IME commit')
+ ev("document.querySelector('[data-k=b0]').focus();document.querySelector('[data-k=b0]').setSelectionRange(2,2)")
+ pipe.call('Input.dispatchKeyEvent',{'type':'keyDown','key':'Enter','code':'Enter','text':'\r','unmodifiedText':'\r','windowsVirtualKeyCode':13,'nativeVirtualKeyCode':13},session)
+ pipe.call('Input.dispatchKeyEvent',{'type':'keyUp','key':'Enter','code':'Enter','windowsVirtualKeyCode':13,'nativeVirtualKeyCode':13},session)
+ wait("document.querySelector('[data-k=b0]')?.value === '本文\\n' && document.getElementById('status').textContent==='保存しました'",'textarea enter')
+ pipe.call('Input.insertText',{'text':'二行目'},session)
+ wait("document.querySelector('[data-k=b0]')?.value==='本文\\n二行目' && localStorage.getItem('itonami.bunsho.candidate.bs1')?.startsWith('BS3|1') && document.getElementById('status').textContent==='保存しました'",'textarea multiline saved')
  result={'status':'PASS_CDP_SYNTHETIC_IME','mid':mid,'final':{'value':ev("document.querySelector('[data-k=title]').value"),'events':ev('window.imeEvents')},'limitations':['CDP-generated browser events; not a physical OS IME test','loopback local candidate; not a release']}
  if result['final']['value'] != '日本語': raise ValueError('composition commit mismatch')
  requests=[e['params']['request']['url'] for e in pipe.events if e.get('method')=='Network.requestWillBeSent']

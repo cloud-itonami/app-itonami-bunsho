@@ -5,8 +5,26 @@
 (defn browser-arg [i :string] :string
   (typed-cap-call :cli/args :string :string i))
 
+;; BS3 protects multiline editable fields from older single-line browsers.
+;; The discriminator retains either the exact BS1 or legacy-provenance BS2
+;; payload. State data and original JSON remain unchanged.
+(defn browser-has-break? [s :string] :bool
+  (or (>= (string-index-of s "\n") 0) (>= (string-index-of s "\r") 0)))
+(defn browser-block-has-break? [v :document i :i64] :bool
+  (if (>= i (document-count v)) false
+    (or (browser-has-break? (dstr (dget (dat v i) :text)))
+        (browser-block-has-break? v (+ i 1)))))
 (defn browser-encode [s :document] [:option :string]
-  (if (and (map? s) (= (document-count s) 4)) (legacy-snapshot-encode s) (snap-encode s)))
+  (let [legacy (and (map? s) (= (document-count s) 4))
+        encoded (if legacy (legacy-snapshot-encode s) (snap-encode s))]
+    (if (not (option-some?-of [:option :string] encoded)) (option-none-of [:option :string])
+      (let [raw (option-value-of [:option :string] encoded "")
+            multiline (or (browser-has-break? (dstr (dget s :title)))
+                          (browser-block-has-break? (dget s :blocks) 0))
+            result (if multiline
+                     (string-concat (if legacy "BS3|2" "BS3|1") (string-substring raw 4 (string-byte-length raw))) raw)]
+        (if (> (string-byte-length result) 35000) (option-none-of [:option :string])
+          (option-some-of [:option :string] result))))))
 
 ;; Check ASCII prefix byte-by-byte so malformed UTF-8-aligned text never
 ;; creates a substring ending inside a multibyte character.
@@ -17,6 +35,11 @@
 (defn browser-decode [s :string] [:option :document]
   (cond (browser-prefix? s 49) (snap-decode s)
         (browser-prefix? s 50) (legacy-snapshot-decode s)
+        (and (browser-prefix? s 51) (>= (string-byte-length s) 5))
+          (let [version (string-code-point-at s 4)]
+            (cond (= version 49) (snap-decode (string-concat "BS1|" (string-substring s 5 (string-byte-length s))))
+                  (= version 50) (legacy-snapshot-decode (string-concat "BS2|" (string-substring s 5 (string-byte-length s))))
+                  :else (option-none-of [:option :document])))
         :else (option-none-of [:option :document])))
 (defn browser-emit [s :document] :i64
   (let [encoded (browser-encode s)]

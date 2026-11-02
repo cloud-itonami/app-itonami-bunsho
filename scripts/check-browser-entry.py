@@ -48,10 +48,20 @@ def frame(s):
 initial = 'BS1|' + ''.join(map(frame, ['無題の文書', 'edit', '2', 'h1', 'itonami Bunsho', 'p', 'Write here.']))
 changed = 'BS1|' + ''.join(map(frame, ['議事😀', 'edit', '2', 'h1', 'itonami Bunsho', 'p', 'Write here.']))
 preview = 'BS1|' + ''.join(map(frame, ['議事😀', 'preview', '2', 'h1', 'itonami Bunsho', 'p', 'Write here.']))
+multiline_text = '最初😀\n続き'
+multiline = 'BS3|1' + ''.join(map(frame, ['無題の文書', 'edit', '2', 'h1', 'itonami Bunsho', 'p', multiline_text]))
+legacy_raw = json.dumps({'found':True,'document':{'documentId':'doc-1','title':'旧文書',
+    'revisionId':'r1','body':[{'elementId':'e1','kind':'paragraph','text':multiline_text}]}},ensure_ascii=False,separators=(',',':'))
+legacy_multiline = 'BS3|2' + ''.join(map(frame, [legacy_raw, '旧文書', 'edit', '1', 'p', multiline_text, 'e1']))
 allowed = [37, 38]
 a = call('init', [('init', {'allow': allowed, 'args': ['init']})])
 expect(a['init'], 0, initial + '\n')
 batch = call('trace', [
+    ('multiline', {'allow': allowed, 'args': ['step', initial, 'b1', 'input', multiline_text]}),
+    ('multiline-reload', {'allow': allowed, 'args': ['step', multiline, 'unused', 'click', '']}),
+    ('legacy-multiline', {'allow': allowed, 'fuel': 100000000, 'args': ['legacy-import', legacy_raw]}),
+    ('legacy-multiline-reload', {'allow': allowed, 'fuel': 100000000, 'args': ['step', legacy_multiline, 'unused', 'click', '']}),
+    ('bad-multiline-version', {'allow': allowed, 'args': ['view', 'BS3|3']}),
     ('edit', {'allow': allowed, 'args': ['step', initial, 'title', 'input', '議事😀']}),
     ('view', {'allow': allowed, 'fuel': 10000000, 'args': ['view', changed]}),
     ('preview', {'allow': allowed, 'fuel': 10000000, 'args': ['view', preview]}),
@@ -65,6 +75,11 @@ batch = call('trace', [
     ('no-write', {'allow': [38], 'args': ['init']}),
     ('no-args', {'allow': [37], 'args': ['init']}),
 ])
+expect(batch['multiline'], 0, multiline + '\n')
+expect(batch['multiline-reload'], 0, multiline + '\n')
+expect(batch['legacy-multiline'], 0, legacy_multiline + '\n')
+expect(batch['legacy-multiline-reload'], 0, legacy_multiline + '\n')
+expect(batch['bad-multiline-version'], 3, '')
 expect(batch['edit'], 0, changed + '\n')
 expect(batch['reload'], 0, changed + '\n')
 view = batch['view']

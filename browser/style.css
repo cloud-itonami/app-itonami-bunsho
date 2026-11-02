@@ -5,6 +5,8 @@ body { margin: 0; }
 .bar, .tools, .block { display: flex; flex-wrap: wrap; gap: .5rem; padding: .75rem; }
 .bar, .tools { background: white; }
 .title, .text { min-width: 12rem; flex: 1; padding: .45rem; }
+textarea.text { min-height: 4rem; resize: vertical; font: inherit; }
+.preview p, .preview li, .preview h1, .preview h2, .preview h3, .preview h4, .preview h5, .preview h6 { white-space: pre-wrap; overflow-wrap: anywhere; }
 button { padding: .4rem .6rem; cursor: pointer; }
 .page { background: white; min-height: 20rem; margin: 1rem; padding: 1rem; }
 .preview { padding: 2rem; }

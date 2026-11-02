@@ -228,14 +228,14 @@ try:
     # Inject a timeout while this tab is actually hidden, then recover visibly.
     background = pipe.call('Target.createTarget', {'url': 'about:blank'})['targetId']
     wait("document.visibilityState === 'hidden'", 'hidden tab')
-    evaluate("window.savedTimer=window.setTimeout;window.setTimeout=(f,n)=>window.savedTimer(f,n===30000?1:n)")
+    evaluate("window.hiddenWorker=window.Worker;window.Worker=class extends window.hiddenWorker {postMessage(msg,...rest){if(msg.args[0]!=='step')super.postMessage(msg,...rest)}};window.savedTimer=window.setTimeout;window.setTimeout=(f,n)=>window.savedTimer(f,n===30000?1:n)")
     evaluate("(()=>{let e=document.querySelector('[data-k=title]');e.value='背景の入力';e.dispatchEvent(new Event('input',{bubbles:true}));})()")
     wait("document.getElementById('status').textContent.includes('時間内に完了しませんでした')", 'hidden timeout')
     pipe.call('Page.bringToFront', {}, session)
     wait("document.visibilityState === 'visible'", 'return to tab')
     if evaluate("document.querySelector('[data-k=title]')?.value") != '背景の入力' or evaluate("document.getElementById('retry-save').hidden") or evaluate("localStorage.getItem('itonami.bunsho.candidate.bs1')") != saved: raise ValueError('hidden timeout discarded input')
     pipe.call('Target.closeTarget', {'targetId': background})
-    evaluate("window.setTimeout=window.savedTimer;document.getElementById('retry-save').click()")
+    evaluate("window.Worker=window.hiddenWorker;window.setTimeout=window.savedTimer;document.getElementById('retry-save').click()")
     wait("localStorage.getItem('itonami.bunsho.candidate.bs1')?.includes('背景の入力') && document.getElementById('retry-save').hidden", 'hidden edit retry')
     evaluate("(()=>{let e=document.querySelector('[data-k=title]');e.value='先の変更';e.dispatchEvent(new Event('input',{bubbles:true}));})()")
     wait("localStorage.getItem('itonami.bunsho.candidate.bs1') === " + json.dumps(saved,ensure_ascii=False), 'restore fixture after hidden retry')

@@ -54,12 +54,12 @@ function offerDraft(raw, allowRestore) {
   document.getElementById('draft-retry-read').hidden = true;
   document.getElementById('draft-download').disabled = false;
   document.getElementById('draft-discard').disabled = false;
-  lockedControls = [...mount.querySelectorAll('input,button')].map(el => [el, el.disabled]);
+  lockedControls = [...mount.querySelectorAll('input,textarea,button')].map(el => [el, el.disabled]);
   for (const [el] of lockedControls) el.disabled = true;
   let data = null;
   try { if (raw.length <= 1000000) data = JSON.parse(raw); } catch (_) {}
   const seen = new Set();
-  const inputs = new Set([...mount.querySelectorAll('input[data-k]')].map(el => el.dataset.k));
+  const inputs = new Set([...mount.querySelectorAll('input[data-k],textarea[data-k]')].map(el => el.dataset.k));
   const valid = data && data.version === 1 && typeof data.program === 'string' && /^[0-9a-f]{64}$/.test(data.program) && (data.base === null || typeof data.base === 'string') &&
     typeof data.baseState === 'string' && data.baseState.length <= LIMIT && Array.isArray(data.entries) && data.entries.length > 0 && data.entries.length <= 33 &&
     data.entries.every(entry => Array.isArray(entry) && entry.length === 2 && typeof entry[0] === 'string' &&
@@ -82,7 +82,7 @@ function inspectDraft(allowRestore) {
   catch (_) {
     if (!draftReadFailed) {
       draftBlocked = true; mount.inert = true;
-      lockedControls = [...mount.querySelectorAll('input,button')].map(el => [el, el.disabled]);
+      lockedControls = [...mount.querySelectorAll('input,textarea,button')].map(el => [el, el.disabled]);
       for (const [el] of lockedControls) el.disabled = true;
     }
     draftReadFailed = true; retryDraftAllowed = allowRestore;
@@ -130,7 +130,7 @@ draftRestore.addEventListener('click', () => {
   }
   for (const [key, value] of recoveryItems) edits.set(key, { value, sequence: ++editSequence, failed: true });
   draftBlocked = false; recoveryRaw = null; recoveryItems = null; draftPanel.hidden = true; unlockDraftMount();
-  for (const el of mount.querySelectorAll('input[data-k]')) if (edits.has(el.dataset.k)) el.value = edits.get(el.dataset.k).value;
+  for (const el of mount.querySelectorAll('input[data-k],textarea[data-k]')) if (edits.has(el.dataset.k)) el.value = edits.get(el.dataset.k).value;
   refreshRetry();
   fail('未保存入力を画面に戻しました。内容を確認して再保存してください。');
 });
@@ -146,18 +146,21 @@ function parseTree(wire) {
     if (!Number.isSafeInteger(n) || n > MAX_VIEW || pos + n > data.length) throw Error('field bounds');
     const text = decoder.decode(data.slice(pos, pos + n)); pos += n; return text;
   }
-  const tags = new Set(['div', 'header', 'main', 'footer', 'input', 'button', 'span', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'ul', 'li']);
+  const tags = new Set(['div', 'header', 'main', 'footer', 'input', 'textarea', 'button', 'span', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'ul', 'li']);
   function node(depth) {
     if (++nodes > 512 || depth > 12) throw Error('view bounds');
     const [tag, css, type, key, value, text, label, count] = Array.from({ length: 8 }, field);
     if (!tags.has(tag) || !/^(0|[1-9][0-9]?)$/.test(count) || Number(count) > 32 || encoder.encode(key).length > 128) throw Error('view node');
-    if ((type && !['text', 'button'].includes(type)) || (tag !== 'input' && value)) throw Error('view attribute');
+    if ((type && !['text', 'button'].includes(type)) || (!['input', 'textarea'].includes(tag) && value) || (tag === 'textarea' && type)) throw Error('view attribute');
     const el = document.createElement(tag);
     if (css) el.className = css;
     if (type) el.setAttribute('type', type);
     if (key) el.dataset.k = key;
     if (label) el.setAttribute('aria-label', label);
-    if (tag === 'input') el.value = value;
+    if (tag === 'input' || tag === 'textarea') {
+      el.value = value;
+      if (el.value !== value) throw Error('input normalization');
+    }
     if (text) el.textContent = text;
     for (let i = 0; i < Number(count); i++) el.append(node(depth + 1));
     return el;
@@ -176,7 +179,7 @@ function run(args) {
       else resolve(data.output);
     };
     worker.onerror = () => { clearTimeout(timer); worker.terminate(); reject(Error('worker failed')); };
-    const fuel = args[0] === 'legacy-import' || (typeof args[1] === 'string' && args[1].startsWith('BS2|')) ? 100000000 : 25000000;
+    const fuel = args[0] === 'legacy-import' || (typeof args[1] === 'string' && (args[1].startsWith('BS2|') || args[1].startsWith('BS3|2'))) ? 100000000 : 25000000;
     worker.postMessage({ module: compiledModule, fuel, allow: [37, 38], args });
   });
 }
@@ -185,7 +188,7 @@ function render(tree, focus) {
   if (composing.size) { deferredRender = { tree, focus }; return; }
   deferredRender = null;
   mount.replaceChildren(tree);
-  for (const node of mount.querySelectorAll('input[data-k]')) {
+  for (const node of mount.querySelectorAll('input[data-k],textarea[data-k]')) {
     const edit = edits.get(node.dataset.k);
     if (edit) node.value = edit.value;
   }
@@ -242,13 +245,13 @@ function captureInput(el) {
   return { key, value, sequence, focus: { key, start: el.selectionStart, end: el.selectionEnd }, type: 'input' };
 }
 mount.addEventListener('compositionstart', e => {
-  const el = e.target.closest('input[data-k]');
+  const el = e.target.closest('input[data-k],textarea[data-k]');
   if (!el || !mount.contains(el) || draftBlocked) return;
   composing.add(el.dataset.k);
   captureInput(el);
 });
 mount.addEventListener('compositionend', e => {
-  const el = e.target.closest('input[data-k]');
+  const el = e.target.closest('input[data-k],textarea[data-k]');
   if (!el || !mount.contains(el) || !composing.has(el.dataset.k)) return;
   const captured = captureInput(el);
   composing.delete(el.dataset.k);
@@ -262,7 +265,7 @@ mount.addEventListener('compositionend', e => {
 for (const kind of ['click', 'input']) mount.addEventListener(kind, e => {
   // Capture the target and value before an earlier queued render replaces it.
   const el = e.target.closest('[data-k]');
-  if (!el || !mount.contains(el) || draftBlocked || (e.type === 'input' && el.tagName !== 'INPUT')
+  if (!el || !mount.contains(el) || draftBlocked || (e.type === 'input' && !['INPUT', 'TEXTAREA'].includes(el.tagName))
       || (e.type === 'click' && el.tagName !== 'BUTTON')) return;
   const key = el.dataset.k, value = e.type === 'input' ? el.value : '';
   if (e.type === 'input') {
@@ -293,16 +296,16 @@ function exportBackup() {
   if (typeof snapshot !== 'string') return;
   const url = URL.createObjectURL(new Blob([snapshot], { type: 'application/octet-stream' }));
   const link = document.createElement('a');
-  link.href = url; link.download = snapshot.startsWith('BS2|') ? 'bunsho-backup.bs2' : 'bunsho-backup.bs1'; link.click();
+  link.href = url; link.download = snapshot.startsWith('BS3|') ? 'bunsho-backup.bs3' : snapshot.startsWith('BS2|') ? 'bunsho-backup.bs2' : 'bunsho-backup.bs1'; link.click();
   setTimeout(() => URL.revokeObjectURL(url), 60000);
   fail('バックアップのダウンロードを開始しました。');
 }
 async function previewBackup(candidate, label) {
   if (typeof candidate !== 'string' || encoder.encode(candidate).length > LIMIT) throw Error('invalid backup');
   let notice = '';
-  if (!candidate.startsWith('BS1|') && !candidate.startsWith('BS2|')) {
+  if (!candidate.startsWith('BS1|') && !candidate.startsWith('BS2|') && !candidate.startsWith('BS3|')) {
     const converted = await run(['legacy-import', candidate]);
-    if (!converted.endsWith('\n') || !converted.startsWith('BS2|')) throw Error('legacy refusal');
+    if (!converted.endsWith('\n') || !(converted.startsWith('BS2|') || converted.startsWith('BS3|2'))) throw Error('legacy refusal');
     candidate = converted.slice(0, -1);
     if (encoder.encode(candidate).length > LIMIT) throw Error('converted size');
     notice = ' 旧文書 JSON: 元データは原文で保存します。未対応の属性は編集画面に反映されません。';

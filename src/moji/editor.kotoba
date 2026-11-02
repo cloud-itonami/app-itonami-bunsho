@@ -178,10 +178,9 @@
          (kind-button "h6" kind k)
          (kind-button "p" kind k)
          (kind-button "li" kind k)
-         (leaf "input"
+         (leaf "textarea"
                (document-map :data-k (document-string (string-concat "b" k))
                              :aria-label (document-string (string-concat "本文ブロック " (string-from-i64 (+ i 1))))
-                             :type (document-string "text")
                              :class (document-string "text")
                              :value (document-string text))
                "")
