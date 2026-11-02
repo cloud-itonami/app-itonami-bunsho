@@ -1,0 +1,41 @@
+{
+  "date": "2026-11-03",
+  "status": "PASS_DELAYED_HTML_REGRESSION",
+  "negativeControl": {
+    "head": "8763059ec44dfda344e485dcfcde388ebac5f831",
+    "htmlDelaySeconds": 0.5,
+    "result": "prior test raises TypeError when migration element is not present"
+  },
+  "fixed": {
+    "htmlDelaySeconds": 0.25,
+    "result": {
+      "status": "PASS_BUNSHO_IDB_UI_SYNTHETIC",
+      "checks": [
+        "new-document-save-reload",
+        "stale-tab-conflict-preserves-draft",
+        "stale-revision-draft-preview-only",
+        "backup-preview-and-atomic-restore",
+        "save-abort-reload-recover-draft-and-retry",
+        "legacy-session-draft-preview-only",
+        "restore-abort-rolls-back-backup",
+        "postcommit-restore-truthful-warning",
+        "postcommit-save-truthful-warning",
+        "legacy-preview-explicit-trusted-confirm",
+        "legacy-copy-and-old-backup-preserved",
+        "old-backup-preview",
+        "old-writer-divergence-freezes",
+        "unfinished-and-late-composition-journaled",
+        "both-divergent-branches-and-unsaved-draft-export",
+        "migration-keyboard-cancel-preserves",
+        "invalid-legacy-refusal",
+        "invalid-utf16-legacy-export",
+        "migration-preview-race-refusal",
+        "migration-transaction-abort",
+        "migration-postcommit-divergence-preserved"
+      ],
+      "scope": "synthetic Chrome loopback; no real user data, atomic cross-store coordination, crash/power-loss, QEMU or release"
+    },
+    "receiptSha256": "f33658b3c3bfd58df252220cf3a71a777b0c1ba7a0dc907e01d204569d5abe88"
+  },
+  "scope": "Synthetic Chrome HTTP timing for the test harness; does not change application runtime or qualify real-user behavior."
+}

@@ -78,7 +78,7 @@ jobs:
           PYTHONPATH=scripts python3 -c 'import sys; from office_candidate_integrity import validate; validate(sys.argv[1], "bunsho")' "$payload/build"
           chrome="$(command -v google-chrome)"
           test -n "$chrome"
-          python3 scripts/check-browser-idb-ui.py "$payload/amu" "$payload/build" "$RUNNER_TEMP/office-ui" "$chrome"
+          OFFICE_TEST_HTML_DELAY=0.25 python3 scripts/check-browser-idb-ui.py "$payload/amu" "$payload/build" "$RUNNER_TEMP/office-ui" "$chrome"
           python3 scripts/check-office-corrupt-recovery.py "$payload/amu" "$payload/build" "$RUNNER_TEMP/office-corrupt" "$chrome" bunsho
           python3 scripts/check-browser-large-restore.py "$payload/amu" "$payload/build" "$RUNNER_TEMP/office-large" "$chrome" expect-success
           python3 scripts/check-browser-large-restore.py "$payload/amu" "$payload/build" "$RUNNER_TEMP/office-short-blocks" "$chrome" expect-success 128
