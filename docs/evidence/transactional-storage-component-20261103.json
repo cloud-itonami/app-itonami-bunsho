@@ -1,0 +1,36 @@
+{
+  "status": "PASS_EXPERIMENTAL_IDB_COMPONENT",
+  "baseCommit": "d638f0f61956eba9ba5b34adb163c7c7fb2f89a4",
+  "adapterSha256": "4a160d4e5a88ed97ce48caa6d50e71d6f9288196f8769112765119296ed125c9",
+  "observerSha256": "ee6f4fe919eeb5e4aab783cd5c0e14c7331d05e5aa950efbf16aa747a0d48aee",
+  "resultSha256": "f4f1c17b996eee9b19d83c9ddd198eb21a2336380a32f239a389467451edcabc",
+  "result": {
+    "status": "PASS_TRANSACTIONAL_STORAGE_SYNTHETIC",
+    "sourceSha256": "4a160d4e5a88ed97ce48caa6d50e71d6f9288196f8769112765119296ed125c9",
+    "checks": [
+      "two-tab-competing-writers",
+      "revision-aba-refusal",
+      "transaction-abort-preserves-state-and-backup",
+      "backup-and-state-atomic",
+      "invalid-unicode-and-oversize",
+      "third-tab-reopen",
+      "legacy-localstorage-untouched",
+      "corrupt-record-refusal"
+    ],
+    "scope": "synthetic same-origin Chrome tabs; experimental adapter only, not integrated; no old-client coordination, app migration, crash/power-loss, QEMU or release"
+  },
+  "negativeControl": {
+    "mutation": "remove revision comparison, retain value comparison",
+    "adapterSha256": "ddaadb2ab944854021ba46814090f8d0e9321d9a9c800a50c948260359f5bbce",
+    "exit": 1,
+    "detectedAt": "ABA stale revision assertion"
+  },
+  "initialProbe": "v1 runner used top-level await in CDP evaluation and failed with SyntaxError; runner corrected, v2 and v3 passed",
+  "limitations": [
+    "experimental source is not loaded by any app or included in candidate builds",
+    "two same-origin IndexedDB clients only; legacy localStorage writers are not coordinated",
+    "requires reported strict durability; Chrome synthetic test only; no crash/power-loss proof",
+    "Kotoba model validation and explicit migration are not integrated",
+    "no Itonami OS, QEMU or release"
+  ]
+}
