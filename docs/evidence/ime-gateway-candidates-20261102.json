@@ -1,0 +1,300 @@
+{
+  "status": "SYNTHETIC_IME_GATEWAY_PASS_NOT_RELEASE",
+  "date": "2026-11-02",
+  "kubo": "0.41.0",
+  "route": "loopback Kubo /ipfs/<CID>/index.html",
+  "isolation": {
+    "swarm_addresses": [],
+    "bootstrap": [],
+    "mdns": false,
+    "routing": "none",
+    "gateway_no_fetch": true,
+    "api_and_gateway": "127.0.0.1 only",
+    "telemetry": "off"
+  },
+  "import_flags": [
+    "recursive",
+    "cid-version=1",
+    "raw-leaves=true",
+    "chunker=size-262144",
+    "hash=sha2-256",
+    "preserve-mode=false",
+    "preserve-mtime=false",
+    "empty-dirs=false",
+    "pin=false"
+  ],
+  "compiler_sha256": "2c551579c06a0228029bb06bae177e93126ecbbc37d636d693c471dbac8d1536",
+  "compiler_pr": "https://github.com/kotoba-lang/amu/pull/1779",
+  "broker_revision": "e00ae75e1c589f76b4f53a88a5e3256c98c9e162",
+  "browser": "Chrome 156.0.8078.74",
+  "apps": {
+    "bunsho": {
+      "artifact_source_head": "485f9b667447ac34bac283e5de10b94f54a621f7",
+      "ime_probe_head": "eb19a456e6c4f37d5e2b6a90b911e8fd2ee7ea4e",
+      "cid": "bafybeicuvqwta2kfxmqzdx7b7lnezkkf4b2riu7wgzwagkvzgourbl2bwu",
+      "files_sha256": {
+        "app.js": "4ffb0fd20b1b4916ad42e0f684fe33f12e84540ec4d3aef93bfd7a80c5e32bed",
+        "build-receipt.json": "465c999e0cf14d7ff11bd03df8dfa85ecb65d9e965c81423513a72ec713308e6",
+        "bundle.js": "ab071440f7274c88295e3a7d0664756eb51bd39b3aae3e74f83abea6d7fa956e",
+        "client-runtime.json": "71af64b5955b3338a4f01239a99a74480ed087a4aa42725e5f300785ddad84a1",
+        "index.html": "353fed9e9833be5a92fcc3cefb04c830df0413e3139670945efe522734aa2852",
+        "kotoba-client-runtime.js": "7f760128c3a58098123c31ec3dd34b9c871932e3933f2c952facc4ab0e647212",
+        "program.kotoba": "8c44d925da01a61dc76fc246914d665c527c6cd2719c1b0e158db2d839cfc1d5",
+        "program.wasm": "7da4e515d108da7f80c8ff83e72c78be5781d8b7847462b9e8f7a317b7cc5de1",
+        "style.css": "78ec5d485b1290768c538c3ba1687e550b7c3af3d2bc4caccc49fd90548c0b86",
+        "worker.js": "58d606d0b3f22766a1b7288fe911c106aea9606fecfe59a2adb66a4bac8923ab"
+      },
+      "full_harness_sha256": "58d7265f6ddf77602d6334f2c9a6355f6cdbb41a0423998efc712613efbc495e",
+      "cdp_harness_sha256": "e82ed83fc39a25edc17f484ca898ec78730b3b1e6112f29136231e8e0a060da4",
+      "full_checks": [
+        "backup-export-import-cancel-restore",
+        "backup-invalid-and-both-write-failures",
+        "init",
+        "edit-save",
+        "synthetic-composition-with-concurrent-redraw",
+        "queued-input",
+        "add",
+        "preview",
+        "reload",
+        "concurrent-write-refusal",
+        "worker-timeout-and-retry",
+        "hidden-timeout-and-retry",
+        "worker-interruption-and-retry",
+        "storage-failure-and-retry",
+        "multiple-unsaved-fields",
+        "oversized-input-recovery",
+        "corruption-refusal",
+        "digest-refusal",
+        "loopback-only"
+      ],
+      "cdp_mid_snapshot": null,
+      "cdp_final_value": "日本語",
+      "cdp_event_flags": [
+        {
+          "type": "compositionstart",
+          "composing": false,
+          "trusted": true
+        },
+        {
+          "type": "compositionupdate",
+          "composing": false,
+          "trusted": true
+        },
+        {
+          "type": "beforeinput",
+          "composing": true,
+          "trusted": true
+        },
+        {
+          "type": "input",
+          "composing": true,
+          "trusted": true
+        },
+        {
+          "type": "compositionupdate",
+          "composing": false,
+          "trusted": true
+        },
+        {
+          "type": "beforeinput",
+          "composing": true,
+          "trusted": true
+        },
+        {
+          "type": "input",
+          "composing": true,
+          "trusted": true
+        },
+        {
+          "type": "compositionend",
+          "composing": false,
+          "trusted": false
+        }
+      ]
+    },
+    "hyokeisan": {
+      "artifact_source_head": "690fdbf7b9beeac053231f41317088f733d8c4cd",
+      "ime_probe_head": "6af2b078180977e03923928c012503d58d225d2b",
+      "cid": "bafybeidbvav56fjfnyew7ut6p46cqg4c2og3h3xh6y3u4jphy7vzlpa22e",
+      "files_sha256": {
+        "app.js": "2d8d74ac70d2c062f478132aabb0ca0c62c5294cd105e4d5446703fd2044a4bc",
+        "build-receipt.json": "896909b51eb20038c35d03312e14cea0a2b11b68f9f2423a1cbe4e0af23d8665",
+        "bundle.js": "3d6387a8dbac11a5b49e8297fb118d2789d88c617ce68fec085977f43d4bea22",
+        "client-runtime.json": "e39af345d04d52c639f9c37d5205b2ba8af377d2a0fb06efe371542d0d58b2d5",
+        "index.html": "b1bdca94852fe949bbea348e30ec3955ccc68340bb396c989c5adea440ff8018",
+        "kotoba-client-runtime.js": "7f760128c3a58098123c31ec3dd34b9c871932e3933f2c952facc4ab0e647212",
+        "program.kotoba": "ad4f830cb6a24de15b1960d977f1d3a440a18042e9c8a152f3227576ad3755d3",
+        "program.wasm": "4f19741f6ebdb1ef73ddcdfaac13a60f697d7333459a3b610b10186d2c4fba7f",
+        "style.css": "8876c78c805e16302fae5226e39d06b6239fd20b12954368afa73d973877eacb",
+        "worker.js": "58d606d0b3f22766a1b7288fe911c106aea9606fecfe59a2adb66a4bac8923ab"
+      },
+      "full_harness_sha256": "5583c09ba0c8deeaed49779cb86424596fe81e96e5cbc7712e07cc5a6dcc958b",
+      "cdp_harness_sha256": "a307e322877b96d8f88495ee310b80b6ab2dd5af317ba46ab3fc392797cfc213",
+      "full_checks": [
+        "backup-export-import-cancel-restore",
+        "backup-invalid-both-write-failures-conflict",
+        "grid",
+        "addition",
+        "sum",
+        "recalculate",
+        "cycle",
+        "save-reload",
+        "synthetic-composition-with-concurrent-redraw",
+        "oversized-refusal",
+        "concurrent-tab-refusal",
+        "worker-timeout-retry",
+        "hidden-timeout-retry",
+        "worker-interruption-retry",
+        "storage-failure-retry",
+        "multiple-unsaved-fields",
+        "corrupt-refusal",
+        "digest-refusal",
+        "loopback-only"
+      ],
+      "cdp_mid_snapshot": null,
+      "cdp_final_value": "日本語",
+      "cdp_event_flags": [
+        {
+          "type": "compositionstart",
+          "composing": false,
+          "trusted": true
+        },
+        {
+          "type": "compositionupdate",
+          "composing": false,
+          "trusted": true
+        },
+        {
+          "type": "beforeinput",
+          "composing": true,
+          "trusted": true
+        },
+        {
+          "type": "input",
+          "composing": true,
+          "trusted": true
+        },
+        {
+          "type": "compositionupdate",
+          "composing": false,
+          "trusted": true
+        },
+        {
+          "type": "beforeinput",
+          "composing": true,
+          "trusted": true
+        },
+        {
+          "type": "input",
+          "composing": true,
+          "trusted": true
+        },
+        {
+          "type": "compositionend",
+          "composing": false,
+          "trusted": false
+        }
+      ]
+    },
+    "zuhyo": {
+      "artifact_source_head": "7b622b95fff615b8ea84242e0b16260ba2f2eda4",
+      "ime_probe_head": "e22796cc1031012f1dd915b5bafc7d4692ac2b7e",
+      "cid": "bafybeigbfwvqzlbsrbxcf6z3agadqizbjwftgrgxci2kvej6oxqvqgsy6a",
+      "files_sha256": {
+        "app.js": "7699901ff806b75cd7436f1ca9490c53b9d46524b35ffc94fd75b39322cce355",
+        "build-receipt.json": "cba815f466ef1f7202b764dfbc802097769097d55e465dfc06279f81c217bdd0",
+        "bundle.js": "e1b5db9d0675c57a28f780cf45f8553d2787cdea25e48d076f18c8f30e7b06c3",
+        "client-runtime.json": "977c322d85e27d51bea0c322e8a5952e3cc2810dd9539611a762fd0cbd5ace26",
+        "index.html": "6019f8d9cb65ebd89662d9a6c7defcf63cf8edf7f3643ba91048907f523d4dc3",
+        "kotoba-client-runtime.js": "7f760128c3a58098123c31ec3dd34b9c871932e3933f2c952facc4ab0e647212",
+        "program.kotoba": "b87d865a3978a39fc72b798908653b44fdc0c9bec2bb0008ab1bd91143316cd3",
+        "program.wasm": "e273cfd8ab75d8a70f8a89e6ae2ed3c15bb95cb14fb0ae4be5c67a5091c757fb",
+        "style.css": "ebcefc13e066ce9c491dce785d73caa70161c215cf7f5790260703ec3ee4c5e3",
+        "worker.js": "58d606d0b3f22766a1b7288fe911c106aea9606fecfe59a2adb66a4bac8923ab"
+      },
+      "full_harness_sha256": "c47623c69ab6ca18c8852ce9b96bbbd58efd4769fa46c9b155ddb1820c4972ae",
+      "cdp_harness_sha256": "daedb6e1181b9a27edc51f33a6445e8dd17c832f77b1d5382b9c60dafdcba837",
+      "full_checks": [
+        "backup-export-import-cancel-restore",
+        "backup-invalid-both-write-failures-conflict",
+        "edit",
+        "notes",
+        "add",
+        "remove",
+        "shape",
+        "reorder",
+        "present",
+        "reload",
+        "navigate",
+        "synthetic-composition-with-concurrent-redraw",
+        "oversized-refusal",
+        "concurrent-tab-refusal",
+        "worker-timeout-retry",
+        "hidden-timeout-retry",
+        "worker-interruption-retry",
+        "storage-failure-retry",
+        "multiple-unsaved-fields",
+        "corrupt-refusal",
+        "digest-refusal",
+        "loopback-only"
+      ],
+      "cdp_mid_snapshot": null,
+      "cdp_final_value": "日本語",
+      "cdp_event_flags": [
+        {
+          "type": "compositionstart",
+          "composing": false,
+          "trusted": true
+        },
+        {
+          "type": "compositionupdate",
+          "composing": false,
+          "trusted": true
+        },
+        {
+          "type": "beforeinput",
+          "composing": true,
+          "trusted": true
+        },
+        {
+          "type": "input",
+          "composing": true,
+          "trusted": true
+        },
+        {
+          "type": "compositionupdate",
+          "composing": false,
+          "trusted": true
+        },
+        {
+          "type": "beforeinput",
+          "composing": true,
+          "trusted": true
+        },
+        {
+          "type": "input",
+          "composing": true,
+          "trusted": true
+        },
+        {
+          "type": "compositionend",
+          "composing": false,
+          "trusted": false
+        }
+      ]
+    }
+  },
+  "procedure": [
+    "Build each app with the pinned compiler and canonical broker; import unpinned into an isolated no-routing Kubo node.",
+    "Compare every artifact through the loopback CID gateway with its build output.",
+    "Generate harnesses from each app test, substituting the CID gateway URL and network allowlist; foreground the operated tab for ordinary two-tab actions.",
+    "Run sequentially: full synthetic composition/delayed-redraw and forced hidden-timeout/retry suite, then Chrome DevTools-generated IME input probe."
+  ],
+  "limitations": [
+    "Both IME tests use generated events; they do not qualify a physical OS IME or every browser. CDP compositionend was reported untrusted in these runs.",
+    "An injected timeout demonstrates recovery only; earlier natural hidden-tab Worker timeouts remain unexplained.",
+    "Unsaved input is page-memory-only and lost on reload or termination; crash/power-loss recovery is unqualified.",
+    "No external node, public gateway, DNS, TLS, route cutover, QEMU app execution or legacy data migration was qualified.",
+    "CIDs are local and unpinned; the compiler PR was unmerged. Test harnesses are generated copies, not production code."
+  ]
+}
