@@ -1,0 +1,27 @@
+{
+  "date": "2026-11-02",
+  "scope": "local synthetic build and browser qualification, not release",
+  "appSourceHeadBeforeEvidence": "09f425164e2af3985a12fa661970673ac70e16d6",
+  "amuMergedCommit": "068dcbef96a549517ed31cc5727ce7e4f67279fc",
+  "amuPrHead": "da321093e9557b811cce5129dacd453e300f63a3",
+  "compilerSha256": "2c551579c06a0228029bb06bae177e93126ecbbc37d636d693c471dbac8d1536",
+  "headChecks": "all 33 successful, merge-commit checks separately pending",
+  "filesEqualToPrHeadBuild": {
+    "build-receipt.json": "b3d0fc1d4b4d92a3e53db098e0fe3aa435acd0433aa1ebd7f8fbde7bfe11e9a9",
+    "index.html": "ddaff0527f7fb0684e0044fdc64c502c7b7881f4e0acff235022117387529bd2",
+    "client-runtime.json": "667d312e0cd027e8f0a121b6d31a11f0b8c6905953cfbb26e13070bd99799c1a",
+    "worker.js": "58d606d0b3f22766a1b7288fe911c106aea9606fecfe59a2adb66a4bac8923ab",
+    "bundle.js": "508281a107d040b4e52310afc4640abe782042e9f4d4746d454dc35b349a9fdc",
+    "kotoba-client-runtime.js": "7f760128c3a58098123c31ec3dd34b9c871932e3933f2c952facc4ab0e647212",
+    "program.kotoba": "7b6b1232f828e9a1130cb2e4335f2862151bcafbe87c95ccb8a8f2113fbae927",
+    "program.wasm": "0db90c67dc38b2d9f130dd502100f74641749a9835bd515d90644cbffdb9b80a",
+    "style.css": "ea520c4ed7e07a763a0a7baad3a1e8e9a5705b4347f3d176f6883c5abdb06bee",
+    "app.js": "d0654c6454c0b2c859c1ba70263e3b14f523277dc91bc29d5d74e5f780ad9b49"
+  },
+  "browserResult": "PASS_LEGACY_BROWSER",
+  "limitations": [
+    "synthetic local Chrome only",
+    "no actual old user migration",
+    "no QEMU, fleet trust, external delivery or publication"
+  ]
+}
