@@ -1,0 +1,34 @@
+(ns moji.native-document-host
+  (:export [main])
+  (:require [moji.editor :as doc]))
+(defn item [d :document k :keyword] :document
+  (option-value-of [:option :document] (document-get d k) (document-null)))
+(defn text [d :document] :string
+  (option-value-of [:option :string] (document-string-value d) ""))
+(defn main [] :i64
+  (let [initial (doc/init)
+        changed (doc/step initial "b0" "input" "文書😀\n二行")
+        added (doc/step changed "add-p" "click" "")
+        encoded (doc/browser-encode added)
+        raw (option-value-of [:option :string] encoded "")
+        decoded (doc/browser-decode raw)
+        state (option-value-of [:option :document] decoded (document-null))
+        view (doc/browser-view-node (doc/view state) "BV2|")
+        blocks (item state :blocks)
+        first (option-value-of [:option :document] (document-vector-at blocks 0) (document-null))
+        json "{\"found\":true,\"document\":{\"documentId\":\"old\",\"title\":\"旧\",\"revisionId\":\"r1\",\"body\":[{\"elementId\":\"e1\",\"kind\":\"paragraph\",\"text\":\"一行\\n二行\"}]}}"
+        legacy (doc/legacy-convert json)
+        legacy-state (option-value-of [:option :document] legacy (document-null))
+        legacy-out (doc/browser-encode legacy-state)
+        legacy-raw (option-value-of [:option :string] legacy-out "")]
+    (if (and (option-some?-of [:option :string] encoded)
+             (option-some?-of [:option :document] decoded)
+             (document-equal? state added)
+             (= (document-count blocks) 3)
+             (string=? (text (item first :text)) "文書😀\n二行")
+             (>= (string-index-of view "文書😀\n二行") 0)
+             (not (option-some?-of [:option :document] (doc/browser-decode (string-concat raw "x"))))
+             (option-some?-of [:option :document] legacy)
+             (option-some?-of [:option :string] legacy-out)
+             (= (string-index-of legacy-raw "BS3|2") 0)
+             (>= (string-index-of legacy-raw json) 0)) 0 1)))

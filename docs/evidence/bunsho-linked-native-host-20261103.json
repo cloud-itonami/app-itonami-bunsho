@@ -1,0 +1,119 @@
+{
+  "status": "PASS_BUNSHO_LINKED_HOST",
+  "compilerSHA256": "2c551579c06a0228029bb06bae177e93126ecbbc37d636d693c471dbac8d1536",
+  "host": [
+    "Darwin",
+    "arm64"
+  ],
+  "packagerSHA256": "e95284408f091c8979ef74ece57116a4df2250e61e42074da5dc95ca30264142",
+  "resultBits": 8,
+  "artifacts": {
+    "host": {
+      "unsignedSHA256": "c1bef5479b81900d226c1718cc94d88490a0a814150ee816ec7c927b2e6a3bd3",
+      "lockSHA256": "482c8c948d93bba8f1991e1b896d47f19be3434a5461e48a6ad5e0388fff847b",
+      "sources": {
+        "moji/editor.kotoba": "698d03dfa74100c10cbbf1107ce972b43808b8c6bfbca0528ee3de0550d65ee5",
+        "moji/native_document_host.kotoba": "789234aa14543864b457850aaf7890642bff89d240c196371d8ec1fd3715b152"
+      }
+    },
+    "mutant": {
+      "unsignedSHA256": "da0be9cc3ff33542f0ef1ca4f60af441ee2a72ac2f08c742813c058e2b0d0c09",
+      "lockSHA256": "6d69f6c94a89d2601f17cdb8a3066c980c29bcf64fbb87d6ec7557aad8194ba3",
+      "sources": {
+        "moji/editor.kotoba": "c12e54c44eaa11d82e64a678d1a1de90b0d579824a2adfd8a602a9512474dba0",
+        "moji/native_document_host.kotoba": "789234aa14543864b457850aaf7890642bff89d240c196371d8ec1fd3715b152"
+      }
+    }
+  },
+  "observations": [
+    {
+      "name": "host-check",
+      "exit": 0,
+      "seconds": 0.912,
+      "stdoutSHA256": "dc51b8c96c2d745df3bd5590d990230a482fd247123599548e0632fdbf97fc22",
+      "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "host-compile",
+      "exit": 0,
+      "seconds": 0.92,
+      "stdoutSHA256": "5eecbe362e5bed71e8ccad92d07ce4d186cd0860f9ec293eeb214087352fe8d3",
+      "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "host-extract",
+      "exit": 0,
+      "seconds": 0.008,
+      "stdoutSHA256": "2ebf756eab6ac2da37c99c8a65f1a57534d176589898c465992ec7bde29b3ed0",
+      "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "host-package",
+      "exit": 0,
+      "seconds": 0.008,
+      "stdoutSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "linked-model",
+      "exit": 0,
+      "seconds": 0.4,
+      "stdoutSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "mutant-check",
+      "exit": 0,
+      "seconds": 0.913,
+      "stdoutSHA256": "dc51b8c96c2d745df3bd5590d990230a482fd247123599548e0632fdbf97fc22",
+      "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "mutant-compile",
+      "exit": 0,
+      "seconds": 0.918,
+      "stdoutSHA256": "739c8dc26b62e4e66b12a2970690324ff7a91075052ac6a4a762b558fb7db718",
+      "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "mutant-extract",
+      "exit": 0,
+      "seconds": 0.008,
+      "stdoutSHA256": "f0a52ea0acb0b9d0ec3ce92f446e4a700ff8eef6c1aefbad71a6f1ad3e564d51",
+      "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "mutant-package",
+      "exit": 0,
+      "seconds": 0.008,
+      "stdoutSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "mutation-detected",
+      "exit": 1,
+      "seconds": 0.484,
+      "stdoutSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "publicTestKeysOnly": true,
+  "observerSHA256": "1c57524e77e8a62b89196ae8cc0651a12ec8cfb7abce142ac9d26240adea6143",
+  "stagerSHA256": "f9af49b01138cef435ea7838b6a4d66e01f38241e1f3e3722b2a0edcbe963d24",
+  "browserStagerSHA256": "9daf87bade044e939b8a4085fefaa08544740514c1b3066ceae7504172f20b9b",
+  "nativeGateSHA256": "84dea6644db292aaede4d93c39f326cdf41b83ad7482632c969dd6cae9bf9e37",
+  "browserBuild": {
+    "wasmSha256": "5853d737677abe80ee26368e73515598f724d6cde48988c7ebd496a646c0e30c",
+    "compilerSha256": "2c551579c06a0228029bb06bae177e93126ecbbc37d636d693c471dbac8d1536",
+    "sourceSha256": "6bb9ec37aecaf31d55e36042602f4903e303ae1677121afc69c49ac60d8d3705",
+    "brokerRevision": "e00ae75e1c589f76b4f53a88a5e3256c98c9e162",
+    "brokerSha256": "7f760128c3a58098123c31ec3dd34b9c871932e3933f2c952facc4ab0e647212",
+    "workerSha256": "58d606d0b3f22766a1b7288fe911c106aea9606fecfe59a2adb66a4bac8923ab"
+  },
+  "hostSourceSha256": "698d03dfa74100c10cbbf1107ce972b43808b8c6bfbca0528ee3de0550d65ee5",
+  "scope": "macOS Arm native synthetic data; no Itonami OS GUI, QEMU, durable storage or release",
+  "limitations": [
+    "macOS Arm synthetic native host only; no Itonami OS, QEMU, filesystem persistence or release.",
+    "Host build changes only the export declaration of the browser-staged unit; migration is exercised on synthetic JSON."
+  ]
+}
