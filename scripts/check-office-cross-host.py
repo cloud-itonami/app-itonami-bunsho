@@ -8,6 +8,7 @@ independent network/power failure domains, public availability, DNS or release.
 """
 import hashlib,importlib.util,json,os,re,secrets,shlex,socket,subprocess,sys,time,urllib.request
 from pathlib import Path
+from office_candidate_integrity import validate
 if len(sys.argv)!=11:raise SystemExit(__doc__)
 amu,bunsho,hyokeisan,zuhyo,out,chrome=map(lambda s:Path(s).resolve(),sys.argv[1:7]);host,remote,local_ip,remote_ip=sys.argv[7:]
 if not re.fullmatch(r'[a-zA-Z0-9.-]+',host) or not re.fullmatch(r'/Users/[A-Za-z0-9_-]+/github/workspaces/codex/[A-Za-z0-9_-]+',remote):raise ValueError('unsafe remote')
@@ -51,10 +52,7 @@ try:
  remote_call('python3','-c',configcode,remote,remote_ip,rp,ra,rg)
  builds={'bunsho':bunsho,'hyokeisan':hyokeisan,'zuhyo':zuhyo};results={}
  for name,build in builds.items():
-  files=sorted(p for p in build.iterdir() if p.is_file())
-  if len(files)!=10 or any(p.is_symlink() for p in files):raise ValueError(name+' unexpected files')
-  receipt=json.loads((build/'build-receipt.json').read_text())
-  if sha((build/'program.kotoba').read_bytes())!=receipt['sourceSha256'] or sha((build/'program.wasm').read_bytes())!=receipt['wasmSha256']:raise ValueError(name+' stale build')
+  receipt=validate(build)
   cid=local('add','-Qr','--cid-version=1','--raw-leaves=true','--chunker=size-262144','--hash=sha2-256','--pin=true',build).splitlines()[-1]
   results[name]={'cid':cid,'build':receipt,'files':{}}
  for _ in range(100):

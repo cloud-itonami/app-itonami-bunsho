@@ -6,6 +6,7 @@ No external peers, public pin, DNS/TLS, independent host, production route or re
 """
 import hashlib, importlib.util, json, os, secrets, socket, subprocess, sys, time, urllib.request
 from pathlib import Path
+from office_candidate_integrity import validate
 if len(sys.argv)!=7: raise SystemExit(__doc__)
 amu,bunsho,hyokeisan,zuhyo,out,chrome=map(lambda s:Path(s).resolve(),sys.argv[1:])
 out.mkdir(parents=True,exist_ok=False)
@@ -30,10 +31,7 @@ try:
   (root/'config').write_text(json.dumps(cfg))
  builds={'bunsho':bunsho,'hyokeisan':hyokeisan,'zuhyo':zuhyo};results={}
  for name,build in builds.items():
-  files=sorted(p for p in build.iterdir() if p.is_file())
-  if len(files)!=10 or any(p.is_symlink() for p in files):raise ValueError(name+' unexpected files')
-  receipt=json.loads((build/'build-receipt.json').read_text())
-  if sha((build/'program.kotoba').read_bytes())!=receipt['sourceSha256'] or sha((build/'program.wasm').read_bytes())!=receipt['wasmSha256']:raise ValueError(name+' stale receipt')
+  receipt=validate(build)
   cid=call('provider','add','-Qr','--cid-version=1','--raw-leaves=true','--chunker=size-262144','--hash=sha2-256','--pin=true',build).splitlines()[-1]
   results[name]={'cid':cid,'build':receipt,'files':{}}
  # Wait for standalone commands to release their repo locks before starting.
