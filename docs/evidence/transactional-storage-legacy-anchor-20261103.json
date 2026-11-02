@@ -1,0 +1,33 @@
+{
+  "status": "PASS_EXPERIMENTAL_IDB_LEGACY_ANCHOR",
+  "baseCommit": "736265bbb1cbdadb517bec1d9f9c9cd0b811419e",
+  "adapterSha256": "b4bbfd0637024800308d56a4f4bfad9d9420552841acda495f239c018eb0999d",
+  "observerSha256": "7891576fbeccd34efd3c34671a2e977b77a4cd1b871c9fd687f59222a34757c9",
+  "resultSha256": "96e90051af427d2b294c53586572eac4b6d93c8a75f2d27a1c122dc5520bd669",
+  "result": {
+    "status": "PASS_TRANSACTIONAL_STORAGE_SYNTHETIC",
+    "sourceSha256": "b4bbfd0637024800308d56a4f4bfad9d9420552841acda495f239c018eb0999d",
+    "checks": [
+      "two-tab-competing-writers",
+      "revision-aba-refusal",
+      "transaction-abort-preserves-state-and-backup",
+      "backup-and-state-atomic",
+      "invalid-unicode-and-oversize",
+      "third-tab-reopen",
+      "clean-browser-process-restart",
+      "legacy-anchor-preserved",
+      "strict-durability-required",
+      "unexpected-schema-refused",
+      "legacy-localstorage-untouched",
+      "corrupt-record-refusal"
+    ],
+    "scope": "synthetic same-origin Chrome tabs; experimental adapter only, not integrated; no old-client coordination, app migration, crash/power-loss, QEMU or release"
+  },
+  "negativeControl": {
+    "mutation": "remove legacy anchor comparison",
+    "adapterSha256": "f55551d4d70c4ef65c90c8966b6b1d9887941de49d74837e2f68998ed82b67c8",
+    "exit": 1,
+    "detectedAt": "mismatched anchor assertion"
+  },
+  "scope": "synthetic component only; caller-supplied baseline is not a user approval; no app UI, automatic divergence detection, coordinated old writers, real data migration, crash/power-loss or release"
+}

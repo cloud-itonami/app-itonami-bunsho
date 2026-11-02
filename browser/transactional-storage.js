@@ -2,7 +2,7 @@
 // this module only performs bounded IndexedDB I/O and transactional CAS.
 // It is not wired into the application, does not migrate localStorage, and
 // cannot serialize legacy writers which do not use this database.
-const FORMAT = 'itonami.office.transactional-state.v1';
+const FORMAT = 'itonami.office.transactional-state.v2';
 const STORE = 'records';
 const CURRENT = 'current';
 const ENCODER = new TextEncoder();
@@ -20,27 +20,30 @@ function scalarString(value) {
   return true;
 }
 function validateValue(value, maximum) {
-  return scalarString(value) && ENCODER.encode(value).length <= maximum;
+  return typeof value === 'string' && value.length <= maximum &&
+    scalarString(value) && ENCODER.encode(value).length <= maximum;
 }
 function validRecord(record, maximum) {
   return record && typeof record === 'object' && !Array.isArray(record) &&
-    Object.keys(record).sort().join(',') === 'format,revision,value' &&
+    Object.keys(record).sort().join(',') === 'format,legacyAnchor,revision,value' &&
     record.format === FORMAT && Number.isSafeInteger(record.revision) &&
-    record.revision > 0 && validateValue(record.value, maximum);
+    record.revision > 0 && validateValue(record.value, maximum) &&
+    (record.legacyAnchor === null || validateValue(record.legacyAnchor, maximum));
 }
 function decodeRecord(record, maximum) {
-  if (record === undefined) return { revision: 0, value: null };
+  if (record === undefined) return { revision: 0, value: null, legacyAnchor: null };
   if (!validRecord(record, maximum)) throw Error('invalid stored state');
-  return { revision: record.revision, value: record.value };
+  return { revision: record.revision, value: record.value, legacyAnchor: record.legacyAnchor };
 }
 function validExpected(expected, maximum) {
   return expected && Number.isSafeInteger(expected.revision) && expected.revision >= 0 &&
-    ((expected.revision === 0 && expected.value === null) ||
-     (expected.revision > 0 && validateValue(expected.value, maximum)));
+    ((expected.revision === 0 && expected.value === null && expected.legacyAnchor === null) ||
+     (expected.revision > 0 && validateValue(expected.value, maximum) &&
+      (expected.legacyAnchor === null || validateValue(expected.legacyAnchor, maximum))));
 }
 
 export async function openTransactionalStore(name, maximum) {
-  if (!/^itonami\.office\.(bunsho|hyokeisan|zuhyo)\.v1$/.test(name) ||
+  if (!/^itonami\.office\.(bunsho|hyokeisan|zuhyo)\.v2$/.test(name) ||
       !Number.isSafeInteger(maximum) || maximum < 1 || maximum > 1000000) throw Error('invalid store configuration');
   const db = await new Promise((resolve, reject) => {
     let failed = false;
@@ -85,8 +88,13 @@ export async function openTransactionalStore(name, maximum) {
     });
   }
 
-  function compareAndSwap(expected, next, backup = false) {
-    if (!validExpected(expected, maximum) || !validateValue(next, maximum) || typeof backup !== 'boolean')
+  // `initialLegacyAnchor` records the exact legacy value selected by the
+  // caller during initial import. It never reads or mutates localStorage;
+  // a host must obtain explicit user choice and handle later divergence.
+  function compareAndSwap(expected, next, backup = false, initialLegacyAnchor = null) {
+    if (!validExpected(expected, maximum) || !validateValue(next, maximum) || typeof backup !== 'boolean' ||
+        !(initialLegacyAnchor === null || validateValue(initialLegacyAnchor, maximum)) ||
+        (expected.revision !== 0 && initialLegacyAnchor !== null))
       return Promise.reject(Error('invalid state request'));
     return new Promise((resolve, reject) => {
       let tx, outcome;
@@ -100,15 +108,17 @@ export async function openTransactionalStore(name, maximum) {
         request.onsuccess = () => {
           try {
             const current = decodeRecord(request.result, maximum);
-            if (current.revision !== expected.revision || current.value !== expected.value) {
+            if (current.revision !== expected.revision || current.value !== expected.value ||
+                current.legacyAnchor !== expected.legacyAnchor) {
               outcome = { status: 'conflict', current };
               return;
             }
             if (current.revision === Number.MAX_SAFE_INTEGER) throw Error('revision exhausted');
             const revision = current.revision + 1;
             if (backup && current.revision > 0) store.add(request.result, 'backup:' + current.revision);
-            store.put({ format: FORMAT, revision, value: next }, CURRENT);
-            outcome = { status: 'committed', current: { revision, value: next } };
+            const legacyAnchor = current.revision === 0 ? initialLegacyAnchor : current.legacyAnchor;
+            store.put({ format: FORMAT, revision, value: next, legacyAnchor }, CURRENT);
+            outcome = { status: 'committed', current: { revision, value: next, legacyAnchor } };
           } catch (_) { tx.abort(); }
         };
         tx.oncomplete = () => outcome ? resolve(outcome) : reject(Error('storage result missing'));
