@@ -1,0 +1,89 @@
+{
+  "status": "LOCAL_OFFLINE_CANDIDATE",
+  "kubo_version": "ipfs version 0.41.0",
+  "flags": [
+    "--recursive",
+    "--quieter",
+    "--cid-version=1",
+    "--raw-leaves=true",
+    "--chunker=size-262144",
+    "--hash=sha2-256",
+    "--preserve-mode=false",
+    "--preserve-mtime=false",
+    "--empty-dirs=false",
+    "--pin=false"
+  ],
+  "apps": {
+    "bunsho": {
+      "cid": "bafybeihkjyhrp3guqmbwnrmsclvp5lyrqzrmleygwd6foy2fvounf2x5sa",
+      "files": {
+        "app.js": "264e6b7f128a131503b4ac359a1d696690c8c34eaa52173ca9f6fb9eb7419bd0",
+        "build-receipt.json": "465c999e0cf14d7ff11bd03df8dfa85ecb65d9e965c81423513a72ec713308e6",
+        "bundle.js": "ab071440f7274c88295e3a7d0664756eb51bd39b3aae3e74f83abea6d7fa956e",
+        "client-runtime.json": "71af64b5955b3338a4f01239a99a74480ed087a4aa42725e5f300785ddad84a1",
+        "index.html": "8c05d7670096b4627ee0b3c4bee1c6d16e040ce1dc3051a79efb04fb985a2e4d",
+        "kotoba-client-runtime.js": "7f760128c3a58098123c31ec3dd34b9c871932e3933f2c952facc4ab0e647212",
+        "program.kotoba": "8c44d925da01a61dc76fc246914d665c527c6cd2719c1b0e158db2d839cfc1d5",
+        "program.wasm": "7da4e515d108da7f80c8ff83e72c78be5781d8b7847462b9e8f7a317b7cc5de1",
+        "style.css": "78ec5d485b1290768c538c3ba1687e550b7c3af3d2bc4caccc49fd90548c0b86",
+        "worker.js": "58d606d0b3f22766a1b7288fe911c106aea9606fecfe59a2adb66a4bac8923ab"
+      },
+      "note": "offline unpinned candidate only"
+    },
+    "hyokeisan": {
+      "cid": "bafybeiakj5ltt2kkby4fe4dtw52zcontcjdinklgpccvuewc6saemgpx3a",
+      "files": {
+        "app.js": "127e40edfe23f8090ed3ad7cb78069906ce2398f3e296623d4a1873cb248d6ac",
+        "build-receipt.json": "896909b51eb20038c35d03312e14cea0a2b11b68f9f2423a1cbe4e0af23d8665",
+        "bundle.js": "3d6387a8dbac11a5b49e8297fb118d2789d88c617ce68fec085977f43d4bea22",
+        "client-runtime.json": "e39af345d04d52c639f9c37d5205b2ba8af377d2a0fb06efe371542d0d58b2d5",
+        "index.html": "4efac033bb959b5260800f5c579a9af76883d028fbafb802e942365cc2ba5dc7",
+        "kotoba-client-runtime.js": "7f760128c3a58098123c31ec3dd34b9c871932e3933f2c952facc4ab0e647212",
+        "program.kotoba": "ad4f830cb6a24de15b1960d977f1d3a440a18042e9c8a152f3227576ad3755d3",
+        "program.wasm": "4f19741f6ebdb1ef73ddcdfaac13a60f697d7333459a3b610b10186d2c4fba7f",
+        "style.css": "8876c78c805e16302fae5226e39d06b6239fd20b12954368afa73d973877eacb",
+        "worker.js": "58d606d0b3f22766a1b7288fe911c106aea9606fecfe59a2adb66a4bac8923ab"
+      },
+      "note": "offline unpinned candidate only"
+    },
+    "zuhyo": {
+      "cid": "bafybeicsqfc3lxfiwi2ds47vcavwmnrdkvvd35me3sle7565qaohce5jii",
+      "files": {
+        "app.js": "6a09512fa2b0d2c0c518b8be941c3cfe55a247cfd77ddb37aa39bd459efcf7a2",
+        "build-receipt.json": "cba815f466ef1f7202b764dfbc802097769097d55e465dfc06279f81c217bdd0",
+        "bundle.js": "e1b5db9d0675c57a28f780cf45f8553d2787cdea25e48d076f18c8f30e7b06c3",
+        "client-runtime.json": "977c322d85e27d51bea0c322e8a5952e3cc2810dd9539611a762fd0cbd5ace26",
+        "index.html": "eb9bc887fab7e56f8593cb0a9b55c646ea7f627216ad07cecbec3b4b8a8b24c0",
+        "kotoba-client-runtime.js": "7f760128c3a58098123c31ec3dd34b9c871932e3933f2c952facc4ab0e647212",
+        "program.kotoba": "b87d865a3978a39fc72b798908653b44fdc0c9bec2bb0008ab1bd91143316cd3",
+        "program.wasm": "e273cfd8ab75d8a70f8a89e6ae2ed3c15bb95cb14fb0ae4be5c67a5091c757fb",
+        "style.css": "ebcefc13e066ce9c491dce785d73caa70161c215cf7f5790260703ec3ee4c5e3",
+        "worker.js": "58d606d0b3f22766a1b7288fe911c106aea9606fecfe59a2adb66a4bac8923ab"
+      },
+      "note": "offline unpinned candidate only"
+    }
+  },
+  "source": {
+    "amu_pr": "https://github.com/kotoba-lang/amu/pull/1779",
+    "amu_head": "da321093e9557b811cce5129dacd453e300f63a3",
+    "app_heads": {
+      "bunsho": "a46330b2156c52ce3f4d27366a0cf967c3925e3b",
+      "hyokeisan": "ac37fc4d249a9818c13373ef0375763c6a6bf945",
+      "zuhyo": "298d591da3b3b5c6a2d4d6d9f0be8674d4300ae8"
+    },
+    "compiler_sha256": "2c551579c06a0228029bb06bae177e93126ecbbc37d636d693c471dbac8d1536",
+    "broker_revision": "e00ae75e1c589f76b4f53a88a5e3256c98c9e162"
+  },
+  "procedure": [
+    "Rebuild each app with scripts/build-browser.py, the pinned Amu candidate and broker revision.",
+    "Compare each output directory byte-for-byte with its prior local tested build.",
+    "Use an isolated Kubo test repository with the offline flag; calculate only-hash, add without pinning, and calculate only-hash again with the recorded flags.",
+    "Read each file from the local CID/path and compare byte-for-byte with the corresponding build output."
+  ],
+  "limitations": [
+    "Local same-machine candidate evidence; not independent reproducibility or a release attestation.",
+    "No network publication, pin, remote provider, DNS, TLS, or public route was tested.",
+    "No browser was launched from an IPFS gateway; OS/QEMU and legacy migration remain unqualified.",
+    "The compiler candidate was unmerged when these artifacts were built; all CIDs change if artifact bytes or importer options change."
+  ]
+}
