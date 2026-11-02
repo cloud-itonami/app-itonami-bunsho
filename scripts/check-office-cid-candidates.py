@@ -60,8 +60,8 @@ try:
   try:
    target=pipe.call('Target.createTarget',{'url':'about:blank'})['targetId'];session=pipe.call('Target.attachToTarget',{'targetId':target,'flatten':True})['sessionId']
    pipe.call('Network.enable',{},session);pipe.call('Page.enable',{},session);pipe.call('Page.navigate',{'url':results[name]['base']+'index.html'},session);pipe.call('Page.bringToFront',{},session)
-   def ev(expr):
-    r=pipe.call('Runtime.evaluate',{'expression':expr,'returnByValue':True},session)
+   def ev(expr,awaited=False):
+    r=pipe.call('Runtime.evaluate',{'expression':expr,'returnByValue':True,'awaitPromise':awaited},session)
     if 'exceptionDetails' in r:raise ValueError(r['exceptionDetails'])
     return r.get('result',{}).get('value')
    def wait(expr,label):
@@ -78,12 +78,18 @@ try:
    key={'bunsho':'itonami.bunsho.candidate.bs1','hyokeisan':'itonami.hyokeisan.candidate.hs1','zuhyo':'itonami.zuhyo.candidate.zs1'}[name]
    selector='[data-k='+field+']';wait('document.querySelector('+json.dumps(selector)+') !== null','initial')
    ev('(()=>{let e=document.querySelector('+json.dumps(selector)+');e.value='+json.dumps(value,ensure_ascii=False)+";e.dispatchEvent(new Event('input',{bubbles:true}))})()")
-   wait('localStorage.getItem('+json.dumps(key)+')?.includes('+json.dumps(value,ensure_ascii=False)+") && document.getElementById('status').textContent==='保存しました'",'save')
+   idb=json.loads((builds[name]/'client-runtime.json').read_text())['local-state']['adapter']=='indexeddb'
+   def read_saved():
+    if not idb:return ev('localStorage.getItem('+json.dumps(key)+')')
+    return ev('new Promise((resolve,reject)=>{const r=indexedDB.open("itonami.office.bunsho.v2",1);r.onsuccess=()=>{const d=r.result,t=d.transaction("records","readonly"),g=t.objectStore("records").get("current");g.onsuccess=()=>resolve(g.result?.value??null);g.onerror=()=>reject(Error("read"));t.oncomplete=()=>d.close()};r.onerror=()=>reject(Error("open"))})',True)
+   wait("document.getElementById('status').textContent==='保存しました'",'save')
+   saved=read_saved()
+   if not isinstance(saved,str) or value not in saved:raise ValueError(name+' saved value missing')
    if name=='hyokeisan':wait("document.querySelector('[data-k=c0]')?.parentElement.querySelector('.value')?.textContent==='1.5'",'decimal result')
-   if name=='zuhyo' and not ev('localStorage.getItem('+json.dumps(key)+").startsWith('ZS2|')"):raise ValueError('multiline version missing')
-   saved=ev('localStorage.getItem('+json.dumps(key)+')');ev('window.__oldDocument=true');pipe.call('Page.reload',{},session)
+   if name=='zuhyo' and not saved.startswith('ZS2|'):raise ValueError('multiline version missing')
+   ev('window.__oldDocument=true');pipe.call('Page.reload',{},session)
    wait('window.__oldDocument !== true && document.querySelector('+json.dumps(selector)+')?.value === '+json.dumps(value,ensure_ascii=False),'reload')
-   if ev('localStorage.getItem('+json.dumps(key)+')')!=saved:raise ValueError(name+' reload altered bytes')
+   if read_saved()!=saved:raise ValueError(name+' reload altered bytes')
    if name=='hyokeisan':wait("document.querySelector('[data-k=c0]')?.parentElement.querySelector('.value')?.textContent==='1.5'",'decimal reload')
    requests=[e['params']['request']['url'] for e in pipe.events if e.get('method')=='Network.requestWillBeSent']
    if not requests or any(not x.startswith(results[name]['base']) for x in requests):raise ValueError(name+' unexpected network request '+repr(requests))

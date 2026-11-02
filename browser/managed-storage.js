@@ -28,5 +28,5 @@ export async function openManagedStore(name, maximum, readLegacy) {
     } catch (_) { return { status: 'legacy-unreadable-after-commit', current: result.current }; }
     return result;
   }
-  return { inspect, commit, readLatestBackup: store.readLatestBackup, close: store.close };
+  return { inspect, commit, readCurrent: store.read, readLatestBackup: store.readLatestBackup, close: store.close };
 }
