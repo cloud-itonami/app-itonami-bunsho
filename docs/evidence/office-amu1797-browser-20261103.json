@@ -1,0 +1,246 @@
+{
+  "status": "PASS_SYNTHETIC_OFFICE_AMU_1797_BROWSER",
+  "date": "2026-11-03",
+  "compilerPR": "https://github.com/kotoba-lang/amu/pull/1797",
+  "compilerCommit": "67ddfc45a15b1201609f9d31c3e658bbac2a23f5",
+  "compilerSha256": "60afafaa2a363a9ad706213912730c7e2ba054ec4a066846d44551dd333ab51d",
+  "browser": "Google Chrome 156.0.8078.74 headless",
+  "browserExecutableSha256": "cf864393a84aa983ba58feea2c24050748e39738591205ecaa54b2c1199ad28c",
+  "apps": [
+    {
+      "issue": "JUN-703",
+      "sourceHead": "2c03c8ae7bc2ebdc28a4d7a343a7cef0831f5b95",
+      "uiObserverSha256": "a049ae5181e0636544ce5c3192da7eabc4c5023b0d79ca56599a7434272d1ea2",
+      "modelObserverSha256": "bc02d9aef71cd9c492ba6e17587e54941f4b4ea68a7a3d844951900697333d3d",
+      "buildReceipt": {
+        "wasmSha256": "7dc54bebb853d35193770891b30453c3830fbc8df214d38fa03870db2f681a49",
+        "compilerSha256": "60afafaa2a363a9ad706213912730c7e2ba054ec4a066846d44551dd333ab51d",
+        "sourceSha256": "1867560228b9b5ae5875f70fbf92f53e246a5d4c6ba3c196f44113e4414bff96",
+        "brokerRevision": "e00ae75e1c589f76b4f53a88a5e3256c98c9e162",
+        "brokerSha256": "7f760128c3a58098123c31ec3dd34b9c871932e3933f2c952facc4ab0e647212",
+        "workerSha256": "58d606d0b3f22766a1b7288fe911c106aea9606fecfe59a2adb66a4bac8923ab",
+        "draftPolicyRevision": "c28c8b551d696df780dddff5064ac530ae29ff2f",
+        "draftPolicySourceSha256": "14c1b5ebb9cd6f663ff08722f89599efe0af28ebde9bc998232d43a044623baf",
+        "draftPolicyWasmSha256": "447ecbed8b4023a06e1d8ed4bb1c457b2b35472519314169749ca6a5e3b0bcca",
+        "didSha256": "31149ca88400ef1cb30d9787c060512db335d14f9a1145a9fad2b1a3b61176cd",
+        "transactionalStorageSha256": "3d83f73142bd053dadb82d23d8e220ee9f3490515568b048d95f2ac1954c5dcf",
+        "managedStorageSha256": "f48d45cedf89be861f1a3376e04ded9a19c2914e3cbd4756326b1799ab7a14c0"
+      },
+      "oldProgramWasmSha256": "5b1d61ca825cdf916128149fd537904eb5a76c0a64ba9ec0875e17d0a394f991",
+      "uiResult": {
+        "status": "PASS_BUNSHO_IDB_UI_SYNTHETIC",
+        "checks": [
+          "new-document-save-reload",
+          "stale-tab-conflict-preserves-draft",
+          "stale-revision-draft-preview-only",
+          "backup-preview-and-atomic-restore",
+          "save-abort-reload-recover-draft-and-retry",
+          "legacy-session-draft-preview-only",
+          "restore-abort-rolls-back-backup",
+          "postcommit-restore-truthful-warning",
+          "postcommit-save-truthful-warning",
+          "legacy-preview-explicit-trusted-confirm",
+          "legacy-copy-and-old-backup-preserved",
+          "old-backup-preview",
+          "old-writer-divergence-freezes",
+          "unfinished-and-late-composition-journaled",
+          "both-divergent-branches-and-unsaved-draft-export",
+          "migration-keyboard-cancel-preserves",
+          "invalid-legacy-refusal",
+          "invalid-utf16-legacy-export",
+          "migration-preview-race-refusal",
+          "migration-transaction-abort",
+          "migration-postcommit-divergence-preserved"
+        ],
+        "scope": "synthetic Chrome loopback; no real user data, atomic cross-store coordination, crash/power-loss, QEMU or release"
+      },
+      "modelResult": {
+        "compilerSha256": "60afafaa2a363a9ad706213912730c7e2ba054ec4a066846d44551dd333ab51d",
+        "sourceSha256": "1867560228b9b5ae5875f70fbf92f53e246a5d4c6ba3c196f44113e4414bff96",
+        "wasmSha256": "7dc54bebb853d35193770891b30453c3830fbc8df214d38fa03870db2f681a49",
+        "cases": [
+          "init",
+          "multiline",
+          "multiline-reload",
+          "legacy-multiline",
+          "legacy-multiline-reload",
+          "legacy-original",
+          "no-legacy-original",
+          "corrupt-legacy-original",
+          "bad-multiline-version",
+          "edit",
+          "view",
+          "preview",
+          "view-corrupt",
+          "reload",
+          "corrupt",
+          "oversized",
+          "oversized-state",
+          "badargc",
+          "badkind",
+          "no-write",
+          "no-args"
+        ]
+      }
+    },
+    {
+      "issue": "JUN-704",
+      "sourceHead": "08221c2ceaf7da17b2fc1b67e8f27d88768f2dca",
+      "uiObserverSha256": "d7af4b79abaeab4ec5cd1a7647b2b2e3d88b46425daccd3b1895c45ebdc8c269",
+      "modelObserverSha256": "ea63dac8c57c3b8f8c9407c78faa811db185d037f6f52fc3533af3fbb4d95ddf",
+      "buildReceipt": {
+        "wasmSha256": "3de8dc510ddb68ee1e1cf450d36fab791a004478bc9b1b5fbdb3f3619a44e8c6",
+        "compilerSha256": "60afafaa2a363a9ad706213912730c7e2ba054ec4a066846d44551dd333ab51d",
+        "sourceSha256": "378e9f802a309fc10b5f015afd80118b0bc6a10a8c2a269958d666fdd734d5e8",
+        "brokerRevision": "e00ae75e1c589f76b4f53a88a5e3256c98c9e162",
+        "brokerSha256": "7f760128c3a58098123c31ec3dd34b9c871932e3933f2c952facc4ab0e647212",
+        "workerSha256": "58d606d0b3f22766a1b7288fe911c106aea9606fecfe59a2adb66a4bac8923ab",
+        "draftPolicyRevision": "c28c8b551d696df780dddff5064ac530ae29ff2f",
+        "draftPolicySourceSha256": "14c1b5ebb9cd6f663ff08722f89599efe0af28ebde9bc998232d43a044623baf",
+        "draftPolicyWasmSha256": "447ecbed8b4023a06e1d8ed4bb1c457b2b35472519314169749ca6a5e3b0bcca",
+        "didSha256": "4949be2174337d03be51a68e95eb014fab5062bd5e4371fd2110be28895449a9",
+        "storageRevision": "d569c4cc7e884c58dc5867c38731c9465bac70dc",
+        "transactionalStorageSha256": "3d83f73142bd053dadb82d23d8e220ee9f3490515568b048d95f2ac1954c5dcf",
+        "managedStorageSha256": "f48d45cedf89be861f1a3376e04ded9a19c2914e3cbd4756326b1799ab7a14c0"
+      },
+      "oldProgramWasmSha256": "1d496629211de9b299428bd3a1f4137b5a58692fc3e088a35a88443f8f0fa996",
+      "uiResult": {
+        "status": "PASS_HYOKEISAN_IDB_UI_SYNTHETIC",
+        "checks": [
+          "new-document-save-reload",
+          "stale-tab-conflict-preserves-draft",
+          "stale-revision-draft-preview-only",
+          "backup-preview-and-atomic-restore",
+          "save-abort-reload-recover-draft-and-retry",
+          "legacy-session-draft-preview-only",
+          "restore-abort-rolls-back-backup",
+          "postcommit-restore-truthful-warning",
+          "postcommit-save-truthful-warning",
+          "legacy-preview-explicit-trusted-confirm",
+          "legacy-copy-and-old-backup-preserved",
+          "old-backup-preview",
+          "old-writer-divergence-freezes",
+          "unfinished-and-late-composition-journaled",
+          "both-divergent-branches-and-unsaved-draft-export",
+          "migration-keyboard-cancel-preserves",
+          "invalid-legacy-refusal",
+          "invalid-utf16-legacy-export",
+          "migration-preview-race-refusal",
+          "migration-transaction-abort",
+          "migration-postcommit-divergence-preserved"
+        ],
+        "scope": "synthetic Chrome loopback; no real user data, atomic cross-store coordination, crash/power-loss, QEMU or release"
+      },
+      "modelResult": {
+        "sourceSha256": "a2f3db9f12598911cd9b53b92649b647fee3bd31f0d02d850945c6d3b740b80a",
+        "compilerSha256": "60afafaa2a363a9ad706213912730c7e2ba054ec4a066846d44551dd333ab51d",
+        "browser": {
+          "product": "Chrome/156.0.8078.74",
+          "protocol": "1.3"
+        },
+        "results": {
+          "basic": {
+            "report": "{:status :ok :result 0 :fuel {:initial 25000000 :remaining 24990610}}",
+            "wasmSha256": "2482def98c8081f7aa657f0aa86ec24bc1d9cf77b2e6bc9e2cb6c245a15a0b2a"
+          },
+          "duplicate-cell-mutant": {
+            "report": "{:status :ok :result 1 :fuel {:initial 25000000 :remaining 24990620}}",
+            "wasmSha256": "2c6d670787690c4c3b4164fcdb8c54efdf933bc408657dd3e222493496436b6a"
+          },
+          "duplicate-sheet-mutant": {
+            "report": "{:status :ok :result 1 :fuel {:initial 25000000 :remaining 24991589}}",
+            "wasmSha256": "e965c3b7a50e35c1634b2bde7506d86742e19c12d1a552af8d7bd63762584ddd"
+          },
+          "incremental-256": {
+            "report": "{:status :ok :result 0 :fuel {:initial 25000000 :remaining 19287176}}",
+            "wasmSha256": "e872a366eef6c2bb8967068f52ea791c5679e8f76874d443c7441c04e937f340"
+          },
+          "prebuilt-1024-edit": {
+            "report": "{:status :ok :result 0 :fuel {:initial 25000000 :remaining 24619263}}",
+            "wasmSha256": "c767a9b22c14fdb4b15a0b9821d40cac63b1dcbcadc02bcd6c035993c0c4ec2a"
+          }
+        },
+        "limitations": [
+          "synthetic fixtures",
+          "no UI, legacy import, QEMU or release qualification"
+        ]
+      }
+    },
+    {
+      "issue": "JUN-705",
+      "sourceHead": "f33067006d350ef5ab7345d94c0238894ed0db90",
+      "uiObserverSha256": "811c1ff03d76401a1f029410bf9f06337d91aaefb3ed1973c6442d40c588af8d",
+      "modelObserverSha256": "8fefb0b703cbb68dacede767fcb60756a3782a4f1c1a7e25fcd02ad833de0755",
+      "buildReceipt": {
+        "wasmSha256": "b891164437fe274098e140de185cadb97c7bb4bd46456e6e12884025d11d88c6",
+        "compilerSha256": "60afafaa2a363a9ad706213912730c7e2ba054ec4a066846d44551dd333ab51d",
+        "sourceSha256": "38ea36c2a39d90346e59c3df21141862a450fd4f871bfd169b1426d19899f917",
+        "brokerRevision": "e00ae75e1c589f76b4f53a88a5e3256c98c9e162",
+        "brokerSha256": "7f760128c3a58098123c31ec3dd34b9c871932e3933f2c952facc4ab0e647212",
+        "workerSha256": "58d606d0b3f22766a1b7288fe911c106aea9606fecfe59a2adb66a4bac8923ab",
+        "draftPolicyRevision": "c28c8b551d696df780dddff5064ac530ae29ff2f",
+        "draftPolicySourceSha256": "14c1b5ebb9cd6f663ff08722f89599efe0af28ebde9bc998232d43a044623baf",
+        "draftPolicyWasmSha256": "447ecbed8b4023a06e1d8ed4bb1c457b2b35472519314169749ca6a5e3b0bcca",
+        "didSha256": "c0d2281c76eca67add88ef2ad86201f5185eea70a9d404156dcc0fa0ee5737da",
+        "storageRevision": "d569c4cc7e884c58dc5867c38731c9465bac70dc",
+        "transactionalStorageSha256": "3d83f73142bd053dadb82d23d8e220ee9f3490515568b048d95f2ac1954c5dcf",
+        "managedStorageSha256": "f48d45cedf89be861f1a3376e04ded9a19c2914e3cbd4756326b1799ab7a14c0"
+      },
+      "oldProgramWasmSha256": "59d50c9adbebfae912da432ebd330b9011739eea7a4d5217c7ce83773dbc1bd9",
+      "uiResult": {
+        "status": "PASS_ZUHYO_IDB_UI_SYNTHETIC",
+        "checks": [
+          "new-document-save-reload",
+          "stale-tab-conflict-preserves-draft",
+          "stale-revision-draft-preview-only",
+          "backup-preview-and-atomic-restore",
+          "save-abort-reload-recover-draft-and-retry",
+          "legacy-session-draft-preview-only",
+          "restore-abort-rolls-back-backup",
+          "postcommit-restore-truthful-warning",
+          "postcommit-save-truthful-warning",
+          "legacy-preview-explicit-trusted-confirm",
+          "legacy-copy-and-old-backup-preserved",
+          "old-backup-preview",
+          "old-writer-divergence-freezes",
+          "unfinished-and-late-composition-journaled",
+          "both-divergent-branches-and-unsaved-draft-export",
+          "migration-keyboard-cancel-preserves",
+          "invalid-legacy-refusal",
+          "invalid-utf16-legacy-export",
+          "migration-preview-race-refusal",
+          "migration-transaction-abort",
+          "migration-postcommit-divergence-preserved"
+        ],
+        "scope": "synthetic Chrome loopback; no real user data, atomic cross-store coordination, crash/power-loss, QEMU or release"
+      },
+      "modelResult": {
+        "sourceSha256": "95421cfe26d95198debd870c45d370ff8cf7ddfb0cf4f433faf4c174a8ab1ada",
+        "compilerSha256": "60afafaa2a363a9ad706213912730c7e2ba054ec4a066846d44551dd333ab51d",
+        "results": {
+          "deck": {
+            "result": 0,
+            "wasmSha256": "da1fc663f1aa1424ee1a0eb175387cdb130a5a0cbf088a8dd8fce24b4f4248e7"
+          },
+          "mutant": {
+            "result": 1,
+            "wasmSha256": "e6697719bea7fee1c2093ccf0b5fa26c6f54c826804dddd0a3333753dde3ef91"
+          },
+          "version-mutant": {
+            "result": 1,
+            "wasmSha256": "5268c27903cf19df776733c253a9ffa711d7f5080b9147c428811ce7b28d29f0"
+          },
+          "present-mutant": {
+            "result": 1,
+            "wasmSha256": "75fa65534cd1ac5333fa70dd26632784e883fde2f27c95598efbc64c4579b871"
+          }
+        }
+      }
+    }
+  ],
+  "limitations": [
+    "Synthetic local browser tests only; no real user data or cross-origin migration.",
+    "Hyokeisan workbook model is independent and not evidence of UI integration.",
+    "Does not qualify QEMU, Safari, Firefox, fleet, production or release."
+  ]
+}
