@@ -1,0 +1,114 @@
+{
+  "receiptSha256": "f113f082e00a142526e88fda47870f7b4b1e935b522561b2ffe5ee266b4368c2",
+  "observerSha256": "b4b6e817c0a3876096c6d72daf09dbe87763495cccc7d896e29cdfb222bb29c3",
+  "kuboBinarySha256": "e3346937469371095c314e724bdc182a0e2a166b9dcfe7622ba55bf81ad1b585",
+  "status": "PASS_PRIVATE_CROSS_HOST_CANDIDATES",
+  "scope": "two hosts, one tailnet path; private swarm only; not public routing, independent network/power, DNS/TLS, or release",
+  "isolation": {
+    "privateSwarm": true,
+    "bootstrap": [],
+    "mdns": false,
+    "routing": "none",
+    "telemetry": "off"
+  },
+  "replication": {
+    "bothHostsPinned": true,
+    "providerStopped": true,
+    "allFilesVerifiedAfterStop": true
+  },
+  "apps": {
+    "bunsho": {
+      "cid": "bafybeifwmm3nyzjvsi727fxflbrdcauebg3wou223yvqgkckhvd3wffcpy",
+      "fileCount": 15,
+      "files": {
+        ".well-known/did.json": "31149ca88400ef1cb30d9787c060512db335d14f9a1145a9fad2b1a3b61176cd",
+        "app.js": "3629b1f6c27db739de2d1902204f6ca6bd541b09d102cbcb6f53f41816cb2d37",
+        "build-receipt.json": "549b998ae10a588f2f2c035420a2d49935e283a5e2445dd69805da8e6346b186",
+        "bundle.js": "7908f39172d63af12e0f55b0fb698f8f921affc1a467530816d7a57c1e1e4128",
+        "client-runtime.json": "8aed0c0dbe96620879eafe0809f1fa778db357f01711e40accc73319909fca1e",
+        "draft-policy.kotoba": "8888ad0d88e8f954b5b1cd4fa0d3da62ac13e906f9410866cfd9dec6112f11f2",
+        "draft-policy.wasm": "baa17f80e3ce7ce32b86086606168846454ca547842359251b50b911d4b89e42",
+        "index.html": "e0fa40184c861c83c214b3ee2f6e75e6e6478daf4526249cd74b0032e5793528",
+        "kotoba-client-runtime.js": "7f760128c3a58098123c31ec3dd34b9c871932e3933f2c952facc4ab0e647212",
+        "managed-storage.js": "0000a01a7af1586efe74eedee12f2daaf1c5709607d9e5b0d5ce3c95457351a7",
+        "program.kotoba": "cfb4426fec9e463c6cf1e3fb2e2dcd6cda52152a71d8000fdc729c90e52123db",
+        "program.wasm": "f46b02f8ff8288dc7fbe8721de2727b968636d36e087249e13d99a1e3268e65e",
+        "style.css": "1cc3d82b981add0e3b564dd75c318374cbf6f4bea3c862ebbafc71e727df2177",
+        "transactional-storage.js": "9565d1ee272f994891ead432e3ef112531c66962510aaa8e4e8fd4d77e0ba319",
+        "worker.js": "58d606d0b3f22766a1b7288fe911c106aea9606fecfe59a2adb66a4bac8923ab"
+      },
+      "browser": {
+        "status": "PASS",
+        "checks": [
+          "edit",
+          "save",
+          "reload",
+          "multiline"
+        ],
+        "requestCount": 19
+      }
+    },
+    "hyokeisan": {
+      "cid": "bafybeialo2kzmka73b4mkahsebql6ceatoz3rtevlgjdfbwi7syqlfea34",
+      "fileCount": 15,
+      "files": {
+        ".well-known/did.json": "4949be2174337d03be51a68e95eb014fab5062bd5e4371fd2110be28895449a9",
+        "app.js": "02e1812ab40b3a4d853a7b7dddaecfd0f0303865e2b017370e6fb7c8cbfbb857",
+        "build-receipt.json": "a11d4721b776333365bc0ab5afefa5f4c2073f675e7fdbb575a751da952ed97a",
+        "bundle.js": "2fab5a5a22d59cbc6db286461cfd801ce0900de3e2a5af485297cb2f03c2b645",
+        "client-runtime.json": "09ccbc1c704e2d652ac76bfab15e5d0997ec4ef267b50c750bbb3d1d2906d1fd",
+        "draft-policy.kotoba": "8888ad0d88e8f954b5b1cd4fa0d3da62ac13e906f9410866cfd9dec6112f11f2",
+        "draft-policy.wasm": "baa17f80e3ce7ce32b86086606168846454ca547842359251b50b911d4b89e42",
+        "index.html": "921a679afc322ebade4d4b5c933eb8e5e98cb847c2f3aadeb63230030a565d40",
+        "kotoba-client-runtime.js": "7f760128c3a58098123c31ec3dd34b9c871932e3933f2c952facc4ab0e647212",
+        "managed-storage.js": "0000a01a7af1586efe74eedee12f2daaf1c5709607d9e5b0d5ce3c95457351a7",
+        "program.kotoba": "25920c2c14970924b09dee8600ff544f472ef7d8cf38d59557b2ffcea916892e",
+        "program.wasm": "fd30b0f30e12355ecfa6d357daf21dd28c1b8bbf9f9c5a939b3036fcc49f02a8",
+        "style.css": "cd5755055be8e69614c8bf82289ca4b72b97437fade7336ccb199b60446fa400",
+        "transactional-storage.js": "9565d1ee272f994891ead432e3ef112531c66962510aaa8e4e8fd4d77e0ba319",
+        "worker.js": "58d606d0b3f22766a1b7288fe911c106aea9606fecfe59a2adb66a4bac8923ab"
+      },
+      "browser": {
+        "status": "PASS",
+        "checks": [
+          "edit",
+          "save",
+          "reload",
+          "decimal"
+        ],
+        "requestCount": 19
+      }
+    },
+    "zuhyo": {
+      "cid": "bafybeihuwbbjjseilpups4qbtfilhbm5r73nv3usq4u6iguwoovwwdsfyq",
+      "fileCount": 15,
+      "files": {
+        ".well-known/did.json": "c0d2281c76eca67add88ef2ad86201f5185eea70a9d404156dcc0fa0ee5737da",
+        "app.js": "c611c19f7af780461d1e3d020910047535565b1f1d737158aad5dc0e26922582",
+        "build-receipt.json": "32c21c78d957be2e5101d88acefad126d9e7e5a2bde56092f36d9e153dbb19e0",
+        "bundle.js": "2c41adaef2ad145176b28b38ddcee938069645672a605bb672b67ceb8bdfe996",
+        "client-runtime.json": "09ef85cb8d5cdf5209b7f36c7c60572272aab7a1b855a37d284c3940adc6629d",
+        "draft-policy.kotoba": "8888ad0d88e8f954b5b1cd4fa0d3da62ac13e906f9410866cfd9dec6112f11f2",
+        "draft-policy.wasm": "baa17f80e3ce7ce32b86086606168846454ca547842359251b50b911d4b89e42",
+        "index.html": "059bf419ab426b350884278a5c7da7944e87576b198fc66fd893a38ef05ba51c",
+        "kotoba-client-runtime.js": "7f760128c3a58098123c31ec3dd34b9c871932e3933f2c952facc4ab0e647212",
+        "managed-storage.js": "0000a01a7af1586efe74eedee12f2daaf1c5709607d9e5b0d5ce3c95457351a7",
+        "program.kotoba": "38ea36c2a39d90346e59c3df21141862a450fd4f871bfd169b1426d19899f917",
+        "program.wasm": "59d50c9adbebfae912da432ebd330b9011739eea7a4d5217c7ce83773dbc1bd9",
+        "style.css": "8dd3e3acf915261c7885d5d528a8245d7b7645a444b8d0e9b542e35866c97e67",
+        "transactional-storage.js": "9565d1ee272f994891ead432e3ef112531c66962510aaa8e4e8fd4d77e0ba319",
+        "worker.js": "58d606d0b3f22766a1b7288fe911c106aea9606fecfe59a2adb66a4bac8923ab"
+      },
+      "browser": {
+        "status": "PASS",
+        "checks": [
+          "edit",
+          "save",
+          "reload",
+          "multiline"
+        ],
+        "requestCount": 19
+      }
+    }
+  }
+}

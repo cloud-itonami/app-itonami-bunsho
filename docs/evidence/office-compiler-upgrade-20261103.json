@@ -1,0 +1,61 @@
+{
+  "status": "PASS_SYNTHETIC_THREE_APP_COMPILER_UPGRADE",
+  "date": "2026-11-03",
+  "reports": [
+    {
+      "status": "PASS_SYNTHETIC_COMPILER_UPGRADE",
+      "app": "bunsho",
+      "oldBuildReceiptSha256": "14d7045227acd33341c7e132b2f746334fbe148c49a0aae140c43d4d604c8b51",
+      "newBuildReceiptSha256": "f9d394e4017842d0d844842b5eb1fdceb6e83ad9e2d52f1d6879485e9a7aedc8",
+      "oldWasmSha256": "5b1d61ca825cdf916128149fd537904eb5a76c0a64ba9ec0875e17d0a394f991",
+      "newWasmSha256": "7dc54bebb853d35193770891b30453c3830fbc8df214d38fa03870db2f681a49",
+      "observerSha256": "8824b8f2bea756ccd30195d6c0cde58fc159a8e2d83be1cea9e808557f9ddd39",
+      "browserSha256": "cf864393a84aa983ba58feea2c24050748e39738591205ecaa54b2c1199ad28c",
+      "checks": [
+        "old-save",
+        "old-draft-preserved-preview-only",
+        "explicit-discard",
+        "new-code-reopens-saved-state",
+        "new-save-increments-revision"
+      ],
+      "scope": "Synthetic same-origin Chrome only; no real user data, cross-origin import, QEMU or production."
+    },
+    {
+      "status": "PASS_SYNTHETIC_COMPILER_UPGRADE",
+      "app": "hyokeisan",
+      "oldBuildReceiptSha256": "8ced5c4894b221a2514d53e2ad1a0d53180e17ad21c91606e153d1bfd91b890a",
+      "newBuildReceiptSha256": "a5ea630a973cbd4969d48aa8d41a2df8b22d4c623ed4356edc10d4f92be600d6",
+      "oldWasmSha256": "1d496629211de9b299428bd3a1f4137b5a58692fc3e088a35a88443f8f0fa996",
+      "newWasmSha256": "3de8dc510ddb68ee1e1cf450d36fab791a004478bc9b1b5fbdb3f3619a44e8c6",
+      "observerSha256": "8824b8f2bea756ccd30195d6c0cde58fc159a8e2d83be1cea9e808557f9ddd39",
+      "browserSha256": "cf864393a84aa983ba58feea2c24050748e39738591205ecaa54b2c1199ad28c",
+      "checks": [
+        "old-save",
+        "old-draft-preserved-preview-only",
+        "explicit-discard",
+        "new-code-reopens-saved-state",
+        "new-save-increments-revision"
+      ],
+      "scope": "Synthetic same-origin Chrome only; no real user data, cross-origin import, QEMU or production."
+    },
+    {
+      "status": "PASS_SYNTHETIC_COMPILER_UPGRADE",
+      "app": "zuhyo",
+      "oldBuildReceiptSha256": "ffcb370226dd33dc3a0143eec1b86111f819ddad710098468bbfb65268a094b2",
+      "newBuildReceiptSha256": "17150a5cf3654de8a1baae7c8023d614718878d0aa475a1c92848eff2d07f709",
+      "oldWasmSha256": "59d50c9adbebfae912da432ebd330b9011739eea7a4d5217c7ce83773dbc1bd9",
+      "newWasmSha256": "b891164437fe274098e140de185cadb97c7bb4bd46456e6e12884025d11d88c6",
+      "observerSha256": "8824b8f2bea756ccd30195d6c0cde58fc159a8e2d83be1cea9e808557f9ddd39",
+      "browserSha256": "cf864393a84aa983ba58feea2c24050748e39738591205ecaa54b2c1199ad28c",
+      "checks": [
+        "old-save",
+        "old-draft-preserved-preview-only",
+        "explicit-discard",
+        "new-code-reopens-saved-state",
+        "new-save-increments-revision"
+      ],
+      "scope": "Synthetic same-origin Chrome only; no real user data, cross-origin import, QEMU or production."
+    }
+  ],
+  "scope": "Synthetic same-origin Chrome profiles. Old Wasm drafts remain preview-only when the program digest changes and require an explicit decision; no real user data, cross-origin migration, browser crash, QEMU or deployment."
+}

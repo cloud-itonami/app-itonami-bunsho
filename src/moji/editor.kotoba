@@ -164,9 +164,8 @@
                  (string-concat (string-from-i64 start)
                                 (string-concat "–" (string-concat (string-from-i64 end) "]")))))
 
-(defn edit-row [state :document i :i64 start :i64 text :string] :document
-  (let [k (key-at i)
-        kind (block-kind state i)]
+(defn edit-row-fields [kind :string i :i64 start :i64 text :string] :document
+  (let [k (key-at i)]
     (el "div"
         (document-map :class (document-string (string-concat "block " (kind-code kind))))
         (document-vector
@@ -189,9 +188,10 @@
          (button (string-concat "dn" k) "move" "↓")
          (button (string-concat "rm" k) "remove" "削除")))))
 
-(defn preview-node [state :document i :i64] :document
-  (let [kind (block-kind state i)
-        text (block-text state i)]
+(defn edit-row [state :document i :i64 start :i64 text :string] :document
+  (edit-row-fields (block-kind state i) i start text))
+
+(defn preview-node-fields [kind :string text :string] :document
     (cond
       (string=? kind "h1") (leaf "h1" (document-map) text)
       (string=? kind "h2") (leaf "h2" (document-map) text)
@@ -200,7 +200,10 @@
       (string=? kind "h5") (leaf "h5" (document-map) text)
       (string=? kind "h6") (leaf "h6" (document-map) text)
       (string=? kind "li") (el "ul" (document-map) (document-vector (leaf "li" (document-map) text)))
-      :else (leaf "p" (document-map) text))))
+      :else (leaf "p" (document-map) text)))
+
+(defn preview-node [state :document i :i64] :document
+  (preview-node-fields (block-kind state i) (block-text state i)))
 
 (defn rows-from [state :document i :i64 n :i64 preview :bool acc :document start :i64] :document
   (if (>= i n)

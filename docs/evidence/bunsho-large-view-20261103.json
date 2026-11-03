@@ -1,0 +1,554 @@
+{
+  "date": "2026-11-03",
+  "buildReceipt": {
+    "wasmSha256": "af70455c1abec4f8fa334fbdef02cb1847a7c4df71a7199982f3c8af681c7c79",
+    "compilerSha256": "2c551579c06a0228029bb06bae177e93126ecbbc37d636d693c471dbac8d1536",
+    "sourceSha256": "85849d7e931878638755f2387a4e29c674112f38ce4e6a10669803718d396fc1",
+    "brokerRevision": "e00ae75e1c589f76b4f53a88a5e3256c98c9e162",
+    "brokerSha256": "7f760128c3a58098123c31ec3dd34b9c871932e3933f2c952facc4ab0e647212",
+    "workerSha256": "58d606d0b3f22766a1b7288fe911c106aea9606fecfe59a2adb66a4bac8923ab",
+    "draftPolicyRevision": "26da503693359e3e7d544b50b97cae1c5cf6041e",
+    "draftPolicySourceSha256": "8888ad0d88e8f954b5b1cd4fa0d3da62ac13e906f9410866cfd9dec6112f11f2",
+    "draftPolicyWasmSha256": "baa17f80e3ce7ce32b86086606168846454ca547842359251b50b911d4b89e42",
+    "didSha256": "31149ca88400ef1cb30d9787c060512db335d14f9a1145a9fad2b1a3b61176cd",
+    "transactionalStorageSha256": "3d83f73142bd053dadb82d23d8e220ee9f3490515568b048d95f2ac1954c5dcf",
+    "managedStorageSha256": "f48d45cedf89be861f1a3376e04ded9a19c2914e3cbd4756326b1799ab7a14c0"
+  },
+  "tests": {
+    "jun-703-large-negative-v1": {
+      "sha256": "a855c0363f11d0bc562800f62f7308cdc009eebb083343bff0394f4c30b0c279",
+      "result": {
+        "status": "PASS_LARGE_PREVIOUS_REFUSAL",
+        "snapshotBytes": 33052,
+        "previousStatePreserved": true
+      }
+    },
+    "jun-703-small32-negative-v1": {
+      "sha256": "4f53e67f720f0cb012e1495b256c1540f244ef5174927bf5473fa40f1d060ef3",
+      "result": {
+        "status": "PASS_LARGE_PREVIOUS_REFUSAL",
+        "snapshotBytes": 4348,
+        "previousStatePreserved": true
+      }
+    },
+    "jun-703-large-positive-v5": {
+      "sha256": "4ea81b23fc3a720d4732f42d2fac654e1403732b90d69517b9379eaf1e398261",
+      "result": {
+        "status": "PASS_LARGE_RESTORE_EDIT_RELOAD",
+        "snapshotBytes": 34068,
+        "blocks": 32,
+        "blockBytes": 1024,
+        "previousStateBackedUp": true
+      }
+    },
+    "jun-703-small32-positive-v2": {
+      "sha256": "f559620b228606f42cf2eae0f379f3aeb0e87e46d362fcf61803fb23e827959d",
+      "result": {
+        "status": "PASS_LARGE_RESTORE_EDIT_RELOAD",
+        "snapshotBytes": 5364,
+        "blocks": 32,
+        "blockBytes": 128,
+        "previousStateBackedUp": true
+      }
+    },
+    "jun-703-view-parity-v1": {
+      "sha256": "681f4827bba33221786219c3892def20ed0bb851143163f0653bb92e58bcf7bc",
+      "result": {
+        "status": "PASS_BUNSHO_VIEW_STREAM_PARITY",
+        "browser": {
+          "product": "Chrome/156.0.8078.74",
+          "protocol": "1.3"
+        },
+        "cases": {
+          "blocks-2": {
+            "inputBytes": 2091,
+            "outputSha256": "c505b622c20c510b7414a4989348e08cc6a864fb9500b767a72dddc812a94c95",
+            "outputBytes": 4187,
+            "result": 0
+          },
+          "blocks-4": {
+            "inputBytes": 4155,
+            "outputSha256": "a6f8dd0a5a73b360282b69ef7e04ed803b38a71d4087043c9f6609068600e00e",
+            "outputBytes": 7479,
+            "result": 0
+          },
+          "blocks-8": {
+            "inputBytes": 8283,
+            "outputSha256": "4fdf8713a7086fe47918e639d9bfa82f446207b8ed57a032ce1abb9aef1d1e81",
+            "outputBytes": 14063,
+            "result": 0
+          },
+          "blocks-16": {
+            "inputBytes": 16540,
+            "outputSha256": "9fc34c21bd11ace0c4ed69812eb759623035be98659fd65c3db7bc01509c76f2",
+            "outputBytes": 27326,
+            "result": 0
+          },
+          "blocks-24": {
+            "inputBytes": 24796,
+            "outputSha256": "5c69f34588de5f4764001a6565c29fecd3d74a46ef4cb16b0048864715788e2f",
+            "outputBytes": 40614,
+            "result": 0
+          },
+          "blocks-32": {
+            "inputBytes": 33052,
+            "outputSha256": "7f096186b889f7849f5743a936c75854f02d57fe6455cdda4d1eb5db6aa2489f",
+            "outputBytes": 53902,
+            "result": 0
+          },
+          "unicode": {
+            "inputBytes": 55,
+            "outputSha256": "3f5d059bd4ecf9a7d7c897ee66802dfb8d6fa8df1b90dc32f5260159fc229ce5",
+            "outputBytes": 960,
+            "result": 0
+          },
+          "invalid": {
+            "inputBytes": 16,
+            "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "outputBytes": 0,
+            "result": 3
+          }
+        },
+        "baselineWasmSha256": "f46b02f8ff8288dc7fbe8721de2727b968636d36e087249e13d99a1e3268e65e",
+        "currentWasmSha256": "af70455c1abec4f8fa334fbdef02cb1847a7c4df71a7199982f3c8af681c7c79",
+        "scope": "synthetic Wasm browser protocol; no real user data, QEMU or deployment"
+      }
+    },
+    "jun-703-stream-final-ui-v3": {
+      "sha256": "f33658b3c3bfd58df252220cf3a71a777b0c1ba7a0dc907e01d204569d5abe88",
+      "result": {
+        "status": "PASS_BUNSHO_IDB_UI_SYNTHETIC",
+        "checks": [
+          "new-document-save-reload",
+          "stale-tab-conflict-preserves-draft",
+          "stale-revision-draft-preview-only",
+          "backup-preview-and-atomic-restore",
+          "save-abort-reload-recover-draft-and-retry",
+          "legacy-session-draft-preview-only",
+          "restore-abort-rolls-back-backup",
+          "postcommit-restore-truthful-warning",
+          "postcommit-save-truthful-warning",
+          "legacy-preview-explicit-trusted-confirm",
+          "legacy-copy-and-old-backup-preserved",
+          "old-backup-preview",
+          "old-writer-divergence-freezes",
+          "unfinished-and-late-composition-journaled",
+          "both-divergent-branches-and-unsaved-draft-export",
+          "migration-keyboard-cancel-preserves",
+          "invalid-legacy-refusal",
+          "invalid-utf16-legacy-export",
+          "migration-preview-race-refusal",
+          "migration-transaction-abort",
+          "migration-postcommit-divergence-preserved"
+        ],
+        "scope": "synthetic Chrome loopback; no real user data, atomic cross-store coordination, crash/power-loss, QEMU or release"
+      }
+    },
+    "jun-703-stream-final-corrupt-v3": {
+      "sha256": "14b394e948226fe3b32aecf494a2064687074a0db93489a06a8d3917b1e95f7e",
+      "result": {
+        "status": "PASS_CORRUPT_METADATA_RECOVERY",
+        "app": "bunsho",
+        "checks": [
+          "invalid-record-refused",
+          "surviving-text-exported",
+          "stored-record-unchanged",
+          "invalid-utf16-export-preserved"
+        ],
+        "scope": "synthetic Chromium loopback, damaged record metadata only; no physical crash or real user data"
+      }
+    },
+    "jun-703-stream-restart-v1": {
+      "sha256": "30608865e398f4e0c78cc5ed62aa7880e91d35710e11df6b7cf1ca82d6b8ccc2",
+      "result": {
+        "status": "PASS_BUNSHO_IDB_RESTART_SYNTHETIC",
+        "scope": "synthetic Chrome clean process restart; no crash/power-loss, storage eviction, old-client coordination, QEMU or release"
+      }
+    },
+    "jun-780-compact-boundary-v1": {
+      "sha256": "307c299e44fc287c4cbd7bb09c117f93647fea45b1d8931e8b35f1d06863c9dc",
+      "result": {
+        "status": "COMPARED",
+        "browser": {
+          "product": "Chrome/156.0.8078.74",
+          "protocol": "1.3"
+        },
+        "cases": {
+          "2": {
+            "normal": {
+              "exit": 0,
+              "report": "{:status :ok :result 0 :fuel {:initial 100000000 :remaining 97860882}}",
+              "trap": null,
+              "stderr": "",
+              "outputSha256": "c505b622c20c510b7414a4989348e08cc6a864fb9500b767a72dddc812a94c95",
+              "outputBytes": 4187
+            },
+            "compact": {
+              "exit": 0,
+              "report": "{:status :ok :result 0 :fuel {:initial 100000000 :remaining 97860882}}",
+              "trap": null,
+              "stderr": "",
+              "outputSha256": "c505b622c20c510b7414a4989348e08cc6a864fb9500b767a72dddc812a94c95",
+              "outputBytes": 4187
+            },
+            "sameOutput": true
+          },
+          "4": {
+            "normal": {
+              "exit": 0,
+              "report": "{:status :ok :result 0 :fuel {:initial 100000000 :remaining 95804334}}",
+              "trap": null,
+              "stderr": "",
+              "outputSha256": "a6f8dd0a5a73b360282b69ef7e04ed803b38a71d4087043c9f6609068600e00e",
+              "outputBytes": 7479
+            },
+            "compact": {
+              "exit": 0,
+              "report": "{:status :ok :result 0 :fuel {:initial 100000000 :remaining 95804334}}",
+              "trap": null,
+              "stderr": "",
+              "outputSha256": "a6f8dd0a5a73b360282b69ef7e04ed803b38a71d4087043c9f6609068600e00e",
+              "outputBytes": 7479
+            },
+            "sameOutput": true
+          },
+          "8": {
+            "normal": {
+              "exit": 0,
+              "report": "{:status :ok :result 0 :fuel {:initial 100000000 :remaining 90791166}}",
+              "trap": null,
+              "stderr": "",
+              "outputSha256": "4fdf8713a7086fe47918e639d9bfa82f446207b8ed57a032ce1abb9aef1d1e81",
+              "outputBytes": 14063
+            },
+            "compact": {
+              "exit": 120,
+              "report": "{:status :trap :exit 120 :fuel {:initial 100000000 :remaining 91292959}}",
+              "trap": null,
+              "stderr": "KEXE_TRAP {:kind :signal :signal :SIGILL}\nKEXE_TRAP {:kind :budget :reason :budget/bytes :arena :string-pool}\n",
+              "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "outputBytes": 0
+            },
+            "sameOutput": false
+          },
+          "16": {
+            "normal": {
+              "exit": 0,
+              "report": "{:status :ok :result 0 :fuel {:initial 100000000 :remaining 77130045}}",
+              "trap": null,
+              "stderr": "",
+              "outputSha256": "9fc34c21bd11ace0c4ed69812eb759623035be98659fd65c3db7bc01509c76f2",
+              "outputBytes": 27326
+            },
+            "compact": {
+              "exit": 120,
+              "report": "{:status :trap :exit 120 :fuel {:initial 100000000 :remaining 92942427}}",
+              "trap": null,
+              "stderr": "KEXE_TRAP {:kind :signal :signal :SIGILL}\nKEXE_TRAP {:kind :budget :reason :budget/bytes :arena :string-pool}\n",
+              "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "outputBytes": 0
+            },
+            "sameOutput": false
+          },
+          "24": {
+            "normal": {
+              "exit": 0,
+              "report": "{:status :ok :result 0 :fuel {:initial 100000000 :remaining 58638245}}",
+              "trap": null,
+              "stderr": "",
+              "outputSha256": "5c69f34588de5f4764001a6565c29fecd3d74a46ef4cb16b0048864715788e2f",
+              "outputBytes": 40614
+            },
+            "compact": {
+              "exit": 120,
+              "report": "{:status :trap :exit 120 :fuel {:initial 100000000 :remaining 93690892}}",
+              "trap": null,
+              "stderr": "KEXE_TRAP {:kind :signal :signal :SIGILL}\nKEXE_TRAP {:kind :budget :reason :budget/bytes :arena :string-pool}\n",
+              "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "outputBytes": 0
+            },
+            "sameOutput": false
+          },
+          "32": {
+            "normal": {
+              "exit": 0,
+              "report": "{:status :ok :result 0 :fuel {:initial 100000000 :remaining 35323533}}",
+              "trap": null,
+              "stderr": "",
+              "outputSha256": "7f096186b889f7849f5743a936c75854f02d57fe6455cdda4d1eb5db6aa2489f",
+              "outputBytes": 53902
+            },
+            "compact": {
+              "exit": 120,
+              "report": "{:status :trap :exit 120 :fuel {:initial 100000000 :remaining 94805579}}",
+              "trap": null,
+              "stderr": "KEXE_TRAP {:kind :signal :signal :SIGILL}\nKEXE_TRAP {:kind :budget :reason :budget/bytes :arena :string-pool}\n",
+              "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "outputBytes": 0
+            },
+            "sameOutput": false
+          }
+        },
+        "scope": "Synthetic Bunsho snapshot; bounded runtime is experimental and not OS/QEMU or production"
+      }
+    },
+    "jun-780-stream-boundary-v2": {
+      "sha256": "0cee4ffac2cc614fb383b91464b27c8fbb271cd26d3bb74c0b73308a183bb434",
+      "result": {
+        "status": "COMPARED",
+        "browser": {
+          "product": "Chrome/156.0.8078.74",
+          "protocol": "1.3"
+        },
+        "cases": {
+          "2": {
+            "normal": {
+              "exit": 0,
+              "report": "{:status :ok :result 0 :fuel {:initial 100000000 :remaining 97860882}}",
+              "trap": null,
+              "stderr": "",
+              "outputSha256": "c505b622c20c510b7414a4989348e08cc6a864fb9500b767a72dddc812a94c95",
+              "outputBytes": 4187
+            },
+            "compact": {
+              "exit": 0,
+              "report": "{:status :ok :result 0 :fuel {:initial 100000000 :remaining 97860882}}",
+              "trap": null,
+              "stderr": "",
+              "outputSha256": "c505b622c20c510b7414a4989348e08cc6a864fb9500b767a72dddc812a94c95",
+              "outputBytes": 4187
+            },
+            "sameOutput": true
+          },
+          "4": {
+            "normal": {
+              "exit": 0,
+              "report": "{:status :ok :result 0 :fuel {:initial 100000000 :remaining 95804334}}",
+              "trap": null,
+              "stderr": "",
+              "outputSha256": "a6f8dd0a5a73b360282b69ef7e04ed803b38a71d4087043c9f6609068600e00e",
+              "outputBytes": 7479
+            },
+            "compact": {
+              "exit": 0,
+              "report": "{:status :ok :result 0 :fuel {:initial 100000000 :remaining 95804334}}",
+              "trap": null,
+              "stderr": "",
+              "outputSha256": "a6f8dd0a5a73b360282b69ef7e04ed803b38a71d4087043c9f6609068600e00e",
+              "outputBytes": 7479
+            },
+            "sameOutput": true
+          },
+          "8": {
+            "normal": {
+              "exit": 0,
+              "report": "{:status :ok :result 0 :fuel {:initial 100000000 :remaining 90791166}}",
+              "trap": null,
+              "stderr": "",
+              "outputSha256": "4fdf8713a7086fe47918e639d9bfa82f446207b8ed57a032ce1abb9aef1d1e81",
+              "outputBytes": 14063
+            },
+            "compact": {
+              "exit": 0,
+              "report": "{:status :ok :result 0 :fuel {:initial 100000000 :remaining 90791166}}",
+              "trap": null,
+              "stderr": "",
+              "outputSha256": "4fdf8713a7086fe47918e639d9bfa82f446207b8ed57a032ce1abb9aef1d1e81",
+              "outputBytes": 14063
+            },
+            "sameOutput": true
+          },
+          "16": {
+            "normal": {
+              "exit": 0,
+              "report": "{:status :ok :result 0 :fuel {:initial 100000000 :remaining 77130045}}",
+              "trap": null,
+              "stderr": "",
+              "outputSha256": "9fc34c21bd11ace0c4ed69812eb759623035be98659fd65c3db7bc01509c76f2",
+              "outputBytes": 27326
+            },
+            "compact": {
+              "exit": 120,
+              "report": null,
+              "trap": null,
+              "stderr": "KEXE_TRAP {:kind :signal :signal :SIGILL}\nKEXE_TRAP {:kind :budget :reason :budget/bytes :arena :string-pool}\n",
+              "outputSha256": "15dbecefdbc855fa670817202140ceda78b8e5258a4d2d839dc9973d716ab6de",
+              "outputBytes": 77
+            },
+            "sameOutput": false
+          },
+          "24": {
+            "normal": {
+              "exit": 0,
+              "report": "{:status :ok :result 0 :fuel {:initial 100000000 :remaining 58638245}}",
+              "trap": null,
+              "stderr": "",
+              "outputSha256": "5c69f34588de5f4764001a6565c29fecd3d74a46ef4cb16b0048864715788e2f",
+              "outputBytes": 40614
+            },
+            "compact": {
+              "exit": 120,
+              "report": null,
+              "trap": null,
+              "stderr": "KEXE_TRAP {:kind :signal :signal :SIGILL}\nKEXE_TRAP {:kind :budget :reason :budget/bytes :arena :string-pool}\n",
+              "outputSha256": "a62be05b16ad9e0b0ba30323bf87acc257e1bfbbaceaa2db6b75561dd086fa2b",
+              "outputBytes": 77
+            },
+            "sameOutput": false
+          },
+          "32": {
+            "normal": {
+              "exit": 0,
+              "report": "{:status :ok :result 0 :fuel {:initial 100000000 :remaining 35323533}}",
+              "trap": null,
+              "stderr": "",
+              "outputSha256": "7f096186b889f7849f5743a936c75854f02d57fe6455cdda4d1eb5db6aa2489f",
+              "outputBytes": 53902
+            },
+            "compact": {
+              "exit": 120,
+              "report": "{:status :trap :exit 120 :fuel {:initial 100000000 :remaining 94805579}}",
+              "trap": null,
+              "stderr": "KEXE_TRAP {:kind :signal :signal :SIGILL}\nKEXE_TRAP {:kind :budget :reason :budget/bytes :arena :string-pool}\n",
+              "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "outputBytes": 0
+            },
+            "sameOutput": false
+          }
+        },
+        "scope": "Synthetic Bunsho snapshot; bounded runtime is experimental and not OS/QEMU or production"
+      }
+    },
+    "jun-703-large-fuel-v1": {
+      "sha256": "c348ca4ed41c655255a2d911492ff9a08ff4da61e332e2d93b8a1f5d8709eb48",
+      "result": {
+        "protect-25000000": {
+          "exit": 0,
+          "report": "{:status :ok :result 0 :fuel {:initial 25000000 :remaining 14537998}}",
+          "stderr": "",
+          "outputSha256": "782c6756178a777808b5dddaa54667d63202650f08033f5afb35a05d5c1719d4"
+        },
+        "protect-100000000": {
+          "exit": 0,
+          "report": "{:status :ok :result 0 :fuel {:initial 100000000 :remaining 89537998}}",
+          "stderr": "",
+          "outputSha256": "782c6756178a777808b5dddaa54667d63202650f08033f5afb35a05d5c1719d4"
+        },
+        "view-25000000": {
+          "exit": 120,
+          "report": null,
+          "stderr": "KEXE_TRAP {:kind :signal :signal :SIGTRAP}\nKEXE_TRAP {:kind :budget :reason :budget/fuel}\n",
+          "outputSha256": "c3a1a6ae3a2a3cf62523d138314e57d6d1168f9e9a46733f17d2ef9e770e6aa4"
+        },
+        "view-100000000": {
+          "exit": 0,
+          "report": "{:status :ok :result 0 :fuel {:initial 100000000 :remaining 35323533}}",
+          "stderr": "",
+          "outputSha256": "7f096186b889f7849f5743a936c75854f02d57fe6455cdda4d1eb5db6aa2489f"
+        },
+        "step-25000000": {
+          "exit": 0,
+          "report": "{:status :ok :result 0 :fuel {:initial 25000000 :remaining 13495369}}",
+          "stderr": "",
+          "outputSha256": "b5883da3a8c27e9c4d34e538f7a83218d4141d786ecefda6ead32e682a059b86"
+        },
+        "step-100000000": {
+          "exit": 0,
+          "report": "{:status :ok :result 0 :fuel {:initial 100000000 :remaining 88495369}}",
+          "stderr": "",
+          "outputSha256": "b5883da3a8c27e9c4d34e538f7a83218d4141d786ecefda6ead32e682a059b86"
+        }
+      }
+    },
+    "jun-703-view-below-v1": {
+      "sha256": "45ae781d2111658bb380bac81ccb06820c448fdbffb3652bd00f945f3fd86593",
+      "result": {
+        "status": "COMPARED",
+        "browser": {
+          "product": "Chrome/156.0.8078.74",
+          "protocol": "1.3"
+        },
+        "cases": {
+          "128": {
+            "normal": {
+              "exit": 120,
+              "report": "{:status :trap :exit 120 :fuel {:initial 25000000 :remaining 0}}",
+              "trap": null,
+              "stderr": "KEXE_TRAP {:kind :signal :signal :SIGTRAP}\nKEXE_TRAP {:kind :budget :reason :budget/fuel}\n",
+              "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "outputBytes": 0
+            },
+            "compact": {
+              "exit": 120,
+              "report": null,
+              "trap": null,
+              "stderr": "KEXE_TRAP {:kind :signal :signal :SIGTRAP}\nKEXE_TRAP {:kind :budget :reason :budget/fuel}\n",
+              "outputSha256": "c3a1a6ae3a2a3cf62523d138314e57d6d1168f9e9a46733f17d2ef9e770e6aa4",
+              "outputBytes": 69
+            },
+            "sameOutput": false
+          },
+          "200": {
+            "normal": {
+              "exit": 120,
+              "report": "{:status :trap :exit 120 :fuel {:initial 25000000 :remaining 0}}",
+              "trap": null,
+              "stderr": "KEXE_TRAP {:kind :signal :signal :SIGTRAP}\nKEXE_TRAP {:kind :budget :reason :budget/fuel}\n",
+              "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "outputBytes": 0
+            },
+            "compact": {
+              "exit": 120,
+              "report": null,
+              "trap": null,
+              "stderr": "KEXE_TRAP {:kind :signal :signal :SIGTRAP}\nKEXE_TRAP {:kind :budget :reason :budget/fuel}\n",
+              "outputSha256": "c3a1a6ae3a2a3cf62523d138314e57d6d1168f9e9a46733f17d2ef9e770e6aa4",
+              "outputBytes": 69
+            },
+            "sameOutput": false
+          },
+          "220": {
+            "normal": {
+              "exit": 120,
+              "report": "{:status :trap :exit 120 :fuel {:initial 25000000 :remaining 0}}",
+              "trap": null,
+              "stderr": "KEXE_TRAP {:kind :signal :signal :SIGTRAP}\nKEXE_TRAP {:kind :budget :reason :budget/fuel}\n",
+              "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "outputBytes": 0
+            },
+            "compact": {
+              "exit": 120,
+              "report": null,
+              "trap": null,
+              "stderr": "KEXE_TRAP {:kind :signal :signal :SIGTRAP}\nKEXE_TRAP {:kind :budget :reason :budget/fuel}\n",
+              "outputSha256": "c3a1a6ae3a2a3cf62523d138314e57d6d1168f9e9a46733f17d2ef9e770e6aa4",
+              "outputBytes": 69
+            },
+            "sameOutput": false
+          },
+          "240": {
+            "normal": {
+              "exit": 120,
+              "report": "{:status :trap :exit 120 :fuel {:initial 25000000 :remaining 0}}",
+              "trap": null,
+              "stderr": "KEXE_TRAP {:kind :signal :signal :SIGTRAP}\nKEXE_TRAP {:kind :budget :reason :budget/fuel}\n",
+              "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "outputBytes": 0
+            },
+            "compact": {
+              "exit": 120,
+              "report": null,
+              "trap": null,
+              "stderr": "KEXE_TRAP {:kind :signal :signal :SIGTRAP}\nKEXE_TRAP {:kind :budget :reason :budget/fuel}\n",
+              "outputSha256": "c3a1a6ae3a2a3cf62523d138314e57d6d1168f9e9a46733f17d2ef9e770e6aa4",
+              "outputBytes": 69
+            },
+            "sameOutput": false
+          }
+        },
+        "scope": "Synthetic Bunsho snapshot; bounded runtime is experimental and not OS/QEMU or production"
+      }
+    }
+  },
+  "scope": "Synthetic browser tests and experimental compact Wasm; no real user data, QEMU, crash/power-loss, public delivery, or production release. The experimental compact runtime is not shipped and still refuses some valid large views."
+}

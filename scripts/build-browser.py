@@ -25,7 +25,7 @@ raw = subprocess.run(['git', '-C', str(broker), 'show', pin['revision'] + ':src/
 if hashlib.sha256(raw).hexdigest() != pin['sha256']:
     raise SystemExit('canonical broker digest mismatch')
 (out / 'kotoba-client-runtime.js').write_bytes(raw)
-for name in ('index.html', 'style.css', 'app.js'):
+for name in ('index.html', 'style.css', 'app.js', 'transactional-storage.js', 'managed-storage.js'):
     shutil.copyfile(root / 'browser' / name, out / name)
 shutil.copyfile(amu / 'runtime/wasm32-browser-static-host.js', out / 'worker.js')
 from browser_source import stage
@@ -63,7 +63,7 @@ if did_document.get('id') != 'did:web:bunsho.itonami.app' or did_document.get('@
 (out / '.well-known').mkdir()
 (out / '.well-known/did.json').write_bytes(did)
 desc = {'schema': 'kotoba.app.client-runtime.v1', 'target': 'browser', 'profile': 'trusted-page-v1',
-        'entry': 'index.html', 'local-state': {'adapter': 'localstorage', 'schema': 'itonami.bunsho.candidate.bs1-bs2', 'version': 2},
+        'entry': 'index.html', 'local-state': {'adapter': 'indexeddb', 'schema': 'itonami.bunsho.candidate.idb-v2', 'version': 2},
         'workers': [{'id': 'bunsho-worker', 'entry': 'worker.js', 'protocol': 'wasm32-browser-static.v1'}], 'operations': []}
 (out / 'client-runtime.json').write_text(json.dumps(desc, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
 config = ('export const descriptor = ' + json.dumps(desc, ensure_ascii=False) + ';\n'
@@ -77,6 +77,8 @@ receipt = {'wasmSha256': hashlib.sha256(wasm).hexdigest(), 'compilerSha256': has
            'workerSha256': hashlib.sha256((out / 'worker.js').read_bytes()).hexdigest(),
            'draftPolicyRevision': policy_pin['revision'], 'draftPolicySourceSha256': hashlib.sha256(policy_source.encode()).hexdigest(),
            'draftPolicyWasmSha256': hashlib.sha256(policy_wasm).hexdigest(),
-           'didSha256': hashlib.sha256(did).hexdigest()}
+           'didSha256': hashlib.sha256(did).hexdigest(),
+           'transactionalStorageSha256': hashlib.sha256((out / 'transactional-storage.js').read_bytes()).hexdigest(),
+           'managedStorageSha256': hashlib.sha256((out / 'managed-storage.js').read_bytes()).hexdigest()}
 (out / 'build-receipt.json').write_text(json.dumps(receipt, indent=2) + '\n')
 print('BUILT_BUNSHO_BROWSER_CANDIDATE', out)

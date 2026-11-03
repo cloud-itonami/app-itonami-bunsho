@@ -11,12 +11,14 @@ if len(sys.argv)!=5:raise SystemExit(__doc__)
 builds=dict(zip(('bunsho','hyokeisan','zuhyo'),map(lambda s:Path(s).resolve(),sys.argv[1:4])))
 out=Path(sys.argv[4]).resolve();out.mkdir(parents=True,exist_ok=False)
 for name,build in builds.items():
- receipt=validate(build,name);assert len(candidate_files(build))==13
+ receipt=validate(build,name);assert len(candidate_files(build))==(15 if 'managedStorageSha256' in receipt else 13)
  assert hashlib.sha256((build/'.well-known/did.json').read_bytes()).hexdigest()==receipt['didSha256']
 # Alterations are isolated copies. A receipt edited along with the wrong ID
 # must not bypass the independent app/hostname binding.
 controls={}
-for case in ('missing','wrong-id','symlink-dir','extra-hidden','did-bytes'):
+cases = ['missing','wrong-id','symlink-dir','extra-hidden','did-bytes']
+if (builds['bunsho']/'managed-storage.js').exists(): cases.append('storage-adapter')
+for case in cases:
  target=out/case;shutil.copytree(builds['bunsho'],target)
  did=target/'.well-known/did.json'
  if case=='missing':did.unlink()
@@ -26,6 +28,8 @@ for case in ('missing','wrong-id','symlink-dir','extra-hidden','did-bytes'):
  elif case=='symlink-dir':
   shutil.rmtree(target/'.well-known');(target/'.well-known').symlink_to(builds['bunsho']/'.well-known',target_is_directory=True)
  elif case=='extra-hidden':(target/'.well-known/extra').write_text('unexpected')
+ elif case=='storage-adapter':
+  adapter=target/'managed-storage.js';adapter.write_bytes(adapter.read_bytes()+b'\n')
  else:did.write_bytes(did.read_bytes()+b'\n')
  try:validate(target,'bunsho')
  except (ValueError,KeyError):controls[case]='refused'
@@ -45,5 +49,5 @@ with_hidden=good('add','-Qr','--hidden',*common).splitlines()[-1]
 if without==with_hidden:raise ValueError('hidden control failed to change CID')
 missing=run('cat',without+'/.well-known/did.json');found=run('cat',with_hidden+'/.well-known/did.json')
 if missing.returncode==0 or found.returncode or found.stdout.encode()!=(builds['bunsho']/'.well-known/did.json').read_bytes():raise ValueError('hidden DID retrieval control failed')
-report={'status':'PASS_DID_CANDIDATE_INTEGRITY','apps':list(builds),'filesEach':13,'controls':controls,'defaultRecursiveAddOmitsDid':True,'hiddenAddRetrievesExactDid':True,'scope':'local isolated Kubo and static candidate bytes; no DID key control, public DNS/TLS, permanent pins or release'}
+report={'status':'PASS_DID_CANDIDATE_INTEGRITY','apps':list(builds),'fileCounts':{name:len(candidate_files(build)) for name,build in builds.items()},'controls':controls,'defaultRecursiveAddOmitsDid':True,'hiddenAddRetrievesExactDid':True,'scope':'local isolated Kubo and static candidate bytes; no DID key control, public DNS/TLS, permanent pins or release'}
 (out/'result.json').write_text(json.dumps(report,indent=2)+'\n');print(report['status'],flush=True)

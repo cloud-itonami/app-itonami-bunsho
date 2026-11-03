@@ -9,6 +9,7 @@ FILES = frozenset(('app.js', 'build-receipt.json', 'bundle.js', 'client-runtime.
                    'draft-policy.kotoba', 'draft-policy.wasm', 'index.html',
                    'kotoba-client-runtime.js', 'program.kotoba', 'program.wasm',
                    'style.css', 'worker.js', '.well-known/did.json'))
+IDB_FILES = frozenset(('transactional-storage.js', 'managed-storage.js'))
 
 def sha(raw):
     return hashlib.sha256(raw).hexdigest()
@@ -18,7 +19,7 @@ def candidate_files(build):
     paths = list(build.rglob('*'))
     if (any(p.is_symlink() or not (p.is_file() or p.is_dir()) for p in paths)
             or {p.relative_to(build).as_posix() for p in paths if p.is_dir()} != {'.well-known'}
-            or {p.relative_to(build).as_posix() for p in paths if p.is_file()} != FILES):
+            or frozenset(p.relative_to(build).as_posix() for p in paths if p.is_file()) not in (FILES, FILES | IDB_FILES)):
         raise ValueError('unexpected candidate files')
     return sorted((p for p in paths if p.is_file()), key=lambda p: p.relative_to(build).as_posix())
 
@@ -32,6 +33,18 @@ def validate(build, name):
     if did.get('id') != 'did:web:' + name + '.itonami.app' or did.get('@context') != ['https://www.w3.org/ns/did/v1']:
         raise ValueError('unexpected DID document')
     receipt = json.loads((build / 'build-receipt.json').read_text())
+    descriptor = json.loads((build / 'client-runtime.json').read_text())
+    adapter = descriptor.get('local-state', {}).get('adapter')
+    actual = frozenset(p.relative_to(build).as_posix() for p in candidate_files(build))
+    if adapter == 'indexeddb':
+        if actual != FILES | IDB_FILES:
+            raise ValueError('unexpected indexeddb candidate')
+        for filename, key in (('transactional-storage.js', 'transactionalStorageSha256'),
+                              ('managed-storage.js', 'managedStorageSha256')):
+            if sha((build / filename).read_bytes()) != receipt[key]:
+                raise ValueError('candidate digest mismatch: ' + filename)
+    elif adapter != 'localstorage' or actual != FILES:
+        raise ValueError('unexpected local state adapter')
     for filename, key in (('program.kotoba', 'sourceSha256'), ('program.wasm', 'wasmSha256'),
                           ('draft-policy.kotoba', 'draftPolicySourceSha256'),
                           ('draft-policy.wasm', 'draftPolicyWasmSha256'),

@@ -1,0 +1,29 @@
+{
+  "status": "PASS_EXPERIMENTAL_MANAGED_STORAGE",
+  "baseCommit": "1351db8ef99cf8ddcbf30424640dd2ce24b5512c",
+  "observerSha256": "38934b0a820106dec308aeacb08ecdd2acad43bf5b617e65e2950584e46b5287",
+  "resultSha256": "41f828f15c723a18a7c231cd296fdba04a0425e4db649b7a9dd76bd68623c64e",
+  "result": {
+    "status": "PASS_MANAGED_STORAGE_SYNTHETIC",
+    "checks": [
+      "explicit-caller-baseline",
+      "precommit-legacy-divergence-refusal",
+      "precommit-read-failure-refusal",
+      "postcommit-legacy-divergence-reported",
+      "postcommit-legacy-read-failure-reported",
+      "legacy-data-untouched"
+    ],
+    "sourceSha256": {
+      "transactional-storage.js": "9565d1ee272f994891ead432e3ef112531c66962510aaa8e4e8fd4d77e0ba319",
+      "managed-storage.js": "56a71cdc34b33089015cc078831bdb95cfd52032f5399df8e39374c624ba74fd"
+    },
+    "scope": "synthetic same-origin Chrome; localStorage and IndexedDB are not atomically coupled; no UI, user consent, real migration, crash/power loss or release"
+  },
+  "negativeControl": {
+    "mutation": "remove post-commit legacy comparison",
+    "sha256": "901ec0194ba42463fd1361cbf9002e2cea0d3421ea46b1c3778eed787130cbc8",
+    "exit": 1,
+    "detectedAt": "post-commit divergence assertion"
+  },
+  "scope": "synthetic Chrome component only; explicit caller input is not user consent; non-atomic cross-store checks, ABA and asynchronous notification gaps remain; no UI, actual migration, crash/power loss or release"
+}

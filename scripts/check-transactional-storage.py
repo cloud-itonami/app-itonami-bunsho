@@ -60,6 +60,7 @@ try:
  assert ev('store.read()',b,True)==current and ev('store.readBackup('+str(current['revision'])+')',b,True)=={'revision':0,'value':None,'legacyAnchor':None}
  committed=ev('store.compareAndSwap('+json.dumps(current)+',"restored value",true)',a,True);assert committed['status']=='committed'
  assert ev('store.readBackup('+str(current['revision'])+')',b,True)==current
+ assert ev('store.readLatestBackup()',b,True)==current
  # Invalid transport strings and bounds must not become replacement bytes.
  assert ev('store.compareAndSwap('+json.dumps(committed['current'])+',String.fromCharCode(0xd800)).then(()=>false,()=>true)',a,True)
  assert ev('store.compareAndSwap('+json.dumps(committed['current'])+',"a".repeat(35001)).then(()=>false,()=>true)',a,True)
@@ -86,6 +87,12 @@ try:
  ev('localStorage.setItem("legacy","old writer changed")',a)
  assert ev('migration.read()',a,True)['legacyAnchor']=='legacy preserved' and ev('localStorage.getItem("legacy")',a)=='old writer changed'
  assert ev('migration.compareAndSwap('+json.dumps(updated['current'])+',"bad",false,"another anchor").then(()=>false,()=>true)',a,True)
+ # Confirm latest-backup ordering across the 9-to-10 revision boundary.
+ prior=updated['current']
+ for i in range(12):
+  result=ev('migration.compareAndSwap('+json.dumps(prior)+','+json.dumps('revision '+str(i))+',true)',a,True)
+  assert result['status']=='committed' and ev('migration.readLatestBackup()',a,True)==prior
+  prior=result['current']
  # If a browser cannot report strict durability, no transaction is accepted.
  ev('''window.__transaction=IDBDatabase.prototype.transaction;IDBDatabase.prototype.transaction=function(...args){const t=window.__transaction.apply(this,args);if(args[1]==="readwrite")Object.defineProperty(t,"durability",{value:"relaxed"});return t}''',a)
  assert ev('store.compareAndSwap('+json.dumps(committed['current'])+',"unqualified").then(()=>false,()=>true)',a,True)
@@ -98,6 +105,6 @@ try:
  ev('''new Promise((resolve,reject)=>{const r=indexedDB.open("itonami.office.bunsho.v2",1);r.onsuccess=()=>{const d=r.result,t=d.transaction("records","readwrite");t.objectStore("records").put({format:"bad",revision:5,value:"corrupt"},"current");t.oncomplete=()=>{d.close();resolve(true)};t.onabort=()=>reject(Error("inject"))};r.onerror=()=>reject(Error("open"))})''',a,True)
  assert ev('store.read().then(()=>false,()=>true)',c,True)
  assert ev('store.compareAndSwap('+json.dumps(committed['current'])+',"overwrite").then(()=>false,()=>true)',c,True)
- report={'status':'PASS_TRANSACTIONAL_STORAGE_SYNTHETIC','sourceSha256':hashlib.sha256(source.read_bytes()).hexdigest(),'checks':['two-tab-competing-writers','revision-aba-refusal','transaction-abort-preserves-state-and-backup','backup-and-state-atomic','invalid-unicode-and-oversize','third-tab-reopen','clean-browser-process-restart','legacy-anchor-preserved','strict-durability-required','unexpected-schema-refused','legacy-localstorage-untouched','corrupt-record-refusal'],'scope':'synthetic same-origin Chrome tabs; experimental adapter only, not integrated; no old-client coordination, app migration, crash/power-loss, QEMU or release'}
+ report={'status':'PASS_TRANSACTIONAL_STORAGE_SYNTHETIC','sourceSha256':hashlib.sha256(source.read_bytes()).hexdigest(),'checks':['two-tab-competing-writers','revision-aba-refusal','transaction-abort-preserves-state-and-backup','backup-and-state-atomic','latest-backup-numeric-order','invalid-unicode-and-oversize','third-tab-reopen','clean-browser-process-restart','legacy-anchor-preserved','strict-durability-required','unexpected-schema-refused','legacy-localstorage-untouched','corrupt-record-refusal'],'scope':'synthetic same-origin Chrome tabs; experimental adapter only, not integrated; no old-client coordination, app migration, crash/power-loss, QEMU or release'}
  (out/'result.json').write_text(json.dumps(report,indent=2)+'\n');print(report['status'],flush=True)
 finally:pipe.close();server.shutdown();server.server_close()

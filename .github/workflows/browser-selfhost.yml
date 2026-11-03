@@ -1,0 +1,88 @@
+name: Browser selfhost candidate
+on:
+  pull_request:
+    paths:
+      - 'browser/**'
+      - 'src/**'
+      - 'scripts/**'
+      - 'tests/**'
+      - 'appview/docs-performers-r5ycqp6x/client-runtime.pin.json'
+      - 'appview/docs-performers-r5ycqp6x/cljs/public/.well-known/did.json'
+      - '.github/workflows/browser-selfhost.yml'
+permissions:
+  contents: read
+jobs:
+  build:
+    name: Amu selfhost Wasm build
+    runs-on: macos-15
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Fetch pinned build inputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(uname -m)" = arm64
+          root="$RUNNER_TEMP/office-inputs"
+          mkdir -p "$root"
+          git init -q "$root/amu"
+          git -C "$root/amu" remote add origin https://github.com/kotoba-lang/amu.git
+          git -C "$root/amu" sparse-checkout init --no-cone
+          git -C "$root/amu" sparse-checkout set --no-cone '/scripts/seed/check-aiueos-user-macos-native.py' '/scripts/seed/check-wasm32-browser.py' '/runtime/wasm32-browser-static-host.js' '/seed/bootstrap/aarch64-macos/amu-full-root.macho'
+          git -C "$root/amu" fetch --quiet --depth=1 --filter=blob:none origin 068dcbef96a549517ed31cc5727ce7e4f67279fc
+          git -C "$root/amu" checkout --quiet --detach FETCH_HEAD
+          printf '%s  %s\n' '2c551579c06a0228029bb06bae177e93126ecbbc37d636d693c471dbac8d1536' "$root/amu/seed/bootstrap/aarch64-macos/amu-full-root.macho" | shasum -a 256 -c -
+          git init -q "$root/broker"
+          git -C "$root/broker" fetch --quiet --depth=1 --filter=blob:none https://github.com/kotoba-lang/wasm-webcomponent.git e00ae75e1c589f76b4f53a88a5e3256c98c9e162
+          git init -q "$root/policy"
+          git -C "$root/policy" fetch --quiet --depth=1 --filter=blob:none https://github.com/kotoba-lang/kotoba.git c28c8b551d696df780dddff5064ac530ae29ff2f
+      - name: Compile Wasm and package test inputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="$RUNNER_TEMP/office-inputs"
+          payload="$RUNNER_TEMP/office-payload"
+          mkdir -p "$payload/amu/scripts/seed"
+          python3 scripts/build-browser.py "$root/amu" "$root/broker" "$root/policy" "$payload/build"
+          cp "$root/amu/scripts/seed/check-wasm32-browser.py" "$payload/amu/scripts/seed/"
+          PAYLOAD="$payload" python3 - <<'PY'
+          import hashlib, os
+          from pathlib import Path
+          root = Path(os.environ['PAYLOAD'])
+          paths = sorted(p for p in root.rglob('*') if p.is_file())
+          (root / 'manifest.sha256').write_text(''.join(hashlib.sha256(p.read_bytes()).hexdigest() + '  ' + p.relative_to(root).as_posix() + '\n' for p in paths))
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: bunsho-browser-candidate
+          path: ${{ runner.temp }}/office-payload
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 1
+  browser:
+    name: Synthetic Chrome storage and recovery
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: bunsho-browser-candidate
+          path: ${{ runner.temp }}/office-payload
+      - name: Verify artifact and exercise storage
+        shell: bash
+        run: |
+          set -euo pipefail
+          payload="$RUNNER_TEMP/office-payload"
+          (cd "$payload" && sha256sum -c manifest.sha256)
+          PYTHONPATH=scripts python3 -c 'import sys; from office_candidate_integrity import validate; validate(sys.argv[1], "bunsho")' "$payload/build"
+          chrome="$(command -v google-chrome)"
+          test -n "$chrome"
+          OFFICE_TEST_HTML_DELAY=0.25 python3 scripts/check-browser-idb-ui.py "$payload/amu" "$payload/build" "$RUNNER_TEMP/office-ui" "$chrome"
+          python3 scripts/check-browser-pending-unload.py "$payload/amu" "$payload/build" "$RUNNER_TEMP/office-unload" "$chrome" add-p
+          python3 scripts/check-legacy-untitled-browser.py "$payload/amu" "$payload/build" "$RUNNER_TEMP/office-legacy-untitled" "$chrome"
+          python3 scripts/check-office-corrupt-recovery.py "$payload/amu" "$payload/build" "$RUNNER_TEMP/office-corrupt" "$chrome" bunsho
+          python3 scripts/check-browser-large-restore.py "$payload/amu" "$payload/build" "$RUNNER_TEMP/office-large" "$chrome" expect-success
+          python3 scripts/check-browser-large-restore.py "$payload/amu" "$payload/build" "$RUNNER_TEMP/office-short-blocks" "$chrome" expect-success 128
+          python3 scripts/check-browser-large-restore.py "$payload/amu" "$payload/build" "$RUNNER_TEMP/office-legacy-large" "$chrome" expect-success 1000 bs2

@@ -20,14 +20,14 @@ test = (root / 'tests/json-string-cases.kotoba').read_text(encoding='utf-8')
 staged, count = re.subn(r'\(:export \[json-unquote\]\)', '(:export [main])', source, count=1)
 if count != 1:
     raise SystemExit('decoder namespace changed')
-anchor = '(< c 32)'
+anchor = '(< c 32) (option-none-of [:option :string])'
 if staged.count(anchor) != 1:
     raise SystemExit('mutation anchor changed')
 spec = importlib.util.spec_from_file_location('mac', amu / 'scripts/seed/check-aiueos-user-macos-native.py')
 mac = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(mac)
 results = {}
-for name, code, expected in [('decoder', staged, 23), ('mutant', staged.replace(anchor, '(< c 0)'), 22)]:
+for name, code, expected in [('decoder', staged, 23), ('mutant', staged.replace(anchor, '(< c 0) (option-none-of [:option :string])'), 22)]:
     path = out / (name + '.kotoba')
     path.write_text(code + '\n' + test, encoding='utf-8')
     native = subprocess.run([str(amu / 'bin/amu'), 'run', str(path)], cwd=out,

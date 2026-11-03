@@ -1,0 +1,98 @@
+{
+  "status": "PASS_BUNSHO_UNTITLED_LEGACY_SYNTHETIC",
+  "date": "2026-11-03",
+  "sourceSha256": {
+    "lg-clj/src/lg_docs/handlers.cljk": "8cdecc411f52c559c628e06513b2cad045ab3dcfac98a361c7d99ff86c569f5d",
+    "lg-clj/src/lg_docs/mapping.cljk": "04a324ad789e1195ae3c6e68525dc58bf6f390a2b2781384ef3a245c8bf2e61d",
+    "src/moji/legacy_document.kotoba": "ccd5dcd7276260494ff8612c606fa6da7232ee12ed6d320807d5bf27a2131752",
+    "tests/legacy-document-cases.kotoba": "87a683d150be8ec7a6926b5cfd9b6a4fd6755ad4f3deec0f8e3546e64a583763",
+    "scripts/check-legacy-document.py": "66bac630bf86d8d0222a2953ffcf2aac02a2f9fd870e545f6e2c0504d61d0ef5",
+    "scripts/check-legacy-untitled-browser.py": "ac25dc8a411fa5c41b7d02efeb26c92b585ac0fd679ffd89158c95915170fd52",
+    ".github/workflows/browser-selfhost.yml": "37c8cd33f2a4859a05242d1d098c07a42bd233bddea2d604ccb3c72bb2e3944f"
+  },
+  "legacySourceFinding": "documents-create accepts missing title; create-ops skips nil and attrs-to-document-meta returns only present scalar fields.",
+  "nativeAndWasm": {
+    "inputSha256": {
+      "editor.kotoba": "c8612ba41db6431a0a3a15d87171fbcdf11789cd54c9fc59603fc3bcf3a0718b",
+      "json_string.kotoba": "48524f6982e4890b8bc59f3afa8c9d57a103f1139cd805e4c0efd44fefc6e3d8",
+      "json_parse.kotoba": "d63d72d8c473ccab01e773add499f6df4aaff0bb271388a7e86fce0bbf760c6f",
+      "legacy_document.kotoba": "ccd5dcd7276260494ff8612c606fa6da7232ee12ed6d320807d5bf27a2131752",
+      "legacy-document-cases.kotoba": "87a683d150be8ec7a6926b5cfd9b6a4fd6755ad4f3deec0f8e3546e64a583763"
+    },
+    "results": {
+      "conversion": {
+        "result": 16,
+        "wasmSha256": "5854623d563645fc5fbea2c4d30ce419bc54945479698ed05e24da8196a5ed40"
+      },
+      "duplicate-mutant": {
+        "result": 15,
+        "wasmSha256": "cc4d72de56ce450d8980817e0e9e810846e4b8a505f5e71daf15d0e0a9e91b19"
+      },
+      "title-guard-mutant": {
+        "result": 15,
+        "wasmSha256": "453a06fd2e2498cfcec53b725c187eb32e3def6cdab8a079ce460180101db39f"
+      }
+    }
+  },
+  "browserCandidate": {
+    "status": "PASS_UNTITLED_LEGACY_UI_SYNTHETIC",
+    "buildReceiptSha256": "1ab75afeed696a47a1769648cfa8f71f17a3847b94694df9473b8f41f2a308f7",
+    "observerSha256": "ac25dc8a411fa5c41b7d02efeb26c92b585ac0fd679ffd89158c95915170fd52",
+    "inputSha256": "904aabb29cfddbd934ff1d05fa9a7d92f7f180f7ed94111fc0adf700918b7bcc",
+    "checks": [
+      "null-title-refused",
+      "preview-cancel",
+      "explicit-import",
+      "prior-backup",
+      "reload",
+      "exact-original-export"
+    ],
+    "scope": "Synthetic documentsGet response only; no real data, actual old-origin fetch, QEMU or release."
+  },
+  "browserCiBaseline": {
+    "status": "PASS_UNTITLED_LEGACY_UI_SYNTHETIC",
+    "buildReceiptSha256": "6de5b117c95417ba28793b478922c66aa1dd44e84351ea79ed1470c83e5cdb98",
+    "observerSha256": "ac25dc8a411fa5c41b7d02efeb26c92b585ac0fd679ffd89158c95915170fd52",
+    "inputSha256": "904aabb29cfddbd934ff1d05fa9a7d92f7f180f7ed94111fc0adf700918b7bcc",
+    "checks": [
+      "null-title-refused",
+      "preview-cancel",
+      "explicit-import",
+      "prior-backup",
+      "reload",
+      "exact-original-export"
+    ],
+    "scope": "Synthetic documentsGet response only; no real data, actual old-origin fetch, QEMU or release."
+  },
+  "existingUiRegression": {
+    "status": "PASS_BUNSHO_IDB_UI_SYNTHETIC",
+    "checks": [
+      "new-document-save-reload",
+      "stale-tab-conflict-preserves-draft",
+      "stale-revision-draft-preview-only",
+      "backup-preview-and-atomic-restore",
+      "save-abort-reload-recover-draft-and-retry",
+      "legacy-session-draft-preview-only",
+      "restore-abort-rolls-back-backup",
+      "postcommit-restore-truthful-warning",
+      "postcommit-save-truthful-warning",
+      "legacy-preview-explicit-trusted-confirm",
+      "legacy-copy-and-old-backup-preserved",
+      "old-backup-preview",
+      "old-writer-divergence-freezes",
+      "unfinished-and-late-composition-journaled",
+      "both-divergent-branches-and-unsaved-draft-export",
+      "migration-keyboard-cancel-preserves",
+      "invalid-legacy-refusal",
+      "invalid-utf16-legacy-export",
+      "migration-preview-race-refusal",
+      "migration-transaction-abort",
+      "migration-postcommit-divergence-preserved"
+    ],
+    "scope": "synthetic Chrome loopback; no real user data, atomic cross-store coordination, crash/power-loss, QEMU or release"
+  },
+  "limitations": [
+    "Synthetic documentsGet response; no real historical records or network service accessed.",
+    "No proof of every legacy schema, real migration, QEMU or release."
+  ]
+}
