@@ -1,0 +1,86 @@
+{
+  "date": "2026-11-03",
+  "status": "PASS_SYNTHETIC_LEGACY_COMPACT",
+  "sourceSha256": "1867560228b9b5ae5875f70fbf92f53e246a5d4c6ba3c196f44113e4414bff96",
+  "normal": {
+    "compilerSha256": "2c551579c06a0228029bb06bae177e93126ecbbc37d636d693c471dbac8d1536",
+    "wasmSha256": "5b1d61ca825cdf916128149fd537904eb5a76c0a64ba9ec0875e17d0a394f991"
+  },
+  "experimentalCompact": {
+    "compilerSha256": "3c63cc6c8c4641bf971173e8baa7596326f6e992d23e1b965df6fff4d4041b63",
+    "wasmSha256": "0f507d3cbf64b8ddd50e43c194b196e88238ce22686751e4a070c002bedf865d",
+    "runtimeStringPoolBytes": 4194304,
+    "linearMemoryBytes": 7536640
+  },
+  "parity": {
+    "status": "PASS_LEGACY_COMPACT_PARITY",
+    "cases": [
+      "2-view",
+      "2-protect",
+      "2-original",
+      "2-edit",
+      "4-view",
+      "4-protect",
+      "4-original",
+      "4-edit",
+      "8-view",
+      "8-protect",
+      "8-original",
+      "8-edit",
+      "12-view",
+      "12-protect",
+      "12-original",
+      "12-edit",
+      "16-view",
+      "16-protect",
+      "16-original",
+      "16-edit",
+      "import-plain",
+      "import-unicode",
+      "import-escapes",
+      "import-boundary-128",
+      "import-boundary-129",
+      "refuse-bad-surrogate",
+      "refuse-bad-escape",
+      "refuse-raw-control",
+      "refuse-duplicate-key",
+      "refuse-overlong-text"
+    ],
+    "browser": {
+      "product": "Chrome/156.0.8078.74",
+      "protocol": "1.3"
+    },
+    "wasmSha256": {
+      "old": "ce5b1f52699595d4164700af48730ac1097634fffbe7293d0523a986dfd26091",
+      "new": "5b1d61ca825cdf916128149fd537904eb5a76c0a64ba9ec0875e17d0a394f991",
+      "compact": "0f507d3cbf64b8ddd50e43c194b196e88238ce22686751e4a070c002bedf865d"
+    },
+    "scope": "synthetic legacy browser parity; no real data, QEMU or release"
+  },
+  "indexedDbLegacyRestore": {
+    "status": "PASS_LARGE_RESTORE_EDIT_RELOAD",
+    "snapshotBytes": 33098,
+    "blocks": 16,
+    "blockBytes": 1000,
+    "format": "BS2",
+    "previousStateBackedUp": true
+  },
+  "indexedDbRegularRestore": {
+    "status": "PASS_LARGE_RESTORE_EDIT_RELOAD",
+    "snapshotBytes": 34068,
+    "blocks": 32,
+    "blockBytes": 1024,
+    "format": "BS3",
+    "previousStateBackedUp": true
+  },
+  "otherChecks": [
+    "native and Wasm JSON string, JSON parser, legacy document and legacy snapshot with negative controls",
+    "synthetic IndexedDB UI regression"
+  ],
+  "limitations": [
+    "synthetic fixture only; not all possible valid BS2 payloads",
+    "compact Wasm is experimental and not an Itonami OS or QEMU runtime",
+    "real source authority and user data migration not established",
+    "not production deployment or fleet synchronization"
+  ]
+}

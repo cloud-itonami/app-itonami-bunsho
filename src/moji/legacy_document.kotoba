@@ -66,10 +66,10 @@
             (legacy-blocks tokens (+ i 1) (document-vector-conj acc b))))))))
 
 (defn legacy-convert [raw :string] [:option :document]
-  (let [valid (json/json-parse raw)
+  (let [valid (arena-scope (option-some?-of [:option :string] (json/json-parse raw)))
         found (json/json-object-field raw "found")
         doc (json/json-object-field raw "document")]
-    (if (and (option-some?-of [:option :string] valid)
+    (if (and valid
              (option-some?-of [:option :string] found)
              (string=? (option-value-of [:option :string] found "") "true")
              (option-some?-of [:option :string] doc))

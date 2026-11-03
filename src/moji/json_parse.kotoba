@@ -27,7 +27,7 @@
 (defn jp-string [s :string i :i64 n :i64] :i64
   (let [end (jp-string-end s (+ i 1) n i)]
     (if (< end 0) -1
-      (if (option-some?-of [:option :string] (js/json-unquote (string-substring s i end))) end -1))))
+      (if (arena-scope (option-some?-of [:option :string] (js/json-unquote (string-substring s i end)))) end -1))))
 (defn jp-digit? [c :i64] :bool (and (>= c 48) (<= c 57)))
 (defn jp-digits [s :string i :i64 n :i64] :i64
   (loop [at i]
@@ -134,8 +134,8 @@
                       (if (and (< next n) (= (string-code-point-at s next) 44))
                         (jp-object-field-from s (+ next 1) n key) (option-none-of [:option :string])))))))))))))
 (defn json-object-field [s :string key :string] [:option :string]
-  (let [valid (json-parse s) n (string-byte-length s) start (jp-space s 0 n)]
-    (if (or (not (option-some?-of [:option :string] valid)) (>= start n)
+  (let [valid (arena-scope (option-some?-of [:option :string] (json-parse s))) n (string-byte-length s) start (jp-space s 0 n)]
+    (if (or (not valid) (>= start n)
             (not (= (string-code-point-at s start) 123))) (option-none-of [:option :string])
       (jp-object-field-from s (+ start 1) n key))))
 (defn jp-array-item-from [s :string i :i64 n :i64 wanted :i64 index :i64] [:option :string]
@@ -148,8 +148,8 @@
               (if (and (< next n) (= (string-code-point-at s next) 44))
                 (jp-array-item-from s (+ next 1) n wanted (+ index 1)) (option-none-of [:option :string])))))))))
 (defn json-array-item [s :string index :i64] [:option :string]
-  (let [valid (json-parse s) n (string-byte-length s) start (jp-space s 0 n)]
-    (if (or (< index 0) (not (option-some?-of [:option :string] valid)) (>= start n)
+  (let [valid (arena-scope (option-some?-of [:option :string] (json-parse s))) n (string-byte-length s) start (jp-space s 0 n)]
+    (if (or (< index 0) (not valid) (>= start n)
             (not (= (string-code-point-at s start) 91))) (option-none-of [:option :string])
       (jp-array-item-from s (+ start 1) n index 0))))
 
@@ -168,7 +168,7 @@
                       (= (string-code-point-at s next) 44) (jp-array-tokens-from s (+ next 1) n items)
                       :else (option-none-of [:option :document]))))))))))
 (defn json-array-tokens [s :string] [:option :document]
-  (if (not (option-some?-of [:option :string] (json-parse s))) (option-none-of [:option :document])
+  (if (not (arena-scope (option-some?-of [:option :string] (json-parse s)))) (option-none-of [:option :document])
     (let [n (string-byte-length s) start (jp-space s 0 n)]
       (if (>= start n) (option-none-of [:option :document])
         (if (not (= (string-code-point-at s start) 91)) (option-none-of [:option :document])
