@@ -1,0 +1,65 @@
+{
+  "status": "PASS_SYNTHETIC_THREE_APP_ORIGIN_TRANSFER",
+  "date": "2026-11-03",
+  "reports": [
+    {
+      "status": "PASS_SYNTHETIC_ORIGIN_TRANSFER",
+      "app": "bunsho",
+      "sourceBuildReceiptSha256": "14d7045227acd33341c7e132b2f746334fbe148c49a0aae140c43d4d604c8b51",
+      "destinationBuildReceiptSha256": "f9d394e4017842d0d844842b5eb1fdceb6e83ad9e2d52f1d6879485e9a7aedc8",
+      "observerSha256": "c751b5204ee0f269827d0689f93072de1d6a366d659b32d05a6600f382449e2a",
+      "exportSha256": "d02135138862d3f0efbddcb21f41e624a9d66d9cd8ae6af31c606f305441ec46",
+      "checks": [
+        "source-export-exact",
+        "separate-origin",
+        "preview-and-cancel-preserve-both",
+        "explicit-import",
+        "destination-backup",
+        "source-preserved",
+        "destination-reload"
+      ],
+      "scope": "Synthetic loopback origins and data only; not actual legacy formats, production, crash/power-loss, QEMU or release."
+    },
+    {
+      "status": "PASS_SYNTHETIC_ORIGIN_TRANSFER",
+      "app": "hyokeisan",
+      "sourceBuildReceiptSha256": "8ced5c4894b221a2514d53e2ad1a0d53180e17ad21c91606e153d1bfd91b890a",
+      "destinationBuildReceiptSha256": "a5ea630a973cbd4969d48aa8d41a2df8b22d4c623ed4356edc10d4f92be600d6",
+      "observerSha256": "c751b5204ee0f269827d0689f93072de1d6a366d659b32d05a6600f382449e2a",
+      "exportSha256": "43bc83826487da007087f94e86c7c00a158c2611bdb05fcf35f92015ba7cb636",
+      "checks": [
+        "source-export-exact",
+        "separate-origin",
+        "preview-and-cancel-preserve-both",
+        "explicit-import",
+        "destination-backup",
+        "source-preserved",
+        "destination-reload"
+      ],
+      "scope": "Synthetic loopback origins and data only; not actual legacy formats, production, crash/power-loss, QEMU or release."
+    },
+    {
+      "status": "PASS_SYNTHETIC_ORIGIN_TRANSFER",
+      "app": "zuhyo",
+      "sourceBuildReceiptSha256": "ffcb370226dd33dc3a0143eec1b86111f819ddad710098468bbfb65268a094b2",
+      "destinationBuildReceiptSha256": "17150a5cf3654de8a1baae7c8023d614718878d0aa475a1c92848eff2d07f709",
+      "observerSha256": "c751b5204ee0f269827d0689f93072de1d6a366d659b32d05a6600f382449e2a",
+      "exportSha256": "345dc92687e1462f2908b467a4576c64979a228be252ee457616cdcbd32cb29b",
+      "checks": [
+        "source-export-exact",
+        "separate-origin",
+        "preview-and-cancel-preserve-both",
+        "explicit-import",
+        "destination-backup",
+        "source-preserved",
+        "destination-reload"
+      ],
+      "scope": "Synthetic loopback origins and data only; not actual legacy formats, production, crash/power-loss, QEMU or release."
+    }
+  ],
+  "limitations": [
+    "Synthetic old/new candidates and loopback origins; actual historical origins and formats remain unverified.",
+    "Export/import requires an explicit user file choice and confirmation.",
+    "No crash/power-loss, QEMU application, live fleet, public URL or production cutover qualification."
+  ]
+}
