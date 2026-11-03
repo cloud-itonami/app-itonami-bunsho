@@ -1,0 +1,125 @@
+{
+  "status": "PASS_PRIVATE_CROSS_HOST_CANDIDATES",
+  "observerSha256": "b55341186a5d8afb88a48e90551223995373d0cfb9354df8f7efcc55cb81b25d",
+  "kuboBinarySha256": "e3346937469371095c314e724bdc182a0e2a166b9dcfe7622ba55bf81ad1b585",
+  "scope": "two hosts, one tailnet path; private swarm only; not public routing, independent network/power, DNS/TLS, or release; isolated test pins and daemons stopped after test; no durable production replicas",
+  "isolation": {
+    "privateSwarm": true,
+    "bootstrap": [],
+    "mdns": false,
+    "routing": "none",
+    "telemetry": "off"
+  },
+  "replication": {
+    "bothHostsPinned": true,
+    "providerStopped": true,
+    "allFilesVerifiedAfterStop": true
+  },
+  "apps": {
+    "bunsho": {
+      "cid": "bafybeic6piaqbef7dlipzxhe3yerw2p6d3afchcxjbcmvujue2oosnmrm4",
+      "build": {
+        "wasmSha256": "5853d737677abe80ee26368e73515598f724d6cde48988c7ebd496a646c0e30c",
+        "compilerSha256": "2c551579c06a0228029bb06bae177e93126ecbbc37d636d693c471dbac8d1536",
+        "sourceSha256": "6bb9ec37aecaf31d55e36042602f4903e303ae1677121afc69c49ac60d8d3705",
+        "brokerRevision": "e00ae75e1c589f76b4f53a88a5e3256c98c9e162",
+        "brokerSha256": "7f760128c3a58098123c31ec3dd34b9c871932e3933f2c952facc4ab0e647212",
+        "workerSha256": "58d606d0b3f22766a1b7288fe911c106aea9606fecfe59a2adb66a4bac8923ab"
+      },
+      "files": {
+        "app.js": "3c90a18fa3abfcb1c4614ead349fddc5f0ed6305a95a02c11279df14ec07f8a1",
+        "build-receipt.json": "40b88fd9673f8c885e0338b57541de3bd779509782056e64f05221b11085c2a2",
+        "bundle.js": "c2896b61ce625d1f6bb03ae301a9b2ca2113e421bbc539ac285df0bd7e2e45ad",
+        "client-runtime.json": "667d312e0cd027e8f0a121b6d31a11f0b8c6905953cfbb26e13070bd99799c1a",
+        "index.html": "37e3988d25386d0a836a6b3a2ec6cede5fc1d632706c2304e16aa20d690ecd9b",
+        "kotoba-client-runtime.js": "7f760128c3a58098123c31ec3dd34b9c871932e3933f2c952facc4ab0e647212",
+        "program.kotoba": "6bb9ec37aecaf31d55e36042602f4903e303ae1677121afc69c49ac60d8d3705",
+        "program.wasm": "5853d737677abe80ee26368e73515598f724d6cde48988c7ebd496a646c0e30c",
+        "style.css": "1cc3d82b981add0e3b564dd75c318374cbf6f4bea3c862ebbafc71e727df2177",
+        "worker.js": "58d606d0b3f22766a1b7288fe911c106aea9606fecfe59a2adb66a4bac8923ab"
+      },
+      "browser": {
+        "status": "PASS",
+        "checks": [
+          "edit",
+          "save",
+          "reload",
+          "multiline"
+        ],
+        "requestCount": 15
+      },
+      "sourceCommit": "e594f1b42613e1a778028510c9bd4c2588667331",
+      "stagedSourceAndAppJsMatchCheckout": true
+    },
+    "hyokeisan": {
+      "cid": "bafybeiawlcs57qkh24ez6ikpmbl23gzinx6h5bu22xof3yqo6rki566tay",
+      "build": {
+        "wasmSha256": "ab04244066fec7ebbc39c96e97f2545d6ece33923876baf36f8ff2f157f64f79",
+        "compilerSha256": "2c551579c06a0228029bb06bae177e93126ecbbc37d636d693c471dbac8d1536",
+        "sourceSha256": "746866e79cb0c88d4ae8fa9659390e0370973a9e1160f4ee1b0fdc35362af76f",
+        "brokerRevision": "e00ae75e1c589f76b4f53a88a5e3256c98c9e162",
+        "brokerSha256": "7f760128c3a58098123c31ec3dd34b9c871932e3933f2c952facc4ab0e647212",
+        "workerSha256": "58d606d0b3f22766a1b7288fe911c106aea9606fecfe59a2adb66a4bac8923ab"
+      },
+      "files": {
+        "app.js": "4b46806e52c111d52499c4202e1f6b3001980ee75244497de29ff1e54a896ae1",
+        "build-receipt.json": "415ff59077b1cf8b3581d478f46213f316aee97b39bd90b37ea468ced1a1e9df",
+        "bundle.js": "6af719ec938e4a48fb3f3243a07927072dbdc58b32771c2138cadb3020bc891d",
+        "client-runtime.json": "f0d6467244538d1809b48a6f022367a44ff7e29352d526262941e06130507f6c",
+        "index.html": "98c35824615e2bb536c32f3769b0b54045bf4c90279dd8cedfeeab4c7addff01",
+        "kotoba-client-runtime.js": "7f760128c3a58098123c31ec3dd34b9c871932e3933f2c952facc4ab0e647212",
+        "program.kotoba": "746866e79cb0c88d4ae8fa9659390e0370973a9e1160f4ee1b0fdc35362af76f",
+        "program.wasm": "ab04244066fec7ebbc39c96e97f2545d6ece33923876baf36f8ff2f157f64f79",
+        "style.css": "cd5755055be8e69614c8bf82289ca4b72b97437fade7336ccb199b60446fa400",
+        "worker.js": "58d606d0b3f22766a1b7288fe911c106aea9606fecfe59a2adb66a4bac8923ab"
+      },
+      "browser": {
+        "status": "PASS",
+        "checks": [
+          "edit",
+          "save",
+          "reload",
+          "decimal"
+        ],
+        "requestCount": 15
+      },
+      "sourceCommit": "1e2301a2662465bd605c7061ac26368c601615e1",
+      "stagedSourceAndAppJsMatchCheckout": true
+    },
+    "zuhyo": {
+      "cid": "bafybeib5k3aqhqck436lrfh4aigbk7e432xgggzzgkkkactjf4vtw3ba4q",
+      "build": {
+        "wasmSha256": "8ee1f10004fa57d6ff50f00855ed276031b4d008b4c65a8084b744df63ef7628",
+        "compilerSha256": "2c551579c06a0228029bb06bae177e93126ecbbc37d636d693c471dbac8d1536",
+        "sourceSha256": "fec489655a1b3f8a87bc2f8a1c3adb3c56b1d2d3c7984dbd7d2cbb82185beb85",
+        "brokerRevision": "e00ae75e1c589f76b4f53a88a5e3256c98c9e162",
+        "brokerSha256": "7f760128c3a58098123c31ec3dd34b9c871932e3933f2c952facc4ab0e647212",
+        "workerSha256": "58d606d0b3f22766a1b7288fe911c106aea9606fecfe59a2adb66a4bac8923ab"
+      },
+      "files": {
+        "app.js": "b14ffb2030425d5807bab8abc3203de2df8a208fd2c5f733177e69f09e6bdf76",
+        "build-receipt.json": "ff50799269f257a3a7fc45a5054df69e7150d400ad234f6dd9ba0b92ecbe29b9",
+        "bundle.js": "be56ae9f335e43d2bd31092fbb8d2e523e011f3ea43d57267d392fc2d40d6fe1",
+        "client-runtime.json": "977c322d85e27d51bea0c322e8a5952e3cc2810dd9539611a762fd0cbd5ace26",
+        "index.html": "6fb6d11f8f81809b8f68a8282f2a8b232bec0c5f4a7e2b3b0137ebb3ebc20893",
+        "kotoba-client-runtime.js": "7f760128c3a58098123c31ec3dd34b9c871932e3933f2c952facc4ab0e647212",
+        "program.kotoba": "fec489655a1b3f8a87bc2f8a1c3adb3c56b1d2d3c7984dbd7d2cbb82185beb85",
+        "program.wasm": "8ee1f10004fa57d6ff50f00855ed276031b4d008b4c65a8084b744df63ef7628",
+        "style.css": "5592848f969fde01d0bb4405f0e6260f3d39e642a4a0962e7d552878c882ca47",
+        "worker.js": "58d606d0b3f22766a1b7288fe911c106aea9606fecfe59a2adb66a4bac8923ab"
+      },
+      "browser": {
+        "status": "PASS",
+        "checks": [
+          "edit",
+          "save",
+          "reload",
+          "multiline"
+        ],
+        "requestCount": 15
+      },
+      "sourceCommit": "b56cf5e7e6dc429f79d635f6666076e18b63a115",
+      "stagedSourceAndAppJsMatchCheckout": true
+    }
+  }
+}

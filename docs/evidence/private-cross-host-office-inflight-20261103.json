@@ -1,0 +1,150 @@
+{
+  "status": "PASS_PRIVATE_CROSS_HOST_CANDIDATES",
+  "observerSha256": "e2f68b2013d495797b6e2d4b8e2e1f52491837d3b40ae373427c5e0a7c6ccab0",
+  "kuboBinarySha256": "e3346937469371095c314e724bdc182a0e2a166b9dcfe7622ba55bf81ad1b585",
+  "scope": "two hosts, one tailnet path; private swarm only; not public routing, independent network/power, DNS/TLS, or release; same tailnet, unsigned candidates and temporary pins; no public DNS/TLS, actual user data, fleet signing or release",
+  "isolation": {
+    "privateSwarm": true,
+    "bootstrap": [],
+    "mdns": false,
+    "routing": "none",
+    "telemetry": "off"
+  },
+  "replication": {
+    "bothHostsPinned": true,
+    "providerStopped": true,
+    "allFilesVerifiedAfterStop": true
+  },
+  "apps": {
+    "bunsho": {
+      "cid": "bafybeih5bl6ctohskbtnyypcsuz57ia4t726abjuxgfdbxxc7m3qhy2q74",
+      "build": {
+        "wasmSha256": "f46b02f8ff8288dc7fbe8721de2727b968636d36e087249e13d99a1e3268e65e",
+        "compilerSha256": "2c551579c06a0228029bb06bae177e93126ecbbc37d636d693c471dbac8d1536",
+        "sourceSha256": "cfb4426fec9e463c6cf1e3fb2e2dcd6cda52152a71d8000fdc729c90e52123db",
+        "brokerRevision": "e00ae75e1c589f76b4f53a88a5e3256c98c9e162",
+        "brokerSha256": "7f760128c3a58098123c31ec3dd34b9c871932e3933f2c952facc4ab0e647212",
+        "workerSha256": "58d606d0b3f22766a1b7288fe911c106aea9606fecfe59a2adb66a4bac8923ab",
+        "draftPolicyRevision": "26da503693359e3e7d544b50b97cae1c5cf6041e",
+        "draftPolicySourceSha256": "8888ad0d88e8f954b5b1cd4fa0d3da62ac13e906f9410866cfd9dec6112f11f2",
+        "draftPolicyWasmSha256": "baa17f80e3ce7ce32b86086606168846454ca547842359251b50b911d4b89e42",
+        "didSha256": "31149ca88400ef1cb30d9787c060512db335d14f9a1145a9fad2b1a3b61176cd"
+      },
+      "files": {
+        ".well-known/did.json": "31149ca88400ef1cb30d9787c060512db335d14f9a1145a9fad2b1a3b61176cd",
+        "app.js": "9ce4247c04e797b8c5469c5325595bdea01f3911ff837ae41e62529a3faf890d",
+        "build-receipt.json": "6bce6f6409fe0b65629a486d6db5f9b0d403b65f709ff0488bb0539288491fcc",
+        "bundle.js": "f8daff9275695e1a9e07aaf095093912ef79dc86da23216daa102e6bd7833737",
+        "client-runtime.json": "667d312e0cd027e8f0a121b6d31a11f0b8c6905953cfbb26e13070bd99799c1a",
+        "draft-policy.kotoba": "8888ad0d88e8f954b5b1cd4fa0d3da62ac13e906f9410866cfd9dec6112f11f2",
+        "draft-policy.wasm": "baa17f80e3ce7ce32b86086606168846454ca547842359251b50b911d4b89e42",
+        "index.html": "37e3988d25386d0a836a6b3a2ec6cede5fc1d632706c2304e16aa20d690ecd9b",
+        "kotoba-client-runtime.js": "7f760128c3a58098123c31ec3dd34b9c871932e3933f2c952facc4ab0e647212",
+        "program.kotoba": "cfb4426fec9e463c6cf1e3fb2e2dcd6cda52152a71d8000fdc729c90e52123db",
+        "program.wasm": "f46b02f8ff8288dc7fbe8721de2727b968636d36e087249e13d99a1e3268e65e",
+        "style.css": "1cc3d82b981add0e3b564dd75c318374cbf6f4bea3c862ebbafc71e727df2177",
+        "worker.js": "58d606d0b3f22766a1b7288fe911c106aea9606fecfe59a2adb66a4bac8923ab"
+      },
+      "browser": {
+        "status": "PASS",
+        "checks": [
+          "edit",
+          "save",
+          "reload",
+          "multiline"
+        ],
+        "requestCount": 15
+      },
+      "sourceCommit": "81790ff3ec4f7ac3b61678dd441e3a0758ca61ef",
+      "builderSha256": "072fa3add3302e85c9784b27e6f0a4ae3aead9ce7da0ed28b4740463aef18d6c",
+      "trackedInputsClean": true
+    },
+    "hyokeisan": {
+      "cid": "bafybeibpgvwqoio6ypuxy2o2ywjpzqtp3rnqdm6dwt6lzl2vhwzzyvln7a",
+      "build": {
+        "wasmSha256": "fd30b0f30e12355ecfa6d357daf21dd28c1b8bbf9f9c5a939b3036fcc49f02a8",
+        "compilerSha256": "2c551579c06a0228029bb06bae177e93126ecbbc37d636d693c471dbac8d1536",
+        "sourceSha256": "25920c2c14970924b09dee8600ff544f472ef7d8cf38d59557b2ffcea916892e",
+        "brokerRevision": "e00ae75e1c589f76b4f53a88a5e3256c98c9e162",
+        "brokerSha256": "7f760128c3a58098123c31ec3dd34b9c871932e3933f2c952facc4ab0e647212",
+        "workerSha256": "58d606d0b3f22766a1b7288fe911c106aea9606fecfe59a2adb66a4bac8923ab",
+        "draftPolicyRevision": "26da503693359e3e7d544b50b97cae1c5cf6041e",
+        "draftPolicySourceSha256": "8888ad0d88e8f954b5b1cd4fa0d3da62ac13e906f9410866cfd9dec6112f11f2",
+        "draftPolicyWasmSha256": "baa17f80e3ce7ce32b86086606168846454ca547842359251b50b911d4b89e42",
+        "didSha256": "4949be2174337d03be51a68e95eb014fab5062bd5e4371fd2110be28895449a9"
+      },
+      "files": {
+        ".well-known/did.json": "4949be2174337d03be51a68e95eb014fab5062bd5e4371fd2110be28895449a9",
+        "app.js": "274a17bffa8c65afe86adce02a6f7dc3e27db5303e7775b087c89176b71644d1",
+        "build-receipt.json": "b272325d633ce86cd5df0612167b0bda9323fbd7e80734c20c97191be921ae0b",
+        "bundle.js": "c4c251a26eecd7bbec8f9358e316acb8dad461f35aa9ad55c2d88e09de6ff960",
+        "client-runtime.json": "f0d6467244538d1809b48a6f022367a44ff7e29352d526262941e06130507f6c",
+        "draft-policy.kotoba": "8888ad0d88e8f954b5b1cd4fa0d3da62ac13e906f9410866cfd9dec6112f11f2",
+        "draft-policy.wasm": "baa17f80e3ce7ce32b86086606168846454ca547842359251b50b911d4b89e42",
+        "index.html": "98c35824615e2bb536c32f3769b0b54045bf4c90279dd8cedfeeab4c7addff01",
+        "kotoba-client-runtime.js": "7f760128c3a58098123c31ec3dd34b9c871932e3933f2c952facc4ab0e647212",
+        "program.kotoba": "25920c2c14970924b09dee8600ff544f472ef7d8cf38d59557b2ffcea916892e",
+        "program.wasm": "fd30b0f30e12355ecfa6d357daf21dd28c1b8bbf9f9c5a939b3036fcc49f02a8",
+        "style.css": "cd5755055be8e69614c8bf82289ca4b72b97437fade7336ccb199b60446fa400",
+        "worker.js": "58d606d0b3f22766a1b7288fe911c106aea9606fecfe59a2adb66a4bac8923ab"
+      },
+      "browser": {
+        "status": "PASS",
+        "checks": [
+          "edit",
+          "save",
+          "reload",
+          "decimal"
+        ],
+        "requestCount": 15
+      },
+      "sourceCommit": "fc44d3902cf5955e40f19cc31713c5a61cecfb02",
+      "builderSha256": "a9c729145b82e69c0f965fbec3ca6459227e5a1e556dee22196c0b249e4b5759",
+      "trackedInputsClean": true
+    },
+    "zuhyo": {
+      "cid": "bafybeiayejk4uewktmydehsvsfkklnfuglabxkvi7zjxkujjfcgmhhx7eu",
+      "build": {
+        "wasmSha256": "59d50c9adbebfae912da432ebd330b9011739eea7a4d5217c7ce83773dbc1bd9",
+        "compilerSha256": "2c551579c06a0228029bb06bae177e93126ecbbc37d636d693c471dbac8d1536",
+        "sourceSha256": "38ea36c2a39d90346e59c3df21141862a450fd4f871bfd169b1426d19899f917",
+        "brokerRevision": "e00ae75e1c589f76b4f53a88a5e3256c98c9e162",
+        "brokerSha256": "7f760128c3a58098123c31ec3dd34b9c871932e3933f2c952facc4ab0e647212",
+        "workerSha256": "58d606d0b3f22766a1b7288fe911c106aea9606fecfe59a2adb66a4bac8923ab",
+        "draftPolicyRevision": "26da503693359e3e7d544b50b97cae1c5cf6041e",
+        "draftPolicySourceSha256": "8888ad0d88e8f954b5b1cd4fa0d3da62ac13e906f9410866cfd9dec6112f11f2",
+        "draftPolicyWasmSha256": "baa17f80e3ce7ce32b86086606168846454ca547842359251b50b911d4b89e42",
+        "didSha256": "c0d2281c76eca67add88ef2ad86201f5185eea70a9d404156dcc0fa0ee5737da"
+      },
+      "files": {
+        ".well-known/did.json": "c0d2281c76eca67add88ef2ad86201f5185eea70a9d404156dcc0fa0ee5737da",
+        "app.js": "5e27efd36088a3caedbb0bf36f0ae07c59357ee29d604a04744301edbe791960",
+        "build-receipt.json": "2fc425f883a498e455716bc25baa77785698be3c57da7a99dce78583ff2d6981",
+        "bundle.js": "2746cac645531a508b467ede1d2875f26f964c29449a83271606fc27cfc76389",
+        "client-runtime.json": "977c322d85e27d51bea0c322e8a5952e3cc2810dd9539611a762fd0cbd5ace26",
+        "draft-policy.kotoba": "8888ad0d88e8f954b5b1cd4fa0d3da62ac13e906f9410866cfd9dec6112f11f2",
+        "draft-policy.wasm": "baa17f80e3ce7ce32b86086606168846454ca547842359251b50b911d4b89e42",
+        "index.html": "6fb6d11f8f81809b8f68a8282f2a8b232bec0c5f4a7e2b3b0137ebb3ebc20893",
+        "kotoba-client-runtime.js": "7f760128c3a58098123c31ec3dd34b9c871932e3933f2c952facc4ab0e647212",
+        "program.kotoba": "38ea36c2a39d90346e59c3df21141862a450fd4f871bfd169b1426d19899f917",
+        "program.wasm": "59d50c9adbebfae912da432ebd330b9011739eea7a4d5217c7ce83773dbc1bd9",
+        "style.css": "8dd3e3acf915261c7885d5d528a8245d7b7645a444b8d0e9b542e35866c97e67",
+        "worker.js": "58d606d0b3f22766a1b7288fe911c106aea9606fecfe59a2adb66a4bac8923ab"
+      },
+      "browser": {
+        "status": "PASS",
+        "checks": [
+          "edit",
+          "save",
+          "reload",
+          "multiline"
+        ],
+        "requestCount": 15
+      },
+      "sourceCommit": "5aac63927d6ca02f93a7dcfb4e1fee22024e2bb4",
+      "builderSha256": "8b3c36b9490825f44a80b5818e20e78153e9349be682f73f5ae6673d0f760d26",
+      "trackedInputsClean": true
+    }
+  },
+  "validatorSha256": "a96791cb408d97809f182f23e56475b6ed259bd6c0767f98b1faef1ae8b5c8a7"
+}

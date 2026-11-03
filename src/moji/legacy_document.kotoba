@@ -1,0 +1,101 @@
+(ns moji.legacy-document
+  (:export [legacy-convert])
+  (:require [moji.json-string :as js]
+            [moji.json-parse :as json]))
+
+;; Provisional in-memory conversion of a documentsGet response. The exact
+;; original JSON is retained as provenance, including unknown fields. It is
+;; NOT a persistent snapshot, a complete migration, or an old-origin fetch.
+;; Unsupported documents refuse; callers must not fall back to lossy import.
+(defn legacy-space [s :string n :i64] :i64
+  (loop [i 0]
+    (if (>= i n) i
+      (let [c (string-code-point-at s i)]
+        (if (or (= c 32) (= c 9) (= c 10) (= c 13)) (recur (+ i 1)) i)))))
+
+(defn legacy-string [object :string key :string] [:option :string]
+  (let [raw (json/json-object-field object key)]
+    (if (option-some?-of [:option :string] raw)
+      (js/json-unquote (option-value-of [:option :string] raw ""))
+      (option-none-of [:option :string]))))
+
+(defn legacy-kind [object :string kind :string] :string
+  (cond (string=? kind "paragraph") "p"
+        (string=? kind "listItem") "li"
+        (string=? kind "heading")
+          (let [level (json/json-object-field object "headingLevel")]
+            (if (option-some?-of [:option :string] level)
+              (let [n (option-value-of [:option :string] level "")]
+                (cond (string=? n "1") "h1" (string=? n "2") "h2"
+                      (string=? n "3") "h3" (string=? n "4") "h4"
+                      (string=? n "5") "h5" (string=? n "6") "h6" :else "")) ""))
+        :else ""))
+
+(defn legacy-block [raw :string] [:option :document]
+  (let [id (legacy-string raw "elementId") kind (legacy-string raw "kind") text (legacy-string raw "text")]
+    (if (and (option-some?-of [:option :string] id)
+             (option-some?-of [:option :string] kind)
+             (option-some?-of [:option :string] text))
+      (let [ident (option-value-of [:option :string] id "")
+            k (legacy-kind raw (option-value-of [:option :string] kind ""))
+            t (option-value-of [:option :string] text "")]
+        (if (and (> (string-byte-length ident) 0) (<= (string-byte-length ident) 1024)
+                 (> (string-byte-length k) 0) (<= (string-byte-length t) 1024))
+          (option-some-of [:option :document]
+            (document-map :kind (document-string k) :text (document-string t) :legacy-id (document-string ident)))
+          (option-none-of [:option :document])))
+      (option-none-of [:option :document]))))
+
+(defn legacy-duplicate-id? [blocks :document id :string i :i64] :bool
+  (if (>= i (document-count blocks)) false
+    (let [item (option-value-of [:option :document] (document-vector-at blocks i) (document-null))
+          value (option-value-of [:option :document] (document-get item :legacy-id) (document-null))
+          text (option-value-of [:option :string] (document-string-value value) "")]
+      (if (string=? text id) true (legacy-duplicate-id? blocks id (+ i 1))))))
+
+(defn legacy-blocks [tokens :document i :i64 acc :document] [:option :document]
+  (if (>= i (document-count tokens)) (option-some-of [:option :document] acc)
+    (let [token (option-value-of [:option :document] (document-vector-at tokens i) (document-null))
+          raw (option-value-of [:option :string] (document-string-value token) "")
+          parsed (legacy-block raw)]
+      (if (not (option-some?-of [:option :document] parsed)) (option-none-of [:option :document])
+        (let [b (option-value-of [:option :document] parsed (document-null))
+              ident (option-value-of [:option :string]
+                (document-string-value (option-value-of [:option :document] (document-get b :legacy-id) (document-null))) "")]
+          (if (legacy-duplicate-id? acc ident 0) (option-none-of [:option :document])
+            (legacy-blocks tokens (+ i 1) (document-vector-conj acc b))))))))
+
+(defn legacy-convert [raw :string] [:option :document]
+  (let [valid (json/json-parse raw)
+        found (json/json-object-field raw "found")
+        doc (json/json-object-field raw "document")]
+    (if (and (option-some?-of [:option :string] valid)
+             (option-some?-of [:option :string] found)
+             (string=? (option-value-of [:option :string] found "") "true")
+             (option-some?-of [:option :string] doc))
+      (let [data (option-value-of [:option :string] doc "")
+            id (legacy-string data "documentId") title (legacy-string data "title")
+            revision (legacy-string data "revisionId") body-opt (json/json-object-field data "body")]
+        (if (and (option-some?-of [:option :string] id)
+                 (> (string-byte-length (option-value-of [:option :string] id "")) 0)
+                 (option-some?-of [:option :string] title)
+                 (<= (string-byte-length (option-value-of [:option :string] title "")) 1024)
+                 (option-some?-of [:option :string] revision)
+                 (option-some?-of [:option :string] body-opt))
+          (let [body (option-value-of [:option :string] body-opt "")
+                start (legacy-space body (string-byte-length body))]
+            (if (or (>= start (string-byte-length body)) (not (= (string-code-point-at body start) 91)))
+              (option-none-of [:option :document])
+              (let [tokens (json/json-array-tokens body)
+                    blocks (if (option-some?-of [:option :document] tokens)
+                             (legacy-blocks (option-value-of [:option :document] tokens (document-vector)) 0 (document-vector))
+                             (option-none-of [:option :document]))]
+                (if (option-some?-of [:option :document] blocks)
+                  (option-some-of [:option :document]
+                    (document-map :title (document-string (option-value-of [:option :string] title ""))
+                                  :mode (document-string "edit")
+                                  :blocks (option-value-of [:option :document] blocks (document-vector))
+                                  :legacy-original (document-string raw)))
+                  (option-none-of [:option :document])))))
+          (option-none-of [:option :document])))
+      (option-none-of [:option :document]))))

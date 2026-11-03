@@ -1,0 +1,122 @@
+{
+  "date": "2026-11-02",
+  "scope": "isolated loopback Kubo gateway; synthetic session-journal tests and file readback only",
+  "chrome": "156.0.8078.74",
+  "amu_head": "da321093e9557b811cce5129dacd453e300f63a3",
+  "amu_compiler_sha256": "2c551579c06a0228029bb06bae177e93126ecbbc37d636d693c471dbac8d1536",
+  "broker_revision": "e00ae75e1c589f76b4f53a88a5e3256c98c9e162",
+  "broker_sha256": "7f760128c3a58098123c31ec3dd34b9c871932e3933f2c952facc4ab0e647212",
+  "apps": {
+    "bunsho": {
+      "source_head": "9ea3d21157b50e92dbb715b8e7743236e9c04761",
+      "cid": "bafybeif3mzqqd6bqmgovmehm7qhphr4orrsfv2t5fhxueae37mwlkglloq",
+      "files": {
+        "app.js": "da468b9a178e952bea5659ca458435af7c6638b0cfc3d574998b43493b39689c",
+        "build-receipt.json": "465c999e0cf14d7ff11bd03df8dfa85ecb65d9e965c81423513a72ec713308e6",
+        "bundle.js": "ab071440f7274c88295e3a7d0664756eb51bd39b3aae3e74f83abea6d7fa956e",
+        "client-runtime.json": "71af64b5955b3338a4f01239a99a74480ed087a4aa42725e5f300785ddad84a1",
+        "index.html": "d24aa8bfa32b9d90be497e5a5b830496e96e6cccd27bda25fb74c2ad40fc19c8",
+        "kotoba-client-runtime.js": "7f760128c3a58098123c31ec3dd34b9c871932e3933f2c952facc4ab0e647212",
+        "program.kotoba": "8c44d925da01a61dc76fc246914d665c527c6cd2719c1b0e158db2d839cfc1d5",
+        "program.wasm": "7da4e515d108da7f80c8ff83e72c78be5781d8b7847462b9e8f7a317b7cc5de1",
+        "style.css": "ea520c4ed7e07a763a0a7baad3a1e8e9a5705b4347f3d176f6883c5abdb06bee",
+        "worker.js": "58d606d0b3f22766a1b7288fe911c106aea9606fecfe59a2adb66a4bac8923ab"
+      },
+      "gateway_readback": "10 files matched",
+      "synthetic_journal_checks": [
+        "same-tab-reload",
+        "explicit-recovery-and-retry",
+        "stale-draft-refusal",
+        "raw-export",
+        "explicit-discard",
+        "malformed-draft-refusal",
+        "recovery-selection-race-refusal",
+        "journal-quota-and-retry",
+        "journal-cleanup-failure",
+        "initial-state-mismatch",
+        "program-digest-mismatch",
+        "journal-read-failure-retry",
+        "empty-journal-read-retry",
+        "loopback-only"
+      ],
+      "harness_sha256": "ff7c97e633ef69149d4cea39a67f489c298ea270e45f4d5e3eb103c87298a995",
+      "result_sha256": "19c234590d7c5af032d0af5eb597289824e4455aaaa1cb9f6acc3498171f4285"
+    },
+    "hyokeisan": {
+      "source_head": "2e5ab22c25cad152e2cdfc78cb73d95e4ac8a089",
+      "cid": "bafybeid25hqrjdcjwo5k2utgdswi4c5gfys5nevehswyxyageib5kus7wa",
+      "files": {
+        "app.js": "59cbefe054f180be9014cf36f861f06e4581e13fd1946cea657b1b220c0d033a",
+        "build-receipt.json": "896909b51eb20038c35d03312e14cea0a2b11b68f9f2423a1cbe4e0af23d8665",
+        "bundle.js": "3d6387a8dbac11a5b49e8297fb118d2789d88c617ce68fec085977f43d4bea22",
+        "client-runtime.json": "e39af345d04d52c639f9c37d5205b2ba8af377d2a0fb06efe371542d0d58b2d5",
+        "index.html": "68daa838b231effe02492b215a79152bbbd98dcf4490420942f3536a19c97eae",
+        "kotoba-client-runtime.js": "7f760128c3a58098123c31ec3dd34b9c871932e3933f2c952facc4ab0e647212",
+        "program.kotoba": "ad4f830cb6a24de15b1960d977f1d3a440a18042e9c8a152f3227576ad3755d3",
+        "program.wasm": "4f19741f6ebdb1ef73ddcdfaac13a60f697d7333459a3b610b10186d2c4fba7f",
+        "style.css": "6e51a0790a939d51a05142b71c5f11ab8c83c210ea621c5cc7ef5b3a917cadd2",
+        "worker.js": "58d606d0b3f22766a1b7288fe911c106aea9606fecfe59a2adb66a4bac8923ab"
+      },
+      "gateway_readback": "10 files matched",
+      "synthetic_journal_checks": [
+        "same-tab-reload",
+        "explicit-recovery-and-retry",
+        "stale-draft-refusal",
+        "raw-export",
+        "explicit-discard",
+        "malformed-draft-refusal",
+        "recovery-selection-race-refusal",
+        "journal-quota-and-retry",
+        "journal-cleanup-failure",
+        "initial-state-mismatch",
+        "program-digest-mismatch",
+        "journal-read-failure-retry",
+        "empty-journal-read-retry",
+        "loopback-only"
+      ],
+      "harness_sha256": "6c7bd37403b21a99a0ad8b71137ded2fa4399dff1d0cf020797874295aa05db7",
+      "result_sha256": "19c234590d7c5af032d0af5eb597289824e4455aaaa1cb9f6acc3498171f4285"
+    },
+    "zuhyo": {
+      "source_head": "cd7f4e65741307eb4cb404b32f3fb1aab9aca0ec",
+      "cid": "bafybeifon2nebbizutjsju3qcht6ofevsxxstys7zabinmhxuvdonmyyoq",
+      "files": {
+        "app.js": "bd1d5c80eaeea2d0cbd3a22820d7814163b9622bebf94358ff1ca774674ae218",
+        "build-receipt.json": "cba815f466ef1f7202b764dfbc802097769097d55e465dfc06279f81c217bdd0",
+        "bundle.js": "e1b5db9d0675c57a28f780cf45f8553d2787cdea25e48d076f18c8f30e7b06c3",
+        "client-runtime.json": "977c322d85e27d51bea0c322e8a5952e3cc2810dd9539611a762fd0cbd5ace26",
+        "index.html": "015833c181300e95751db67265e8772f7fd857a1009c93a86cd39573e87db0b3",
+        "kotoba-client-runtime.js": "7f760128c3a58098123c31ec3dd34b9c871932e3933f2c952facc4ab0e647212",
+        "program.kotoba": "b87d865a3978a39fc72b798908653b44fdc0c9bec2bb0008ab1bd91143316cd3",
+        "program.wasm": "e273cfd8ab75d8a70f8a89e6ae2ed3c15bb95cb14fb0ae4be5c67a5091c757fb",
+        "style.css": "048ec650419ce636b74914d563999b6c0127a2da47af8ba7a1b01918da136dcc",
+        "worker.js": "58d606d0b3f22766a1b7288fe911c106aea9606fecfe59a2adb66a4bac8923ab"
+      },
+      "gateway_readback": "10 files matched",
+      "synthetic_journal_checks": [
+        "same-tab-reload",
+        "explicit-recovery-and-retry",
+        "stale-draft-refusal",
+        "raw-export",
+        "explicit-discard",
+        "malformed-draft-refusal",
+        "recovery-selection-race-refusal",
+        "journal-quota-and-retry",
+        "journal-cleanup-failure",
+        "initial-state-mismatch",
+        "program-digest-mismatch",
+        "journal-read-failure-retry",
+        "empty-journal-read-retry",
+        "loopback-only"
+      ],
+      "harness_sha256": "e5497195b0547a34803275e83ab8898b486da45fc989e5e7b9983b4bc2fe0707",
+      "result_sha256": "19c234590d7c5af032d0af5eb597289824e4455aaaa1cb9f6acc3498171f4285"
+    }
+  },
+  "limitations": [
+    "synthetic Chrome only; no physical IME or other browsers",
+    "sessionStorage reload recovery is not crash or closed-tab durability",
+    "natural Worker/CDP timeouts remain unresolved",
+    "full UI regression via this CID, QEMU, legacy migration, fleet trust and public release remain unqualified"
+  ]
+}

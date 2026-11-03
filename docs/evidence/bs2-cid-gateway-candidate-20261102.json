@@ -1,0 +1,108 @@
+{
+  "date": "2026-11-02",
+  "scope": "isolated loopback Kubo CID gateway; synthetic data; not publication",
+  "source_head_before_evidence": "9543fa400bdbf7b35447a272c4a19748cbd53d3c",
+  "compiler": {
+    "wasmSha256": "0db90c67dc38b2d9f130dd502100f74641749a9835bd515d90644cbffdb9b80a",
+    "compilerSha256": "2c551579c06a0228029bb06bae177e93126ecbbc37d636d693c471dbac8d1536",
+    "sourceSha256": "7b6b1232f828e9a1130cb2e4335f2862151bcafbe87c95ccb8a8f2113fbae927",
+    "brokerRevision": "e00ae75e1c589f76b4f53a88a5e3256c98c9e162",
+    "brokerSha256": "7f760128c3a58098123c31ec3dd34b9c871932e3933f2c952facc4ab0e647212",
+    "workerSha256": "58d606d0b3f22766a1b7288fe911c106aea9606fecfe59a2adb66a4bac8923ab"
+  },
+  "cid": "bafybeicf7i6mjpiwnhtc3b2svexwsorcr7jn26arbvbf4amlkfaiqsjxou",
+  "kubo": "0.41.0 offline, no swarm, no gateway fetch or DNSLink",
+  "files_readback_sha256": {
+    "app.js": "d0654c6454c0b2c859c1ba70263e3b14f523277dc91bc29d5d74e5f780ad9b49",
+    "build-receipt.json": "b3d0fc1d4b4d92a3e53db098e0fe3aa435acd0433aa1ebd7f8fbde7bfe11e9a9",
+    "bundle.js": "508281a107d040b4e52310afc4640abe782042e9f4d4746d454dc35b349a9fdc",
+    "client-runtime.json": "667d312e0cd027e8f0a121b6d31a11f0b8c6905953cfbb26e13070bd99799c1a",
+    "index.html": "ddaff0527f7fb0684e0044fdc64c502c7b7881f4e0acff235022117387529bd2",
+    "kotoba-client-runtime.js": "7f760128c3a58098123c31ec3dd34b9c871932e3933f2c952facc4ab0e647212",
+    "program.kotoba": "7b6b1232f828e9a1130cb2e4335f2862151bcafbe87c95ccb8a8f2113fbae927",
+    "program.wasm": "0db90c67dc38b2d9f130dd502100f74641749a9835bd515d90644cbffdb9b80a",
+    "style.css": "ea520c4ed7e07a763a0a7baad3a1e8e9a5705b4347f3d176f6883c5abdb06bee",
+    "worker.js": "58d606d0b3f22766a1b7288fe911c106aea9606fecfe59a2adb66a4bac8923ab"
+  },
+  "legacy_harness_sha256": "4937865fb0e9be6cd2b563389fffe8d52e43ee1516969271a306f72935f35d0e",
+  "chrome": "156.0.8078.74",
+  "checks": {
+    "gateway_normal": {
+      "status": "PASS",
+      "checks": [
+        "BS1 baseline",
+        "unsupported refusal",
+        "preview cancel",
+        "failed backup preserves BS1",
+        "failed write preserves BS1",
+        "explicit BS2 import",
+        "provenance and IDs",
+        "edit reorder reopen",
+        "BS2 export",
+        "loopback CID only"
+      ],
+      "limitations": [
+        "synthetic data",
+        "unsupported legacy kinds refused",
+        "unknown metadata is provenance only",
+        "no old-origin fetch",
+        "no crash/QEMU/publication qualification"
+      ]
+    },
+    "gateway_32_wide": {
+      "status": "PASS",
+      "checks": [
+        "BS1 baseline",
+        "unsupported refusal",
+        "preview cancel",
+        "failed backup preserves BS1",
+        "failed write preserves BS1",
+        "explicit BS2 import",
+        "provenance and IDs",
+        "edit reorder reopen",
+        "BS2 export",
+        "loopback CID only"
+      ],
+      "limitations": [
+        "synthetic data",
+        "unsupported legacy kinds refused",
+        "unknown metadata is provenance only",
+        "no old-origin fetch",
+        "no crash/QEMU/publication qualification"
+      ]
+    },
+    "default_file_server_regression": {
+      "status": "PASS",
+      "checks": [
+        "BS1 baseline",
+        "unsupported refusal",
+        "preview cancel",
+        "failed backup preserves BS1",
+        "failed write preserves BS1",
+        "explicit BS2 import",
+        "provenance and IDs",
+        "edit reorder reopen",
+        "BS2 export",
+        "loopback only"
+      ],
+      "limitations": [
+        "synthetic data",
+        "unsupported legacy kinds refused",
+        "unknown metadata is provenance only",
+        "no old-origin fetch",
+        "no crash/QEMU/publication qualification"
+      ]
+    },
+    "invalid_remote_cid_base": "refused before Chrome creation"
+  },
+  "wide_input_json_bytes": 18053,
+  "wide_export_bs2_bytes": 34713,
+  "limitations": [
+    "only local offline gateway and synthetic documents tested",
+    "CID is local, unpinned and not publicly available",
+    "unsupported block kinds refuse; unknown metadata retained only as provenance",
+    "no actual legacy export or user-data migration",
+    "no crash, QEMU, real IME, other browsers, fleet trust or public delivery qualification",
+    "prior unexplained natural Worker/CDP timeouts remain open"
+  ]
+}

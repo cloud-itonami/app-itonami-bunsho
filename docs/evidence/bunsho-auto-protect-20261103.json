@@ -1,0 +1,246 @@
+{
+  "date": "2026-11-03",
+  "scope": "Synthetic loopback browser candidate; auto-protect legacy multiline before edit or backup restore.",
+  "candidateBuild": {
+    "wasmSha256": "5853d737677abe80ee26368e73515598f724d6cde48988c7ebd496a646c0e30c",
+    "compilerSha256": "2c551579c06a0228029bb06bae177e93126ecbbc37d636d693c471dbac8d1536",
+    "sourceSha256": "6bb9ec37aecaf31d55e36042602f4903e303ae1677121afc69c49ac60d8d3705",
+    "brokerRevision": "e00ae75e1c589f76b4f53a88a5e3256c98c9e162",
+    "brokerSha256": "7f760128c3a58098123c31ec3dd34b9c871932e3933f2c952facc4ab0e647212",
+    "workerSha256": "58d606d0b3f22766a1b7288fe911c106aea9606fecfe59a2adb66a4bac8923ab"
+  },
+  "changedSourceSha256": {
+    "browser/app.js": "82cf93fd8c5ebe8fb249d23860c02b1298808784a3c78e4e65a4f3c7b31761ba",
+    "src/moji/browser-entry.kotoba": "02296107d30198e6fd802c3dcebe8f4d02a341d36d26eaf12578769b67b5cfa1",
+    "scripts/check-multiline-compat.py": "057be0e54026885c45d1610febc8a2d7e3dcd036ee436f4445e67d16ad5dbf42"
+  },
+  "browserEntry": {
+    "compilerSha256": "2c551579c06a0228029bb06bae177e93126ecbbc37d636d693c471dbac8d1536",
+    "sourceSha256": "6bb9ec37aecaf31d55e36042602f4903e303ae1677121afc69c49ac60d8d3705",
+    "wasmSha256": "5853d737677abe80ee26368e73515598f724d6cde48988c7ebd496a646c0e30c",
+    "cases": [
+      "init",
+      "multiline",
+      "multiline-reload",
+      "legacy-multiline",
+      "legacy-multiline-reload",
+      "bad-multiline-version",
+      "edit",
+      "view",
+      "preview",
+      "view-corrupt",
+      "reload",
+      "corrupt",
+      "oversized",
+      "oversized-state",
+      "badargc",
+      "badkind",
+      "no-write",
+      "no-args"
+    ]
+  },
+  "multilineCompatibility": {
+    "status": "PASS",
+    "checks": [
+      "BS3 old editor refuses without write",
+      "new editor reopens exact text",
+      "BS1 auto-protection, conflict and failed write",
+      "CR normalization refusal",
+      "legacy provenance, BS2 auto-protection and backup",
+      "provenance-only newline no rewrite",
+      "loopback only"
+    ],
+    "scope": "synthetic candidate, no real-user migration or release"
+  },
+  "regressions": {
+    "legacy": {
+      "status": "PASS",
+      "checks": [
+        "BS1 baseline",
+        "unsupported refusal",
+        "preview cancel",
+        "failed backup preserves BS1",
+        "failed write preserves BS1",
+        "explicit BS2 import",
+        "provenance and IDs",
+        "edit reorder reopen",
+        "BS2 export",
+        "loopback only"
+      ],
+      "limitations": [
+        "synthetic data",
+        "unsupported legacy kinds refused",
+        "unknown metadata is provenance only",
+        "no old-origin fetch",
+        "no crash/QEMU/publication qualification"
+      ]
+    },
+    "legacy-multiline-retry": {
+      "status": "PASS",
+      "checks": [
+        "BS1 baseline",
+        "unsupported refusal",
+        "preview cancel",
+        "failed backup preserves BS1",
+        "failed write preserves BS1",
+        "explicit multiline BS3 import",
+        "provenance and IDs",
+        "edit reorder reopen",
+        "BS3 export",
+        "loopback only"
+      ],
+      "limitations": [
+        "synthetic data",
+        "unsupported legacy kinds refused",
+        "unknown metadata is provenance only",
+        "no old-origin fetch",
+        "no crash/QEMU/publication qualification"
+      ]
+    },
+    "ui": {
+      "status": "PASS",
+      "checks": [
+        "backup-export-import-cancel-restore",
+        "backup-invalid-and-both-write-failures",
+        "init",
+        "edit-save",
+        "synthetic-composition-with-concurrent-redraw",
+        "queued-input",
+        "add",
+        "preview",
+        "reload",
+        "concurrent-write-refusal",
+        "worker-timeout-and-retry",
+        "hidden-timeout-and-retry",
+        "worker-interruption-and-retry",
+        "storage-failure-and-retry",
+        "multiple-unsaved-fields",
+        "oversized-input-recovery",
+        "corruption-refusal",
+        "digest-refusal",
+        "loopback-only"
+      ]
+    },
+    "draft": {
+      "status": "PASS",
+      "checks": [
+        "same-tab-reload",
+        "explicit-recovery-and-retry",
+        "stale-draft-refusal",
+        "raw-export",
+        "explicit-discard",
+        "malformed-draft-refusal",
+        "recovery-selection-race-refusal",
+        "journal-quota-and-retry",
+        "journal-cleanup-failure",
+        "initial-state-mismatch",
+        "program-digest-mismatch",
+        "journal-read-failure-retry",
+        "empty-journal-read-retry",
+        "loopback-only"
+      ],
+      "limitations": [
+        "sessionStorage only",
+        "not crash or closed-tab durability",
+        "synthetic data"
+      ]
+    },
+    "ime": {
+      "status": "PASS_CDP_SYNTHETIC_IME",
+      "mid": {
+        "value": "日本",
+        "stored": null,
+        "events": [
+          {
+            "type": "compositionstart",
+            "composing": false,
+            "trusted": true
+          },
+          {
+            "type": "compositionupdate",
+            "composing": false,
+            "trusted": true
+          },
+          {
+            "type": "beforeinput",
+            "composing": true,
+            "trusted": true
+          },
+          {
+            "type": "input",
+            "composing": true,
+            "trusted": true
+          }
+        ]
+      },
+      "final": {
+        "value": "日本語",
+        "events": [
+          {
+            "type": "compositionstart",
+            "composing": false,
+            "trusted": true
+          },
+          {
+            "type": "compositionupdate",
+            "composing": false,
+            "trusted": true
+          },
+          {
+            "type": "beforeinput",
+            "composing": true,
+            "trusted": true
+          },
+          {
+            "type": "input",
+            "composing": true,
+            "trusted": true
+          },
+          {
+            "type": "compositionupdate",
+            "composing": false,
+            "trusted": true
+          },
+          {
+            "type": "beforeinput",
+            "composing": true,
+            "trusted": true
+          },
+          {
+            "type": "input",
+            "composing": true,
+            "trusted": true
+          },
+          {
+            "type": "compositionend",
+            "composing": false,
+            "trusted": false
+          }
+        ]
+      },
+      "limitations": [
+        "CDP-generated browser events; not a physical OS IME test",
+        "loopback local candidate; not a release"
+      ]
+    },
+    "unload": {
+      "status": "PASS",
+      "checks": [
+        "activated-dirty-reload-warning",
+        "cancel-retains-input",
+        "retry",
+        "clean-reload-no-warning"
+      ],
+      "limitations": [
+        "browser may suppress beforeunload",
+        "does not provide crash recovery"
+      ]
+    }
+  },
+  "testEnvironmentNote": "First multiline legacy regression attempt timed out creating a Chrome target; retry passed. Earlier compatibility test synchronization was corrected to clear stale status before retry.",
+  "limitations": [
+    "Synthetic data and loopback only; no real-user data migration.",
+    "Synthetic IME events are not an operating-system IME qualification.",
+    "No QEMU office-app runtime, production publication, or cross-host distribution qualification for this candidate."
+  ]
+}

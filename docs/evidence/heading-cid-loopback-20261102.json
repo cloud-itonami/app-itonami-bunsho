@@ -1,0 +1,58 @@
+{
+  "date": "2026-11-02",
+  "scope": "isolated offline loopback Kubo gateway and synthetic Chrome; no publication",
+  "appSourceHeadBeforeEvidence": "63c78d915078c97028d3e5d7a94e6d43e32d6e24",
+  "cid": "bafybeier5t4txxgx7kdzgkjiegbkpfsaspr5y3fethp5j3u66pm7uhrzgm",
+  "kubo": "0.41.0 --offline; swarm not listening",
+  "build": {
+    "wasmSha256": "aa9d138b8c86a6aefd35abe94669e0bc328c8755861b8ddc1f8bbfe20491acd9",
+    "compilerSha256": "2c551579c06a0228029bb06bae177e93126ecbbc37d636d693c471dbac8d1536",
+    "sourceSha256": "2bec89690f267bce9fe5a8617f0fdffe2600c6cb621888c1c66814e357162a27",
+    "brokerRevision": "e00ae75e1c589f76b4f53a88a5e3256c98c9e162",
+    "brokerSha256": "7f760128c3a58098123c31ec3dd34b9c871932e3933f2c952facc4ab0e647212",
+    "workerSha256": "58d606d0b3f22766a1b7288fe911c106aea9606fecfe59a2adb66a4bac8923ab"
+  },
+  "filesReadbackSha256": {
+    "app.js": "29e507699e4cab87f6c5d4be57c14479b52f2eea02a147abf25369e69236149e",
+    "build-receipt.json": "640c0cd6c0b97118ee3aea3ffdcddb33055652c6e7e6f7e944565b11e2cf3efe",
+    "bundle.js": "1ce2108287b5ebce443ae46b20f952bfdf4e119176bdb42423539f5ea9483bbf",
+    "client-runtime.json": "667d312e0cd027e8f0a121b6d31a11f0b8c6905953cfbb26e13070bd99799c1a",
+    "index.html": "ddaff0527f7fb0684e0044fdc64c502c7b7881f4e0acff235022117387529bd2",
+    "kotoba-client-runtime.js": "7f760128c3a58098123c31ec3dd34b9c871932e3933f2c952facc4ab0e647212",
+    "program.kotoba": "2bec89690f267bce9fe5a8617f0fdffe2600c6cb621888c1c66814e357162a27",
+    "program.wasm": "aa9d138b8c86a6aefd35abe94669e0bc328c8755861b8ddc1f8bbfe20491acd9",
+    "style.css": "ea520c4ed7e07a763a0a7baad3a1e8e9a5705b4347f3d176f6883c5abdb06bee",
+    "worker.js": "58d606d0b3f22766a1b7288fe911c106aea9606fecfe59a2adb66a4bac8923ab"
+  },
+  "harnessSha256": "7811132be7d248ec4ccd6255f2555072e9fc060a45aa1a8607b6cdb535eda36e",
+  "chrome": "156.0.8078.74",
+  "browserTest": {
+    "status": "PASS",
+    "checks": [
+      "BS1 baseline",
+      "unsupported refusal",
+      "preview cancel",
+      "failed backup preserves BS1",
+      "failed write preserves BS1",
+      "explicit BS2 import",
+      "provenance and IDs",
+      "edit reorder reopen",
+      "BS2 export",
+      "loopback CID only"
+    ],
+    "limitations": [
+      "synthetic data",
+      "unsupported legacy kinds refused",
+      "unknown metadata is provenance only",
+      "no old-origin fetch",
+      "no crash/QEMU/publication qualification"
+    ]
+  },
+  "wideExportBytes": 34036,
+  "limitations": [
+    "CID exists in isolated local repo only; no public provider pin or availability established",
+    "synthetic data only; no old user-data export",
+    "no external gateway, DNSLink, DNSSEC, TLS, independent ingress, QEMU or release qualification",
+    "previous concurrent browser Worker timeout not reproduced; cause unconfirmed"
+  ]
+}

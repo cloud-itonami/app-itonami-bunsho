@@ -1,0 +1,50 @@
+;; Synthetic legacy data only; no user documents.
+(defn lss-source [] :document
+  (option-value-of [:option :document] (legacy-convert "{\"found\":true,\"document\":{\"documentId\":\"d-1\",\"title\":\"\\u65e7\\u6587\\u66f8\\ud83d\\ude00\",\"revisionId\":\"rev-7\",\"ownerDid\":\"did:key:owner\",\"createdAtMs\":1700000000000,\"unknown\":{\"keep\":\"yes\"},\"body\":[{\"elementId\":\"e-1\",\"kind\":\"heading\",\"headingLevel\":2,\"text\":\"\\u898b\\u51fa\\u3057\\ud83d\\ude00\"},{\"elementId\":\"e-2\",\"kind\":\"paragraph\",\"text\":\"\\u672c\\u6587\"}]}}") (document-null)))
+(defn lss-id [b :document] :string (dstr (dget b :legacy-id)))
+(defn lss-roundtrip [] :i64
+  (let [original (lss-source) edited (swap (set-text original 0 "編集😀") 0 1)
+        added (set-blocks edited (document-vector-conj (blocks edited) (block "p" "追加")))
+        encoded (legacy-snapshot-encode added)]
+    (if (not (option-some?-of [:option :string] encoded)) 0
+      (let [wire (option-value-of [:option :string] encoded "") decoded (legacy-snapshot-decode wire)]
+        (if (not (option-some?-of [:option :document] decoded)) 0
+          (let [v (option-value-of [:option :document] decoded (document-null))]
+            (if (and (= (block-count v) 3) (string=? (lss-id (dat (blocks v) 0)) "e-2")
+                     (string=? (lss-id (dat (blocks v) 1)) "e-1")
+                     (string=? (block-text v 1) "編集😀") (string=? (block-text v 2) "追加")
+                     (string=? (dstr (dget v :legacy-original)) "{\"found\":true,\"document\":{\"documentId\":\"d-1\",\"title\":\"\\u65e7\\u6587\\u66f8\\ud83d\\ude00\",\"revisionId\":\"rev-7\",\"ownerDid\":\"did:key:owner\",\"createdAtMs\":1700000000000,\"unknown\":{\"keep\":\"yes\"},\"body\":[{\"elementId\":\"e-1\",\"kind\":\"heading\",\"headingLevel\":2,\"text\":\"\\u898b\\u51fa\\u3057\\ud83d\\ude00\"},{\"elementId\":\"e-2\",\"kind\":\"paragraph\",\"text\":\"\\u672c\\u6587\"}]}}")
+                     (not (option-some?-of [:option :string] (snap-encode v)))) 1 0)))))))
+(defn lss-refusals [] :i64
+  (let [state (lss-source) v (blocks state) a (dat v 0)
+        dup (set-blocks state (document-vector-assoc v 1 a))
+        bad-id (document-assoc a :legacy-id (document-string "not-origin"))
+        spoof (set-blocks state (document-vector-assoc v 0 bad-id))
+        bad-raw (document-assoc state :legacy-original (document-string "{}"))
+        encoded (legacy-snapshot-encode state) wire (option-value-of [:option :string] encoded "")
+        bs1 (snap-encode (init))]
+    (+ (if (option-some?-of [:option :string] (legacy-snapshot-encode dup)) 0 1)
+       (if (option-some?-of [:option :string] (legacy-snapshot-encode spoof)) 0 1)
+       (if (option-some?-of [:option :string] (legacy-snapshot-encode bad-raw)) 0 1)
+       (if (option-some?-of [:option :document] (legacy-snapshot-decode (string-concat wire "x"))) 0 1)
+       (if (option-some?-of [:option :document] (legacy-snapshot-decode "a😀")) 0 1)
+       (if (option-some?-of [:option :document] (legacy-snapshot-decode "BS2|1:😀0:4:edit1:0")) 0 1)
+       (if (option-some?-of [:option :document] (legacy-snapshot-decode "BS2|01:x0:4:edit1:0")) 0 1)
+       (let [forged (string-concat "BS2|" (string-concat (ls-frame (dstr (dget state :legacy-original)))
+          (string-concat (ls-frame "T") (string-concat (ls-frame "edit")
+            (string-concat (ls-frame "1") (string-concat (ls-frame "p")
+              (string-concat (ls-frame "text") (ls-frame "not-origin"))))))))]
+         (if (option-some?-of [:option :document] (legacy-snapshot-decode forged)) 0 1))
+       (if (option-some?-of [:option :document] (legacy-snapshot-decode (option-value-of [:option :string] bs1 ""))) 0 1)
+       (if (option-some?-of [:option :document] (snap-decode (option-value-of [:option :string] bs1 ""))) 1 0))))
+(defn lss-max [] :i64
+  (let [source (legacy-convert "{\"found\":true,\"document\":{\"documentId\":\"d\",\"title\":\"T\",\"revisionId\":\"r\",\"body\":[{\"elementId\":\"e0\",\"kind\":\"paragraph\",\"text\":\"\\u672c\\u65870\"},{\"elementId\":\"e1\",\"kind\":\"paragraph\",\"text\":\"\\u672c\\u65871\"},{\"elementId\":\"e2\",\"kind\":\"paragraph\",\"text\":\"\\u672c\\u65872\"},{\"elementId\":\"e3\",\"kind\":\"paragraph\",\"text\":\"\\u672c\\u65873\"},{\"elementId\":\"e4\",\"kind\":\"paragraph\",\"text\":\"\\u672c\\u65874\"},{\"elementId\":\"e5\",\"kind\":\"paragraph\",\"text\":\"\\u672c\\u65875\"},{\"elementId\":\"e6\",\"kind\":\"paragraph\",\"text\":\"\\u672c\\u65876\"},{\"elementId\":\"e7\",\"kind\":\"paragraph\",\"text\":\"\\u672c\\u65877\"},{\"elementId\":\"e8\",\"kind\":\"paragraph\",\"text\":\"\\u672c\\u65878\"},{\"elementId\":\"e9\",\"kind\":\"paragraph\",\"text\":\"\\u672c\\u65879\"},{\"elementId\":\"e10\",\"kind\":\"paragraph\",\"text\":\"\\u672c\\u658710\"},{\"elementId\":\"e11\",\"kind\":\"paragraph\",\"text\":\"\\u672c\\u658711\"},{\"elementId\":\"e12\",\"kind\":\"paragraph\",\"text\":\"\\u672c\\u658712\"},{\"elementId\":\"e13\",\"kind\":\"paragraph\",\"text\":\"\\u672c\\u658713\"},{\"elementId\":\"e14\",\"kind\":\"paragraph\",\"text\":\"\\u672c\\u658714\"},{\"elementId\":\"e15\",\"kind\":\"paragraph\",\"text\":\"\\u672c\\u658715\"},{\"elementId\":\"e16\",\"kind\":\"paragraph\",\"text\":\"\\u672c\\u658716\"},{\"elementId\":\"e17\",\"kind\":\"paragraph\",\"text\":\"\\u672c\\u658717\"},{\"elementId\":\"e18\",\"kind\":\"paragraph\",\"text\":\"\\u672c\\u658718\"},{\"elementId\":\"e19\",\"kind\":\"paragraph\",\"text\":\"\\u672c\\u658719\"},{\"elementId\":\"e20\",\"kind\":\"paragraph\",\"text\":\"\\u672c\\u658720\"},{\"elementId\":\"e21\",\"kind\":\"paragraph\",\"text\":\"\\u672c\\u658721\"},{\"elementId\":\"e22\",\"kind\":\"paragraph\",\"text\":\"\\u672c\\u658722\"},{\"elementId\":\"e23\",\"kind\":\"paragraph\",\"text\":\"\\u672c\\u658723\"},{\"elementId\":\"e24\",\"kind\":\"paragraph\",\"text\":\"\\u672c\\u658724\"},{\"elementId\":\"e25\",\"kind\":\"paragraph\",\"text\":\"\\u672c\\u658725\"},{\"elementId\":\"e26\",\"kind\":\"paragraph\",\"text\":\"\\u672c\\u658726\"},{\"elementId\":\"e27\",\"kind\":\"paragraph\",\"text\":\"\\u672c\\u658727\"},{\"elementId\":\"e28\",\"kind\":\"paragraph\",\"text\":\"\\u672c\\u658728\"},{\"elementId\":\"e29\",\"kind\":\"paragraph\",\"text\":\"\\u672c\\u658729\"},{\"elementId\":\"e30\",\"kind\":\"paragraph\",\"text\":\"\\u672c\\u658730\"},{\"elementId\":\"e31\",\"kind\":\"paragraph\",\"text\":\"\\u672c\\u658731\"}]}}")]
+    (if (not (option-some?-of [:option :document] source)) 0
+      (let [wire (legacy-snapshot-encode (option-value-of [:option :document] source (document-null)))]
+        (if (not (option-some?-of [:option :string] wire)) 0
+          (let [back (legacy-snapshot-decode (option-value-of [:option :string] wire ""))]
+            (if (not (option-some?-of [:option :document] back)) 0
+              (let [state (option-value-of [:option :document] back (document-null))]
+                (if (and (= (block-count state) 32) (string=? (lss-id (dat (blocks state) 31)) "e31")) 1 0)))))))))
+
+(defn main [] :i64 (+ (lss-roundtrip) (lss-refusals) (lss-max)))

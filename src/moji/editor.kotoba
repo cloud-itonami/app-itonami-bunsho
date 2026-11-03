@@ -33,7 +33,7 @@
   ;;     route.
   ;;
   ;; `main` and the `test-*` functions are the module's own checks: `main`
-  ;; returns how many of them pass (`amu run` prints 13 when all do).
+  ;; returns how many of them pass (`amu run` prints 17 when all do).
   (:export [init view step main
             test-index-core test-indices test-add test-add-limit test-input
             test-title test-kind test-move-down test-move-up test-remove
@@ -136,6 +136,10 @@
   (cond
     (string=? kind "h1") "見出し1"
     (string=? kind "h2") "見出し2"
+    (string=? kind "h3") "見出し3"
+    (string=? kind "h4") "見出し4"
+    (string=? kind "h5") "見出し5"
+    (string=? kind "h6") "見出し6"
     (string=? kind "li") "箇条書き"
     :else "本文"))
 
@@ -143,6 +147,10 @@
   (cond
     (string=? kind "h1") "k1"
     (string=? kind "h2") "k2"
+    (string=? kind "h3") "k3"
+    (string=? kind "h4") "k4"
+    (string=? kind "h5") "k5"
+    (string=? kind "h6") "k6"
     (string=? kind "li") "kl"
     :else "kp"))
 
@@ -151,13 +159,12 @@
           (if (string=? kind current) "kind on" "kind")
           (kind-label kind)))
 
-(defn index-label [state :document i :i64] :string
+(defn index-label-at [start :i64 end :i64] :string
   (string-concat "["
-                 (string-concat (string-from-i64 (start-index state i))
-                                (string-concat "–"
-                                               (string-concat (string-from-i64 (end-index state i)) "]")))))
+                 (string-concat (string-from-i64 start)
+                                (string-concat "–" (string-concat (string-from-i64 end) "]")))))
 
-(defn edit-row [state :document i :i64] :document
+(defn edit-row [state :document i :i64 start :i64 text :string] :document
   (let [k (key-at i)
         kind (block-kind state i)]
     (el "div"
@@ -165,15 +172,19 @@
         (document-vector
          (kind-button "h1" kind k)
          (kind-button "h2" kind k)
+         (kind-button "h3" kind k)
+         (kind-button "h4" kind k)
+         (kind-button "h5" kind k)
+         (kind-button "h6" kind k)
          (kind-button "p" kind k)
          (kind-button "li" kind k)
-         (leaf "input"
+         (leaf "textarea"
                (document-map :data-k (document-string (string-concat "b" k))
-                             :type (document-string "text")
+                             :aria-label (document-string (string-concat "本文ブロック " (string-from-i64 (+ i 1))))
                              :class (document-string "text")
-                             :value (document-string (block-text state i)))
+                             :value (document-string text))
                "")
-         (leaf "span" (document-map :class (document-string "index")) (index-label state i))
+         (leaf "span" (document-map :class (document-string "index")) (index-label-at start (span-end start (string-byte-length text))))
          (button (string-concat "up" k) "move" "↑")
          (button (string-concat "dn" k) "move" "↓")
          (button (string-concat "rm" k) "remove" "削除")))))
@@ -184,16 +195,22 @@
     (cond
       (string=? kind "h1") (leaf "h1" (document-map) text)
       (string=? kind "h2") (leaf "h2" (document-map) text)
+      (string=? kind "h3") (leaf "h3" (document-map) text)
+      (string=? kind "h4") (leaf "h4" (document-map) text)
+      (string=? kind "h5") (leaf "h5" (document-map) text)
+      (string=? kind "h6") (leaf "h6" (document-map) text)
       (string=? kind "li") (el "ul" (document-map) (document-vector (leaf "li" (document-map) text)))
       :else (leaf "p" (document-map) text))))
 
-(defn rows-from [state :document i :i64 n :i64 preview :bool acc :document] :document
+(defn rows-from [state :document i :i64 n :i64 preview :bool acc :document start :i64] :document
   (if (>= i n)
     acc
-    (rows-from state (+ i 1) n preview
-               (document-vector-conj acc (if preview
-                                           (preview-node state i)
-                                           (edit-row state i))))))
+    (let [text (block-text state i)]
+      (rows-from state (+ i 1) n preview
+                 (document-vector-conj acc (if preview
+                                             (preview-node state i)
+                                             (edit-row state i start text)))
+                 (next-start start (string-byte-length text))))))
 
 (defn preview? [state :document] :bool
   (string=? (dstr (dget state :mode)) "preview"))
@@ -209,6 +226,7 @@
              (document-vector
               (leaf "input"
                     (document-map :data-k (document-string "title")
+                                  :aria-label (document-string "文書タイトル")
                                   :type (document-string "text")
                                   :class (document-string "title")
                                   :value (document-string (dstr (dget state :title))))
@@ -216,14 +234,24 @@
               (button "mode" "mode" (if preview "編集" "プレビュー"))))
          (el "div"
              (document-map :class (document-string "tools"))
-             (document-vector
+             (let [tools (document-vector
               (button "add-h1" "add" "+ 見出し1")
               (button "add-h2" "add" "+ 見出し2")
+              (button "add-h3" "add" "+ 見出し3")
+              (button "add-h4" "add" "+ 見出し4")
+              (button "add-h5" "add" "+ 見出し5")
+              (button "add-h6" "add" "+ 見出し6")
               (button "add-p" "add" "+ 本文")
-              (button "add-li" "add" "+ 箇条書き")))
+              (button "add-li" "add" "+ 箇条書き")
+              (button "backup-export" "add" "バックアップ")
+              (button "backup-import" "add" "読み込む")
+              (button "backup-restore" "add" "読み込み前に戻す"))]
+               (if (option-some?-of [:option :document] (document-get state :legacy-original))
+                 (document-vector-conj tools (button "backup-original" "add" "旧文書の原文を書き出す"))
+                 tools)))
          (el "main"
              (document-map :class (document-string (if preview "page preview" "page edit")))
-             (rows-from state 0 n preview (document-vector)))
+             (rows-from state 0 n preview (document-vector) 1))
          (leaf "footer"
                (document-map :class (document-string "stats"))
                (string-concat (string-from-i64 n)
@@ -282,6 +310,10 @@
       (cond
         (string=? op "k1") (set-kind state i "h1")
         (string=? op "k2") (set-kind state i "h2")
+        (string=? op "k3") (set-kind state i "h3")
+        (string=? op "k4") (set-kind state i "h4")
+        (string=? op "k5") (set-kind state i "h5")
+        (string=? op "k6") (set-kind state i "h6")
         (string=? op "kp") (set-kind state i "p")
         (string=? op "kl") (set-kind state i "li")
         (string=? op "up") (swap state (- i 1) i)
@@ -294,6 +326,10 @@
     (string=? target "mode") (toggle-mode state)
     (string=? target "add-h1") (add-block state "h1")
     (string=? target "add-h2") (add-block state "h2")
+    (string=? target "add-h3") (add-block state "h3")
+    (string=? target "add-h4") (add-block state "h4")
+    (string=? target "add-h5") (add-block state "h5")
+    (string=? target "add-h6") (add-block state "h6")
     (string=? target "add-p") (add-block state "p")
     (string=? target "add-li") (add-block state "li")
     :else (on-block state target)))
@@ -322,6 +358,107 @@
    :blocks (document-vector
             (block "h1" "itonami Bunsho")
             (block "p" "Write here."))))
+
+;; --- bounded local snapshot codec -----------------------------------------
+;; BS1| followed by netstrings: title, mode, block-count, then kind and text
+;; for each block. Lengths are UTF-8 bytes; reject noncanonical lengths,
+;; oversized values, incomplete code points, extra bytes and unknown kinds.
+;; This is a model codec, not an atomic host-storage implementation.
+
+(defn snap-kind? [s :string] :bool
+  (or (string=? s "h1") (string=? s "h2") (string=? s "h3") (string=? s "h4")
+      (string=? s "h5") (string=? s "h6") (string=? s "p") (string=? s "li")))
+
+(defn snap-frame [s :string] :string
+  (string-concat (string-from-i64 (string-byte-length s)) (string-concat ":" s)))
+
+;; Validate and encode each block in one pass over the document vector.  A
+;; rejected block never produces a successful partial snapshot.
+(defn snap-encode-blocks [v :document i :i64 n :i64 acc :string] [:option :string]
+  (if (= i n) (option-some-of [:option :string] acc)
+    (let [b (dat v i)]
+      (if (not (map? b)) (option-none-of [:option :string])
+        (let [kind (dget b :kind) text (dget b :text)]
+          (if (and (= (document-count b) 2) (string? kind) (string? text)
+                   (snap-kind? (dstr kind)) (<= (string-byte-length (dstr text)) 1024))
+            (snap-encode-blocks v (+ i 1) n
+              (string-concat acc (string-concat (snap-frame (dstr kind)) (snap-frame (dstr text)))))
+            (option-none-of [:option :string])))))))
+
+(defn snap-encode [s :document] [:option :string]
+  (if (not (map? s)) (option-none-of [:option :string])
+    (let [title (dget s :title) mode (dget s :mode) v (dget s :blocks)]
+      (if (and (= (document-count s) 3) (string? title) (string? mode) (vector? v)
+               (<= (string-byte-length (dstr title)) 1024)
+               (or (string=? (dstr mode) "edit") (string=? (dstr mode) "preview"))
+               (<= (document-count v) 32))
+        (snap-encode-blocks v 0 (document-count v)
+          (string-concat "BS1|" (string-concat (snap-frame (dstr title))
+            (string-concat (snap-frame (dstr mode)) (snap-frame (string-from-i64 (document-count v)))))))
+        (option-none-of [:option :string])))))
+
+;; Return [begin end next] or [-1 -1 -1]. Scan code points to ensure the
+;; advertised byte length never ends inside a UTF-8 character.
+(defn snap-end [s :string i :i64 end :i64] :bool
+  (if (= i end) true
+    (if (> i end) false
+      (let [c (string-code-point-at s i)
+            w (cond (< c 128) 1 (< c 2048) 2 (< c 65536) 3 :else 4)]
+        (snap-end s (+ i w) end)))))
+
+(defn snap-header [s :string i :i64 n :i64 value :i64 digits :i64 zero :bool] :vector-i64
+  (if (>= i n) [-1 -1 -1]
+    (let [c (string-code-point-at s i)]
+      (cond
+        (= c 58) (let [begin (+ i 1) end (+ begin value)]
+          (if (and (> digits 0) (<= value 1024) (<= end n) (snap-end s begin end))
+            [begin end end] [-1 -1 -1]))
+        (or (< c 48) (> c 57) (>= digits 4) (and zero (> digits 0))) [-1 -1 -1]
+        :else (snap-header s (+ i 1) n (+ (* value 10) (- c 48)) (+ digits 1) (and (= digits 0) (= c 48)))))))
+
+(defn snap-read [s :string i :i64] :vector-i64
+  (snap-header s i (string-byte-length s) 0 0 false))
+
+(defn snap-text [s :string r :vector-i64] :string
+  (string-substring s (vector-at r 0) (vector-at r 1)))
+
+(defn snap-number [s :string i :i64] :i64
+  (if (> i 32) -1
+    (if (string=? s (string-from-i64 i)) i (snap-number s (+ i 1)))))
+
+(defn snap-read-blocks [s :string i :i64 left :i64 acc :document] [:option :document]
+  (if (= left 0)
+    (if (= i (string-byte-length s)) (option-some-of [:option :document] acc) (option-none-of [:option :document]))
+    (let [k (snap-read s i)]
+      (if (< (vector-at k 0) 0) (option-none-of [:option :document])
+        (let [t (snap-read s (vector-at k 2)) kind (snap-text s k)]
+          (if (or (< (vector-at t 0) 0) (not (snap-kind? kind))) (option-none-of [:option :document])
+            (snap-read-blocks s (vector-at t 2) (- left 1)
+              (document-vector-conj acc (block kind (snap-text s t))))))))))
+
+(defn snap-decode [s :string] [:option :document]
+  (if (or (< (string-byte-length s) 4) (not (= (string-code-point-at s 0) 66))
+          (not (= (string-code-point-at s 1) 83)) (not (= (string-code-point-at s 2) 49))
+          (not (= (string-code-point-at s 3) 124)))
+    (option-none-of [:option :document])
+    (let [a (snap-read s 4)]
+      (if (< (vector-at a 0) 0) (option-none-of [:option :document])
+        (let [m (snap-read s (vector-at a 2))]
+          (if (< (vector-at m 0) 0) (option-none-of [:option :document])
+            (let [c (snap-read s (vector-at m 2)) mode (snap-text s m)]
+              (if (or (< (vector-at c 0) 0) (not (or (string=? mode "edit") (string=? mode "preview"))))
+                (option-none-of [:option :document])
+                (let [n (snap-number (snap-text s c) 0)]
+                  (if (< n 0) (option-none-of [:option :document])
+                    (let [v (snap-read-blocks s (vector-at c 2) n (document-vector))]
+                      (if (option-some?-of [:option :document] v)
+                        (option-some-of [:option :document]
+                          (document-map :title (document-string (snap-text s a)) :mode (document-string mode)
+                                        :blocks (option-value-of [:option :document] v (document-vector))))
+                        (option-none-of [:option :document])))))))))))))
+
+(defn snap-restore [current :document text :string] :document
+  (option-value-of [:option :document] (snap-decode text) current))
 
 ;; --- checks (1 = pass) ----------------------------------------------------
 
@@ -395,7 +532,47 @@
              (= (document-count (dget (dat children 2) :children)) 2))
       1 0)))
 
+(defn test-snapshot-roundtrip [] :i64
+  (let [s (step (step (click (init) "add-li") "title" "input" "議事:録\n😀") "b2" "input" "x: 😀\nend")
+        encoded (snap-encode s)
+        decoded (snap-decode (option-value-of [:option :string] encoded ""))]
+    (if (and (option-some?-of [:option :string] encoded) (option-some?-of [:option :document] decoded)
+             (document-equal? s (option-value-of [:option :document] decoded (document-null)))) 1 0)))
+
+(defn test-snapshot-refuse [] :i64
+  (let [s (init) bytes (option-value-of [:option :string] (snap-encode s) "")]
+    (if (and (not (option-some?-of [:option :document] (snap-decode "雪雪")))
+             (not (option-some?-of [:option :document] (snap-decode "BS雪雪")))
+             (not (option-some?-of [:option :document] (snap-decode (string-concat bytes "x"))))
+             (not (option-some?-of [:option :document] (snap-decode "BS2|0:4:edit1:0")))
+             (not (option-some?-of [:option :document] (snap-decode "BS1|01:a4:edit1:0")))
+             (not (option-some?-of [:option :document] (snap-decode "BS1|1:😀4:edit1:0")))
+             (not (option-some?-of [:option :document] (snap-decode "BS1|0:4:edit2:33")))
+             (document-equal? s (snap-restore s (string-concat bytes "x")))) 1 0)))
+
+(defn test-snapshot-empty [] :i64
+  (let [s (document-map :title (document-string "") :mode (document-string "edit") :blocks (document-vector))
+        bytes (option-value-of [:option :string] (snap-encode s) "")]
+    (if (and (string=? bytes "BS1|0:4:edit1:0")
+             (document-equal? s (snap-restore (init) bytes))
+             (not (option-some?-of [:option :string] (snap-encode (document-null))))
+             (not (option-some?-of [:option :string]
+                    (snap-encode (document-assoc s :blocks (document-vector (document-string "bad"))))))) 1 0)))
+
+(defn test-snapshot-boundaries [] :i64
+  (let [maxtext "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界x"
+        too-long "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+        full (step (add-n (init) 30) "b31" "input" maxtext)
+        encoded (snap-encode full)
+        restored (snap-decode (option-value-of [:option :string] encoded ""))
+        invalid (step (init) "title" "input" too-long)]
+    (if (and (option-some?-of [:option :string] encoded) (option-some?-of [:option :document] restored)
+             (document-equal? full (option-value-of [:option :document] restored (document-null)))
+             (not (option-some?-of [:option :string] (snap-encode invalid)))
+             (not (option-some?-of [:option :document] (snap-decode "BS1|0:4:edit1:11:q0:")))) 1 0)))
+
 (defn main [] :i64
   (+ (test-index-core) (test-indices) (test-add) (test-add-limit) (test-input)
      (test-title) (test-kind) (test-move-down) (test-move-up) (test-remove)
-     (test-mode) (test-unknown) (test-view)))
+     (test-mode) (test-unknown) (test-view)
+     (test-snapshot-roundtrip) (test-snapshot-refuse) (test-snapshot-empty) (test-snapshot-boundaries)))

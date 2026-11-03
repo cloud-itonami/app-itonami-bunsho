@@ -1,0 +1,89 @@
+{
+  "date": "2026-11-03",
+  "scope": "Synthetic loopback Chrome and macOS Arm native; no real user migration, OS QEMU, cross-host distribution or release.",
+  "build": {
+    "wasmSha256": "0a3a5df2eccb424ed73ff2b1f3ea13de42fd115927263db3d899495517b6dd1f",
+    "compilerSha256": "2c551579c06a0228029bb06bae177e93126ecbbc37d636d693c471dbac8d1536",
+    "sourceSha256": "35d439042a853e3c4aa3663e1959f61216ea55555fecfec0c413c818f0b5f35c",
+    "brokerRevision": "e00ae75e1c589f76b4f53a88a5e3256c98c9e162",
+    "brokerSha256": "7f760128c3a58098123c31ec3dd34b9c871932e3933f2c952facc4ab0e647212",
+    "workerSha256": "58d606d0b3f22766a1b7288fe911c106aea9606fecfe59a2adb66a4bac8923ab"
+  },
+  "appJsSha256": "cb6f71eef7e56a242f876e910cdbadec12cb891a296ab387e1a670d701225d2e",
+  "checks": [
+    "BS2 and multiline BS3 import, edit, reorder and reload",
+    "original JSON export exact bytes including final newline",
+    "no export control on non-legacy document",
+    "non-legacy and corrupt snapshots rejected by Wasm operation",
+    "browser UI regression",
+    "native linked document host and mutation control"
+  ],
+  "singleLine": {
+    "status": "PASS",
+    "checks": [
+      "BS1 baseline",
+      "unsupported refusal",
+      "preview cancel",
+      "failed backup preserves BS1",
+      "failed write preserves BS1",
+      "explicit BS2 import",
+      "provenance and IDs",
+      "edit reorder reopen",
+      "BS2 export",
+      "loopback only"
+    ],
+    "limitations": [
+      "synthetic data",
+      "unsupported legacy kinds refused",
+      "unknown metadata is provenance only",
+      "no old-origin fetch",
+      "no crash/QEMU/publication qualification"
+    ]
+  },
+  "multiline": {
+    "status": "PASS",
+    "checks": [
+      "BS1 baseline",
+      "unsupported refusal",
+      "preview cancel",
+      "failed backup preserves BS1",
+      "failed write preserves BS1",
+      "explicit multiline BS3 import",
+      "provenance and IDs",
+      "edit reorder reopen",
+      "BS3 export",
+      "loopback only"
+    ],
+    "limitations": [
+      "synthetic data",
+      "unsupported legacy kinds refused",
+      "unknown metadata is provenance only",
+      "no old-origin fetch",
+      "no crash/QEMU/publication qualification"
+    ]
+  },
+  "ui": {
+    "status": "PASS",
+    "checks": [
+      "backup-export-import-cancel-restore",
+      "backup-invalid-and-both-write-failures",
+      "init",
+      "edit-save",
+      "synthetic-composition-with-concurrent-redraw",
+      "queued-input",
+      "add",
+      "preview",
+      "reload",
+      "concurrent-write-refusal",
+      "worker-timeout-and-retry",
+      "hidden-timeout-and-retry",
+      "worker-interruption-and-retry",
+      "storage-failure-and-retry",
+      "multiple-unsaved-fields",
+      "oversized-input-recovery",
+      "corruption-refusal",
+      "digest-refusal",
+      "loopback-only"
+    ]
+  }
+}

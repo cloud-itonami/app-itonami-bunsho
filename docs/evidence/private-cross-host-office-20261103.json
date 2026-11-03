@@ -1,0 +1,132 @@
+{
+  "status": "PASS_PRIVATE_CROSS_HOST_CANDIDATES",
+  "observerSha256": "b55341186a5d8afb88a48e90551223995373d0cfb9354df8f7efcc55cb81b25d",
+  "kuboBinarySha256": "e3346937469371095c314e724bdc182a0e2a166b9dcfe7622ba55bf81ad1b585",
+  "scope": "two hosts, one tailnet path; private swarm only; not public routing, independent network/power, DNS/TLS, or release",
+  "isolation": {
+    "privateSwarm": true,
+    "bootstrap": [],
+    "mdns": false,
+    "routing": "none",
+    "telemetry": "off"
+  },
+  "replication": {
+    "bothHostsPinned": true,
+    "providerStopped": true,
+    "allFilesVerifiedAfterStop": true
+  },
+  "apps": {
+    "bunsho": {
+      "cid": "bafybeihvuc3eceqakqiyel6mxutrl7h63ocgwkzzcw34vnz7habhregzqi",
+      "build": {
+        "wasmSha256": "af90fbf3f1f4258d58f26d4b7294d568020dabfb016e088283369c5d17a348fb",
+        "compilerSha256": "2c551579c06a0228029bb06bae177e93126ecbbc37d636d693c471dbac8d1536",
+        "sourceSha256": "4bc853e4927bab74568f315cb4300783081ad52314f698b9beabc447a01bb7e6",
+        "brokerRevision": "e00ae75e1c589f76b4f53a88a5e3256c98c9e162",
+        "brokerSha256": "7f760128c3a58098123c31ec3dd34b9c871932e3933f2c952facc4ab0e647212",
+        "workerSha256": "58d606d0b3f22766a1b7288fe911c106aea9606fecfe59a2adb66a4bac8923ab"
+      },
+      "files": {
+        "app.js": "17de4075dfb07274b3010b49c6f98bada1883154323b5a318d702c91b1f2b192",
+        "build-receipt.json": "d777bcd72f9a3f472d8b543a7194b17539693dd624dea9adc269b84b87a2776e",
+        "bundle.js": "3179c8c5b7d527b8ef3fa3aa732bf494dca2c4b4cb781413a38c1099c7209297",
+        "client-runtime.json": "667d312e0cd027e8f0a121b6d31a11f0b8c6905953cfbb26e13070bd99799c1a",
+        "index.html": "37e3988d25386d0a836a6b3a2ec6cede5fc1d632706c2304e16aa20d690ecd9b",
+        "kotoba-client-runtime.js": "7f760128c3a58098123c31ec3dd34b9c871932e3933f2c952facc4ab0e647212",
+        "program.kotoba": "4bc853e4927bab74568f315cb4300783081ad52314f698b9beabc447a01bb7e6",
+        "program.wasm": "af90fbf3f1f4258d58f26d4b7294d568020dabfb016e088283369c5d17a348fb",
+        "style.css": "1cc3d82b981add0e3b564dd75c318374cbf6f4bea3c862ebbafc71e727df2177",
+        "worker.js": "58d606d0b3f22766a1b7288fe911c106aea9606fecfe59a2adb66a4bac8923ab"
+      },
+      "browser": {
+        "status": "PASS",
+        "checks": [
+          "edit",
+          "save",
+          "reload",
+          "multiline"
+        ],
+        "requestCount": 15
+      },
+      "sourceCommit": "6dca20243cb6682b15f3fde6af99541cac83ec64"
+    },
+    "hyokeisan": {
+      "cid": "bafybeiawlcs57qkh24ez6ikpmbl23gzinx6h5bu22xof3yqo6rki566tay",
+      "build": {
+        "wasmSha256": "ab04244066fec7ebbc39c96e97f2545d6ece33923876baf36f8ff2f157f64f79",
+        "compilerSha256": "2c551579c06a0228029bb06bae177e93126ecbbc37d636d693c471dbac8d1536",
+        "sourceSha256": "746866e79cb0c88d4ae8fa9659390e0370973a9e1160f4ee1b0fdc35362af76f",
+        "brokerRevision": "e00ae75e1c589f76b4f53a88a5e3256c98c9e162",
+        "brokerSha256": "7f760128c3a58098123c31ec3dd34b9c871932e3933f2c952facc4ab0e647212",
+        "workerSha256": "58d606d0b3f22766a1b7288fe911c106aea9606fecfe59a2adb66a4bac8923ab"
+      },
+      "files": {
+        "app.js": "4b46806e52c111d52499c4202e1f6b3001980ee75244497de29ff1e54a896ae1",
+        "build-receipt.json": "415ff59077b1cf8b3581d478f46213f316aee97b39bd90b37ea468ced1a1e9df",
+        "bundle.js": "6af719ec938e4a48fb3f3243a07927072dbdc58b32771c2138cadb3020bc891d",
+        "client-runtime.json": "f0d6467244538d1809b48a6f022367a44ff7e29352d526262941e06130507f6c",
+        "index.html": "98c35824615e2bb536c32f3769b0b54045bf4c90279dd8cedfeeab4c7addff01",
+        "kotoba-client-runtime.js": "7f760128c3a58098123c31ec3dd34b9c871932e3933f2c952facc4ab0e647212",
+        "program.kotoba": "746866e79cb0c88d4ae8fa9659390e0370973a9e1160f4ee1b0fdc35362af76f",
+        "program.wasm": "ab04244066fec7ebbc39c96e97f2545d6ece33923876baf36f8ff2f157f64f79",
+        "style.css": "cd5755055be8e69614c8bf82289ca4b72b97437fade7336ccb199b60446fa400",
+        "worker.js": "58d606d0b3f22766a1b7288fe911c106aea9606fecfe59a2adb66a4bac8923ab"
+      },
+      "browser": {
+        "status": "PASS",
+        "checks": [
+          "edit",
+          "save",
+          "reload",
+          "decimal"
+        ],
+        "requestCount": 15
+      },
+      "sourceCommit": "1e2301a2662465bd605c7061ac26368c601615e1"
+    },
+    "zuhyo": {
+      "cid": "bafybeidpogbqr4g7qtrkmsjtlatw2wgkc36adgpwp7qpbrhxux4zaxqsly",
+      "build": {
+        "wasmSha256": "2e424ec79f868d9cb1ef8d8d9303cb734972ab9270b5927d1c2b76f23b894f64",
+        "compilerSha256": "2c551579c06a0228029bb06bae177e93126ecbbc37d636d693c471dbac8d1536",
+        "sourceSha256": "9da3400e6bddf41a94d8cc19826b828544a3c19c5c7da41cd48659a6f78ef988",
+        "brokerRevision": "e00ae75e1c589f76b4f53a88a5e3256c98c9e162",
+        "brokerSha256": "7f760128c3a58098123c31ec3dd34b9c871932e3933f2c952facc4ab0e647212",
+        "workerSha256": "58d606d0b3f22766a1b7288fe911c106aea9606fecfe59a2adb66a4bac8923ab"
+      },
+      "files": {
+        "app.js": "6f65ebaca40c21176dc914b779b1912485a222a202c8dc544ea9c1521fca64a7",
+        "build-receipt.json": "ed56843740609e16cce3763e7143046937b7b4ce068d941538091db4305df0a4",
+        "bundle.js": "7668c5b3bedb98402bbbc4e7a79631166cbcc93bacd32798efa3907ce16b5cdf",
+        "client-runtime.json": "977c322d85e27d51bea0c322e8a5952e3cc2810dd9539611a762fd0cbd5ace26",
+        "index.html": "6fb6d11f8f81809b8f68a8282f2a8b232bec0c5f4a7e2b3b0137ebb3ebc20893",
+        "kotoba-client-runtime.js": "7f760128c3a58098123c31ec3dd34b9c871932e3933f2c952facc4ab0e647212",
+        "program.kotoba": "9da3400e6bddf41a94d8cc19826b828544a3c19c5c7da41cd48659a6f78ef988",
+        "program.wasm": "2e424ec79f868d9cb1ef8d8d9303cb734972ab9270b5927d1c2b76f23b894f64",
+        "style.css": "5592848f969fde01d0bb4405f0e6260f3d39e642a4a0962e7d552878c882ca47",
+        "worker.js": "58d606d0b3f22766a1b7288fe911c106aea9606fecfe59a2adb66a4bac8923ab"
+      },
+      "browser": {
+        "status": "PASS",
+        "checks": [
+          "edit",
+          "save",
+          "reload",
+          "multiline"
+        ],
+        "requestCount": 15
+      },
+      "sourceCommit": "f938a28b3ecf60755c2f49430dc47fbbfce2d30c"
+    }
+  },
+  "notes": [
+    "SSH transport returned zero on remote command failure; test requires an explicit remote exit marker, checked with true/false controls",
+    "Private network only; no existing service or route changed",
+    "Remote daemon termination independently verified after test"
+  ],
+  "limitations": [
+    "Separate machines share a tailnet path; independent power or network failure domains are not established",
+    "Only ephemeral private pins; not published or publicly reachable",
+    "No DNSSEC/TLS, user-data migration, OS/QEMU, physical IME or release qualification"
+  ]
+}

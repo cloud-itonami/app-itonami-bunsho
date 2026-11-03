@@ -1,0 +1,151 @@
+{
+  "status": "FOREGROUND_LOOPBACK_GATEWAY_PASS_NOT_RELEASE",
+  "date": "2026-11-02",
+  "kubo": "0.41.0",
+  "route": "loopback Kubo /ipfs/<CID>/index.html",
+  "isolation": {
+    "swarm_addresses": [],
+    "bootstrap": [],
+    "mdns": false,
+    "routing": "none",
+    "gateway_no_fetch": true,
+    "api_and_gateway": "127.0.0.1 only",
+    "telemetry": "off"
+  },
+  "import_flags": [
+    "recursive",
+    "cid-version=1",
+    "raw-leaves=true",
+    "chunker=size-262144",
+    "hash=sha2-256",
+    "preserve-mode=false",
+    "preserve-mtime=false",
+    "empty-dirs=false",
+    "pin=false"
+  ],
+  "compiler_sha256": "2c551579c06a0228029bb06bae177e93126ecbbc37d636d693c471dbac8d1536",
+  "compiler_pr": "https://github.com/kotoba-lang/amu/pull/1779",
+  "broker_revision": "e00ae75e1c589f76b4f53a88a5e3256c98c9e162",
+  "browser": "Chrome 156.0.8078.74",
+  "apps": {
+    "bunsho": {
+      "source_head": "fea4b6c2abc70e0717e557b3710ca12b705396c6",
+      "cid": "bafybeidmsnou7p2ha4z47mva7kmjd3nqm6d6gz6qyuvskwim4chzeovrvq",
+      "files_sha256": {
+        "app.js": "264e6b7f128a131503b4ac359a1d696690c8c34eaa52173ca9f6fb9eb7419bd0",
+        "build-receipt.json": "465c999e0cf14d7ff11bd03df8dfa85ecb65d9e965c81423513a72ec713308e6",
+        "bundle.js": "ab071440f7274c88295e3a7d0664756eb51bd39b3aae3e74f83abea6d7fa956e",
+        "client-runtime.json": "71af64b5955b3338a4f01239a99a74480ed087a4aa42725e5f300785ddad84a1",
+        "index.html": "c50cd3c6066faa94ad7305f35214c99d2bcb51a4ecca47972c5d525dc135f924",
+        "kotoba-client-runtime.js": "7f760128c3a58098123c31ec3dd34b9c871932e3933f2c952facc4ab0e647212",
+        "program.kotoba": "8c44d925da01a61dc76fc246914d665c527c6cd2719c1b0e158db2d839cfc1d5",
+        "program.wasm": "7da4e515d108da7f80c8ff83e72c78be5781d8b7847462b9e8f7a317b7cc5de1",
+        "style.css": "78ec5d485b1290768c538c3ba1687e550b7c3af3d2bc4caccc49fd90548c0b86",
+        "worker.js": "58d606d0b3f22766a1b7288fe911c106aea9606fecfe59a2adb66a4bac8923ab"
+      },
+      "harness_sha256": "db6e64b2e2e3b8ae99c175fdd35705bd6bf545f011f4b1362fe7ce5064e8c259",
+      "checks": [
+        "backup-export-import-cancel-restore",
+        "backup-invalid-and-both-write-failures",
+        "init",
+        "edit-save",
+        "queued-input",
+        "add",
+        "preview",
+        "reload",
+        "concurrent-write-refusal",
+        "worker-timeout",
+        "worker-interruption",
+        "storage-failure",
+        "corruption-refusal",
+        "digest-refusal",
+        "loopback-only"
+      ]
+    },
+    "hyokeisan": {
+      "source_head": "cc8c2df5c755912273deabf2f53ce2c6ca9ae17f",
+      "cid": "bafybeigtt3wncjipywv7o62rdmciotznx7svuejbwjtanyhtod7jwjnnnm",
+      "files_sha256": {
+        "app.js": "127e40edfe23f8090ed3ad7cb78069906ce2398f3e296623d4a1873cb248d6ac",
+        "build-receipt.json": "896909b51eb20038c35d03312e14cea0a2b11b68f9f2423a1cbe4e0af23d8665",
+        "bundle.js": "3d6387a8dbac11a5b49e8297fb118d2789d88c617ce68fec085977f43d4bea22",
+        "client-runtime.json": "e39af345d04d52c639f9c37d5205b2ba8af377d2a0fb06efe371542d0d58b2d5",
+        "index.html": "96ae173f98f3be69ac0cd73447568092784d5199ac5a812e8b540eafc9820570",
+        "kotoba-client-runtime.js": "7f760128c3a58098123c31ec3dd34b9c871932e3933f2c952facc4ab0e647212",
+        "program.kotoba": "ad4f830cb6a24de15b1960d977f1d3a440a18042e9c8a152f3227576ad3755d3",
+        "program.wasm": "4f19741f6ebdb1ef73ddcdfaac13a60f697d7333459a3b610b10186d2c4fba7f",
+        "style.css": "8876c78c805e16302fae5226e39d06b6239fd20b12954368afa73d973877eacb",
+        "worker.js": "58d606d0b3f22766a1b7288fe911c106aea9606fecfe59a2adb66a4bac8923ab"
+      },
+      "harness_sha256": "99d0cd86dc0ed176a434cba43b90bce56f8196e1e437c98e569f395cabe30a16",
+      "checks": [
+        "backup-export-import-cancel-restore",
+        "backup-invalid-both-write-failures-conflict",
+        "grid",
+        "addition",
+        "sum",
+        "recalculate",
+        "cycle",
+        "save-reload",
+        "oversized-refusal",
+        "concurrent-tab-refusal",
+        "worker-timeout",
+        "worker-interruption",
+        "storage-failure",
+        "corrupt-refusal",
+        "digest-refusal",
+        "loopback-only"
+      ]
+    },
+    "zuhyo": {
+      "source_head": "a76adf71295d07ddadc8dcd428336cf3581cdb60",
+      "cid": "bafybeiakdebum5l5ddvoqri3gs374s337pvhnpb2l33px2hccsgpk5kmfu",
+      "files_sha256": {
+        "app.js": "6a09512fa2b0d2c0c518b8be941c3cfe55a247cfd77ddb37aa39bd459efcf7a2",
+        "build-receipt.json": "cba815f466ef1f7202b764dfbc802097769097d55e465dfc06279f81c217bdd0",
+        "bundle.js": "e1b5db9d0675c57a28f780cf45f8553d2787cdea25e48d076f18c8f30e7b06c3",
+        "client-runtime.json": "977c322d85e27d51bea0c322e8a5952e3cc2810dd9539611a762fd0cbd5ace26",
+        "index.html": "78decee0ec341d2c9f9dfc2a75fd3019f1158760ecc00d6a0cea42266fd96874",
+        "kotoba-client-runtime.js": "7f760128c3a58098123c31ec3dd34b9c871932e3933f2c952facc4ab0e647212",
+        "program.kotoba": "b87d865a3978a39fc72b798908653b44fdc0c9bec2bb0008ab1bd91143316cd3",
+        "program.wasm": "e273cfd8ab75d8a70f8a89e6ae2ed3c15bb95cb14fb0ae4be5c67a5091c757fb",
+        "style.css": "ebcefc13e066ce9c491dce785d73caa70161c215cf7f5790260703ec3ee4c5e3",
+        "worker.js": "58d606d0b3f22766a1b7288fe911c106aea9606fecfe59a2adb66a4bac8923ab"
+      },
+      "harness_sha256": "c153af87828eba30678055c0c7804001b5317b75e3d277fdfa59d43e365c8ef6",
+      "checks": [
+        "backup-export-import-cancel-restore",
+        "backup-invalid-both-write-failures-conflict",
+        "edit",
+        "notes",
+        "add",
+        "remove",
+        "shape",
+        "reorder",
+        "present",
+        "reload",
+        "navigate",
+        "oversized-refusal",
+        "concurrent-tab-refusal",
+        "worker-timeout",
+        "worker-interruption",
+        "storage-failure",
+        "corrupt-refusal",
+        "digest-refusal",
+        "loopback-only"
+      ]
+    }
+  },
+  "procedure": [
+    "Build the three app browser candidates with the recorded compiler and canonical broker revision.",
+    "Import unpinned into an isolated no-routing, no-swarm Kubo node and compare each file through the loopback gateway with the built bytes.",
+    "Generate test harnesses from each app browser check, replacing only the entry URL and request allowlist with the CID gateway, and explicitly bringing the operated tab to front before each two-tab action.",
+    "Run the full synthetic tests sequentially; their request guard permits only the CID path and the separate loopback tamper-test server and rejects unversioned favicon requests."
+  ],
+  "limitations": [
+    "The previous hidden-tab gateway tests failed with Worker timeouts; this foreground control does not resolve or qualify them.",
+    "The prior observed /favicon.ico request outside the CID path was from the Bunsho diagnostic; corrected candidates made no such request in these tests.",
+    "No external node, public gateway, DNS, TLS, route cutover, QEMU app execution, legacy data migration, or power-loss recovery was qualified.",
+    "These candidate CIDs are local and unpinned; the compiler PR was unmerged. Test harnesses are generated copies, not production code."
+  ]
+}

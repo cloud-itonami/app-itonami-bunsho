@@ -1,0 +1,118 @@
+{
+  "date": "2026-11-03",
+  "scope": "Loopback synthetic backup preview and same-tab edit; no real user migration.",
+  "before": {
+    "build": {
+      "wasmSha256": "5853d737677abe80ee26368e73515598f724d6cde48988c7ebd496a646c0e30c",
+      "compilerSha256": "2c551579c06a0228029bb06bae177e93126ecbbc37d636d693c471dbac8d1536",
+      "sourceSha256": "6bb9ec37aecaf31d55e36042602f4903e303ae1677121afc69c49ac60d8d3705",
+      "brokerRevision": "e00ae75e1c589f76b4f53a88a5e3256c98c9e162",
+      "brokerSha256": "7f760128c3a58098123c31ec3dd34b9c871932e3933f2c952facc4ab0e647212",
+      "workerSha256": "58d606d0b3f22766a1b7288fe911c106aea9606fecfe59a2adb66a4bac8923ab"
+    },
+    "status": "FAIL_EXPECTED",
+    "observation": "stale preview accepted after same-tab edit saved"
+  },
+  "after": {
+    "build": {
+      "wasmSha256": "5853d737677abe80ee26368e73515598f724d6cde48988c7ebd496a646c0e30c",
+      "compilerSha256": "2c551579c06a0228029bb06bae177e93126ecbbc37d636d693c471dbac8d1536",
+      "sourceSha256": "6bb9ec37aecaf31d55e36042602f4903e303ae1677121afc69c49ac60d8d3705",
+      "brokerRevision": "e00ae75e1c589f76b4f53a88a5e3256c98c9e162",
+      "brokerSha256": "7f760128c3a58098123c31ec3dd34b9c871932e3933f2c952facc4ab0e647212",
+      "workerSha256": "58d606d0b3f22766a1b7288fe911c106aea9606fecfe59a2adb66a4bac8923ab"
+    },
+    "compatibility": {
+      "status": "PASS",
+      "checks": [
+        "BS3 old editor refuses without write",
+        "new editor reopens exact text",
+        "BS1 auto-protection, conflict and failed write",
+        "CR normalization refusal",
+        "legacy provenance, BS2 auto-protection and backup",
+        "stale same-tab preview refusal",
+        "provenance-only newline no rewrite",
+        "loopback only"
+      ],
+      "scope": "synthetic candidate, no real-user migration or release"
+    },
+    "legacy": {
+      "status": "PASS",
+      "checks": [
+        "BS1 baseline",
+        "unsupported refusal",
+        "preview cancel",
+        "failed backup preserves BS1",
+        "failed write preserves BS1",
+        "explicit BS2 import",
+        "provenance and IDs",
+        "edit reorder reopen",
+        "BS2 export",
+        "loopback only"
+      ],
+      "limitations": [
+        "synthetic data",
+        "unsupported legacy kinds refused",
+        "unknown metadata is provenance only",
+        "no old-origin fetch",
+        "no crash/QEMU/publication qualification"
+      ]
+    },
+    "ui": {
+      "status": "PASS",
+      "checks": [
+        "backup-export-import-cancel-restore",
+        "backup-invalid-and-both-write-failures",
+        "init",
+        "edit-save",
+        "synthetic-composition-with-concurrent-redraw",
+        "queued-input",
+        "add",
+        "preview",
+        "reload",
+        "concurrent-write-refusal",
+        "worker-timeout-and-retry",
+        "hidden-timeout-and-retry",
+        "worker-interruption-and-retry",
+        "storage-failure-and-retry",
+        "multiple-unsaved-fields",
+        "oversized-input-recovery",
+        "corruption-refusal",
+        "digest-refusal",
+        "loopback-only"
+      ]
+    },
+    "draft": {
+      "status": "PASS",
+      "checks": [
+        "same-tab-reload",
+        "explicit-recovery-and-retry",
+        "stale-draft-refusal",
+        "raw-export",
+        "explicit-discard",
+        "malformed-draft-refusal",
+        "recovery-selection-race-refusal",
+        "journal-quota-and-retry",
+        "journal-cleanup-failure",
+        "initial-state-mismatch",
+        "program-digest-mismatch",
+        "journal-read-failure-retry",
+        "empty-journal-read-retry",
+        "loopback-only"
+      ],
+      "limitations": [
+        "sessionStorage only",
+        "not crash or closed-tab durability",
+        "synthetic data"
+      ]
+    }
+  },
+  "changedSourceSha256": {
+    "browser/app.js": "3c90a18fa3abfcb1c4614ead349fddc5f0ed6305a95a02c11279df14ec07f8a1",
+    "scripts/check-multiline-compat.py": "b532e99b8317393c4484419a9e44e85a06889db766582f4e471a79d7d53e6267"
+  },
+  "limitations": [
+    "Synthetic browser events on loopback; no real-user migration or public release.",
+    "No QEMU app execution or cross-host qualification for this candidate."
+  ]
+}

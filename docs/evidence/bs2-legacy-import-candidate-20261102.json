@@ -1,0 +1,145 @@
+{
+  "date": "2026-11-02",
+  "scope": "synthetic local Chrome and native selfhost only; no real data or deployment",
+  "base_commit": "12467e14d90a84888aa7d8fc23fbbdd97f3f28e6",
+  "source_files_sha256": {
+    "browser/app.js": "d0654c6454c0b2c859c1ba70263e3b14f523277dc91bc29d5d74e5f780ad9b49",
+    "browser/index.html": "ddaff0527f7fb0684e0044fdc64c502c7b7881f4e0acff235022117387529bd2",
+    "browser/style.css": "ea520c4ed7e07a763a0a7baad3a1e8e9a5705b4347f3d176f6883c5abdb06bee",
+    "src/moji/editor.kotoba": "416a46e9e25bd9b4b373ade0c724dafd87031b63c1fbddcbd7e49e0ec0bffdea",
+    "src/moji/browser-entry.kotoba": "9d429a58c0c30dbfc01bae9cbf514b969220c118425bf717f78d35f67b79ce30",
+    "src/moji/json_string.kotoba": "caf5f8c4c6874e8504d3e08801f0f48253e7f5d516e3deac0301e7e19f106607",
+    "src/moji/json_parse.kotoba": "f66343c0f1f477f29662df6ec0593463849812cb125cb0affab1e02144713058",
+    "src/moji/legacy_document.kotoba": "8cb2a9f796ba55ddc5804816f76eb7041651050b5880df2ad304e4803ded51f1",
+    "src/moji/legacy_snapshot.kotoba": "5658666c29df236b9dcff1693cb0d95b3016d883631199555b7453327d04203c",
+    "scripts/browser_source.py": "9daf87bade044e939b8a4085fefaa08544740514c1b3066ceae7504172f20b9b",
+    "scripts/build-browser.py": "2af47136575d9af42a203a3884e36ae2c279b5bc713ec2ae9fe7e9f5878ff12e",
+    "scripts/check-json-parse.py": "fa5b85d5178bfaf5a7689a0dd2893015f81c2d1711f9e2b608631e066112482d",
+    "scripts/check-legacy-document.py": "29697a4ee78f09621b33fe869c4f211d4520380d1fc4b1d00936c7a9eaa00fe9",
+    "scripts/check-legacy-snapshot.py": "d9e06d117634e324954d5994f8397ac3b44f63fa2f6d658d7f50acf3d6b39a9c",
+    "scripts/check-legacy-browser.py": "2a25815e01890e5c3e5c2bf438ec168c577faf0dc1b82d7836105b740dba693b",
+    "scripts/check-legacy-rollback.py": "88344135731e75fa901b10b3a213c0c271baf20e3f1d651b57fc755b04707e1d",
+    "scripts/check-browser-view-parity.py": "4e8863dbf276bb0101bd51af3f00a4c9b2e42fe3d6105ad91d8cbae8c0e6f9dc",
+    "tests/json-extract-cases.kotoba": "e224836b4ed9385a99b00b64a73d19523055f2402bb1b66c46d5c8ed4538d050",
+    "tests/legacy-document-cases.kotoba": "4cfd9e01e0b9b82c17e29caf29b474cc03f8d3f43a7768f22443d9d887a1510c",
+    "tests/legacy-snapshot-cases.kotoba": "36a52de910af9f2a9a398a41557d5b522d1ab31a37a9d3dc296a805d2c8ce63f"
+  },
+  "compiler_head": "da321093e9557b811cce5129dacd453e300f63a3",
+  "compiler_sha256": "2c551579c06a0228029bb06bae177e93126ecbbc37d636d693c471dbac8d1536",
+  "build_receipt": {
+    "wasmSha256": "0db90c67dc38b2d9f130dd502100f74641749a9835bd515d90644cbffdb9b80a",
+    "compilerSha256": "2c551579c06a0228029bb06bae177e93126ecbbc37d636d693c471dbac8d1536",
+    "sourceSha256": "7b6b1232f828e9a1130cb2e4335f2862151bcafbe87c95ccb8a8f2113fbae927",
+    "brokerRevision": "e00ae75e1c589f76b4f53a88a5e3256c98c9e162",
+    "brokerSha256": "7f760128c3a58098123c31ec3dd34b9c871932e3933f2c952facc4ab0e647212",
+    "workerSha256": "58d606d0b3f22766a1b7288fe911c106aea9606fecfe59a2adb66a4bac8923ab"
+  },
+  "browser_artifacts_sha256": {
+    "program.kotoba": "7b6b1232f828e9a1130cb2e4335f2862151bcafbe87c95ccb8a8f2113fbae927",
+    "program.wasm": "0db90c67dc38b2d9f130dd502100f74641749a9835bd515d90644cbffdb9b80a",
+    "bundle.js": "508281a107d040b4e52310afc4640abe782042e9f4d4746d454dc35b349a9fdc",
+    "app.js": "d0654c6454c0b2c859c1ba70263e3b14f523277dc91bc29d5d74e5f780ad9b49",
+    "index.html": "ddaff0527f7fb0684e0044fdc64c502c7b7881f4e0acff235022117387529bd2",
+    "style.css": "ea520c4ed7e07a763a0a7baad3a1e8e9a5705b4347f3d176f6883c5abdb06bee",
+    "worker.js": "58d606d0b3f22766a1b7288fe911c106aea9606fecfe59a2adb66a4bac8923ab",
+    "kotoba-client-runtime.js": "7f760128c3a58098123c31ec3dd34b9c871932e3933f2c952facc4ab0e647212"
+  },
+  "chrome": "156.0.8078.74",
+  "gates": {
+    "legacy-model": "PASS",
+    "bs2-model": "PASS",
+    "bs1-model": "PASS",
+    "entry": "PASS",
+    "import": "PASS",
+    "import32": "PASS",
+    "ui": "PASS",
+    "ime": "PASS",
+    "unload": "PASS",
+    "session": "PASS"
+  },
+  "legacy_browser_latest": {
+    "status": "PASS",
+    "checks": [
+      "BS1 baseline",
+      "unsupported refusal",
+      "preview cancel",
+      "failed backup preserves BS1",
+      "failed write preserves BS1",
+      "explicit BS2 import",
+      "provenance and IDs",
+      "edit reorder reopen",
+      "BS2 export",
+      "loopback only"
+    ],
+    "limitations": [
+      "synthetic data",
+      "unsupported legacy kinds refused",
+      "unknown metadata is provenance only",
+      "no old-origin fetch",
+      "no crash/QEMU/publication qualification"
+    ]
+  },
+  "wide_32_block": {
+    "wire_bytes": 34713,
+    "result": {
+      "status": "PASS",
+      "checks": [
+        "BS1 baseline",
+        "unsupported refusal",
+        "preview cancel",
+        "failed backup preserves BS1",
+        "failed write preserves BS1",
+        "explicit BS2 import",
+        "provenance and IDs",
+        "edit reorder reopen",
+        "BS2 export",
+        "loopback only"
+      ],
+      "limitations": [
+        "synthetic data",
+        "unsupported legacy kinds refused",
+        "unknown metadata is provenance only",
+        "no old-origin fetch",
+        "no crash/QEMU/publication qualification"
+      ]
+    }
+  },
+  "rollback": {
+    "status": "PASS",
+    "checks": [
+      "old refuses BS2",
+      "BS2 unchanged",
+      "new reopens BS2",
+      "loopback only"
+    ],
+    "limitations": [
+      "synthetic state",
+      "no production rollback or crash qualification"
+    ]
+  },
+  "view_parity": {
+    "status": "PASS",
+    "blocks": 32,
+    "reports": {
+      "old-bs1": "{:status :ok :result 0 :fuel {:initial 25000000 :remaining 1676313}}",
+      "new-bs1": "{:status :ok :result 0 :fuel {:initial 25000000 :remaining 3737963}}",
+      "new-bs2": "{:status :ok :result 0 :fuel {:initial 100000000 :remaining 74491573}}"
+    },
+    "limitations": [
+      "synthetic data",
+      "does not prove accessibility or general performance"
+    ]
+  },
+  "historical_failures": [
+    "first 32-block BS2 view exhausted 25M fuel; original BS1 retained",
+    "native combined-guard array token wrapper exited 132; nested-guard rewrite passed",
+    "first two-write-failure test observed stale status; corrected test passed"
+  ],
+  "resource_policy": "BS1 25M; BS2 and legacy conversion 100M; Worker deadline 30s. Representative near-limit test is not a proof for every allowed document.",
+  "limitations": [
+    "only supported paragraph and level 1/2 headings import; other content refused",
+    "unknown metadata retained only in original JSON provenance, not editable semantics",
+    "no old-origin fetch or actual user data migration",
+    "QEMU/native OS, physical IME, public distribution, fleet sync and crash recovery unqualified"
+  ]
+}

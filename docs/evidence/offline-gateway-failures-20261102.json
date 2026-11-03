@@ -1,0 +1,166 @@
+{
+  "status": "FAILED_NOT_RELEASE_EVIDENCE",
+  "date": "2026-11-02",
+  "route": "loopback Kubo gateway /ipfs/<CID>/index.html",
+  "kubo": "0.41.0",
+  "test_environment": {
+    "swarm_addresses": [],
+    "bootstrap": [],
+    "mdns": false,
+    "routing": "none",
+    "gateway_no_fetch": true,
+    "api_and_gateway": "127.0.0.1 only",
+    "telemetry": "off during browser tests",
+    "connected_peers_during_test": 0,
+    "host_logical_cpus": 10,
+    "host_load_average_observed_near_investigation": "about 124, 118, 88; observational, not an attribution"
+  },
+  "parallel_run": {
+    "bunsho": {
+      "result": "FAIL",
+      "observation": "first-tab save did not finish; UI reported Worker timeout and prior state retained message"
+    },
+    "hyokeisan": {
+      "result": "FAIL",
+      "observation": "first-tab save did not finish; UI reported Worker timeout and prior state retained message"
+    },
+    "zuhyo": {
+      "result": "FAIL",
+      "observation": "first-tab save did not finish; UI reported Worker timeout and prior state retained message"
+    }
+  },
+  "single_bunsho_rerun": {
+    "result": "FAIL",
+    "observation": "first-tab save failed after delayed step response and view Worker timeout",
+    "worker_events": [
+      {
+        "operation": "step",
+        "posted_ms": 787,
+        "created_ms": 786.9000000953674,
+        "message_ms": 810.7000000476837,
+        "terminated_ms": 810.7000000476837
+      },
+      {
+        "operation": "view",
+        "posted_ms": 811,
+        "created_ms": 810.9000000953674,
+        "message_ms": 1040.4000000953674,
+        "terminated_ms": 1040.5
+      },
+      {
+        "operation": "view",
+        "posted_ms": 1274.5,
+        "created_ms": 1274.5,
+        "message_ms": 1504.1000000238419,
+        "terminated_ms": 1504.2000000476837
+      },
+      {
+        "operation": "view",
+        "posted_ms": 1757.3000000715256,
+        "created_ms": 1757.3000000715256,
+        "message_ms": 1975,
+        "terminated_ms": 1975
+      },
+      {
+        "operation": "view",
+        "posted_ms": 2202,
+        "created_ms": 2201.9000000953674,
+        "message_ms": 2422.100000023842,
+        "terminated_ms": 2422.100000023842
+      },
+      {
+        "operation": "view",
+        "posted_ms": 2436.5,
+        "created_ms": 2436.5,
+        "message_ms": 2668.100000023842,
+        "terminated_ms": 2668.2000000476837
+      },
+      {
+        "operation": "view",
+        "posted_ms": 2871.9000000953674,
+        "created_ms": 2871.8000000715256,
+        "message_ms": 3086.600000023842,
+        "terminated_ms": 3086.7000000476837
+      },
+      {
+        "operation": "view",
+        "posted_ms": 3119.7000000476837,
+        "created_ms": 3119.600000023842,
+        "message_ms": 3138.7000000476837,
+        "terminated_ms": 3138.7000000476837
+      },
+      {
+        "operation": "view",
+        "posted_ms": 3690.3000000715256,
+        "created_ms": 3690.3000000715256,
+        "message_ms": 3903.7000000476837,
+        "terminated_ms": 3903.7000000476837
+      },
+      {
+        "operation": "view",
+        "posted_ms": 4124.700000047684,
+        "created_ms": 4124.600000023842,
+        "message_ms": 4341.600000023842,
+        "terminated_ms": 4341.600000023842
+      },
+      {
+        "operation": "view",
+        "posted_ms": 4367.5,
+        "created_ms": 4367.400000095367,
+        "message_ms": 4582.800000071526,
+        "terminated_ms": 4582.900000095367
+      },
+      {
+        "operation": "view",
+        "posted_ms": 4826.700000047684,
+        "created_ms": 4826.700000047684,
+        "message_ms": 5056.200000047684,
+        "terminated_ms": 5056.200000047684
+      },
+      {
+        "operation": "view",
+        "posted_ms": 5333.800000071526,
+        "created_ms": 5333.700000047684,
+        "message_ms": 5560.400000095367,
+        "terminated_ms": 5560.5
+      },
+      {
+        "operation": "view",
+        "posted_ms": 5784.300000071526,
+        "created_ms": 5784.300000071526,
+        "message_ms": 5998.200000047684,
+        "terminated_ms": 5998.300000071526
+      },
+      {
+        "operation": "step",
+        "posted_ms": 7329.200000047684,
+        "created_ms": 7329.100000023842,
+        "message_ms": 52211.90000009537,
+        "terminated_ms": 52212
+      },
+      {
+        "operation": "view",
+        "posted_ms": 52213.300000071526,
+        "created_ms": 52213,
+        "terminated_ms": 106490.40000009537
+      },
+      {
+        "operation": "view",
+        "posted_ms": 106494.5,
+        "created_ms": 106494.30000007153
+      }
+    ]
+  },
+  "harness_sha256": {
+    "bunsho-timing.py": "1ab99efcff3c8af10e9f40edf10123629d751ab16c20e6a085077d8ed1fd2128",
+    "bunsho.py": "be2f107409874a4130c6af489984c3147e27da393bdb765db267f8ff69b6a239",
+    "hyokeisan.py": "121dac5a3e531507ae108748f52d4f696a4e02dd55943b653d71906002ed640b",
+    "zuhyo.py": "f536ec7bbf853f92ecdcd178940f14d6341a55e299d341478d1ebca041badf8c"
+  },
+  "limitations": [
+    "All states and input were synthetic; no user documents were accessed.",
+    "High host load is a possible explanation, not a demonstrated cause. Timings include browser scheduling, Worker startup, instantiation, and program execution.",
+    "The tests exited before their final network-request audit; do not claim they established absence of every external request.",
+    "CID byte readback on the same machine remains valid, but browser gateway, remote availability and release are not qualified."
+  ]
+}

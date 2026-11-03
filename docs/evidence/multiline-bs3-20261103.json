@@ -1,0 +1,244 @@
+{
+  "date": "2026-11-03",
+  "scope": "Synthetic loopback browser candidate, no real user migration, deployment or OS qualification",
+  "candidate": {
+    "wasmSha256": "af90fbf3f1f4258d58f26d4b7294d568020dabfb016e088283369c5d17a348fb",
+    "compilerSha256": "2c551579c06a0228029bb06bae177e93126ecbbc37d636d693c471dbac8d1536",
+    "sourceSha256": "4bc853e4927bab74568f315cb4300783081ad52314f698b9beabc447a01bb7e6",
+    "brokerRevision": "e00ae75e1c589f76b4f53a88a5e3256c98c9e162",
+    "brokerSha256": "7f760128c3a58098123c31ec3dd34b9c871932e3933f2c952facc4ab0e647212",
+    "workerSha256": "58d606d0b3f22766a1b7288fe911c106aea9606fecfe59a2adb66a4bac8923ab"
+  },
+  "old_candidate": {
+    "wasmSha256": "aa9d138b8c86a6aefd35abe94669e0bc328c8755861b8ddc1f8bbfe20491acd9",
+    "compilerSha256": "2c551579c06a0228029bb06bae177e93126ecbbc37d636d693c471dbac8d1536",
+    "sourceSha256": "2bec89690f267bce9fe5a8617f0fdffe2600c6cb621888c1c66814e357162a27",
+    "brokerRevision": "e00ae75e1c589f76b4f53a88a5e3256c98c9e162",
+    "brokerSha256": "7f760128c3a58098123c31ec3dd34b9c871932e3933f2c952facc4ab0e647212",
+    "workerSha256": "58d606d0b3f22766a1b7288fe911c106aea9606fecfe59a2adb66a4bac8923ab"
+  },
+  "source_sha256": {
+    "src/moji/editor.kotoba": "47e902bd38793899e365b34220c03ee1ac00941932e3e1af02f93b256fc0b8c6",
+    "src/moji/browser-entry.kotoba": "d086d42e841553153ffab19524ba30193252b109fbab33790a7892daaa0de5a6",
+    "browser/app.js": "17de4075dfb07274b3010b49c6f98bada1883154323b5a318d702c91b1f2b192",
+    "browser/index.html": "37e3988d25386d0a836a6b3a2ec6cede5fc1d632706c2304e16aa20d690ecd9b",
+    "browser/style.css": "1cc3d82b981add0e3b564dd75c318374cbf6f4bea3c862ebbafc71e727df2177",
+    "scripts/check-browser-entry.py": "e39a67c14e7a2fc086d7018dbcaa95891d37e1633c065bbfcc994fe70ce028ed",
+    "scripts/check-browser-ime.py": "ed991bfa49164ce7244924984f9d0dc924837e212904c34ea240a6d69d62202f",
+    "scripts/check-browser-session-draft.py": "7afa66522722add342f29abb64c5efe5fa5f6dbcca3b31eafc22b102f908b5ba",
+    "scripts/check-browser-ui.py": "7eafa0b3031c5becc96fce61a5333f55f15e5dd3e8bdaa99cbc28db84ab11e92",
+    "scripts/check-browser-unload.py": "7782e4fe2c1f411e04cd140e567da5eac9a6f719beb881c1037187eb6dfb296c",
+    "scripts/check-legacy-browser.py": "d7b3eb5e65905a862541876f7019dc26acb78e24b2a2cfaaa8ed1896c2ae8a9a",
+    "scripts/check-multiline-compat.py": "c379df946721c4b5f80e3b8fc12b97ef3639f6c4cbda30fc4be97fa007c40596"
+  },
+  "checks": {
+    "compatibility": {
+      "status": "PASS",
+      "checks": [
+        "BS3 old editor refuses without write",
+        "new editor reopens exact text",
+        "BS1 multiline upgrade",
+        "CR normalization refusal",
+        "multiline legacy provenance and old-version refusal",
+        "loopback only"
+      ],
+      "scope": "synthetic candidate, no real-user migration or release"
+    },
+    "ime": {
+      "status": "PASS_CDP_SYNTHETIC_IME",
+      "mid": {
+        "value": "日本",
+        "stored": null,
+        "events": [
+          {
+            "type": "compositionstart",
+            "composing": false,
+            "trusted": true
+          },
+          {
+            "type": "compositionupdate",
+            "composing": false,
+            "trusted": true
+          },
+          {
+            "type": "beforeinput",
+            "composing": true,
+            "trusted": true
+          },
+          {
+            "type": "input",
+            "composing": true,
+            "trusted": true
+          }
+        ]
+      },
+      "final": {
+        "value": "日本語",
+        "events": [
+          {
+            "type": "compositionstart",
+            "composing": false,
+            "trusted": true
+          },
+          {
+            "type": "compositionupdate",
+            "composing": false,
+            "trusted": true
+          },
+          {
+            "type": "beforeinput",
+            "composing": true,
+            "trusted": true
+          },
+          {
+            "type": "input",
+            "composing": true,
+            "trusted": true
+          },
+          {
+            "type": "compositionupdate",
+            "composing": false,
+            "trusted": true
+          },
+          {
+            "type": "beforeinput",
+            "composing": true,
+            "trusted": true
+          },
+          {
+            "type": "input",
+            "composing": true,
+            "trusted": true
+          },
+          {
+            "type": "compositionend",
+            "composing": false,
+            "trusted": false
+          }
+        ]
+      },
+      "limitations": [
+        "CDP-generated browser events; not a physical OS IME test",
+        "loopback local candidate; not a release"
+      ]
+    },
+    "legacy_single_line": {
+      "status": "PASS",
+      "checks": [
+        "BS1 baseline",
+        "unsupported refusal",
+        "preview cancel",
+        "failed backup preserves BS1",
+        "failed write preserves BS1",
+        "explicit BS2 import",
+        "provenance and IDs",
+        "edit reorder reopen",
+        "BS2 export",
+        "loopback only"
+      ],
+      "limitations": [
+        "synthetic data",
+        "unsupported legacy kinds refused",
+        "unknown metadata is provenance only",
+        "no old-origin fetch",
+        "no crash/QEMU/publication qualification"
+      ]
+    },
+    "legacy_multiline": {
+      "status": "PASS",
+      "checks": [
+        "BS1 baseline",
+        "unsupported refusal",
+        "preview cancel",
+        "failed backup preserves BS1",
+        "failed write preserves BS1",
+        "explicit multiline BS3 import",
+        "provenance and IDs",
+        "edit reorder reopen",
+        "BS3 export",
+        "loopback only"
+      ],
+      "limitations": [
+        "synthetic data",
+        "unsupported legacy kinds refused",
+        "unknown metadata is provenance only",
+        "no old-origin fetch",
+        "no crash/QEMU/publication qualification"
+      ]
+    },
+    "ui": {
+      "status": "PASS",
+      "checks": [
+        "backup-export-import-cancel-restore",
+        "backup-invalid-and-both-write-failures",
+        "init",
+        "edit-save",
+        "synthetic-composition-with-concurrent-redraw",
+        "queued-input",
+        "add",
+        "preview",
+        "reload",
+        "concurrent-write-refusal",
+        "worker-timeout-and-retry",
+        "hidden-timeout-and-retry",
+        "worker-interruption-and-retry",
+        "storage-failure-and-retry",
+        "multiple-unsaved-fields",
+        "oversized-input-recovery",
+        "corruption-refusal",
+        "digest-refusal",
+        "loopback-only"
+      ]
+    },
+    "unload": {
+      "status": "PASS",
+      "checks": [
+        "activated-dirty-reload-warning",
+        "cancel-retains-input",
+        "retry",
+        "clean-reload-no-warning"
+      ],
+      "limitations": [
+        "browser may suppress beforeunload",
+        "does not provide crash recovery"
+      ]
+    },
+    "session_draft": {
+      "status": "PASS",
+      "checks": [
+        "same-tab-reload",
+        "explicit-recovery-and-retry",
+        "stale-draft-refusal",
+        "raw-export",
+        "explicit-discard",
+        "malformed-draft-refusal",
+        "recovery-selection-race-refusal",
+        "journal-quota-and-retry",
+        "journal-cleanup-failure",
+        "initial-state-mismatch",
+        "program-digest-mismatch",
+        "journal-read-failure-retry",
+        "empty-journal-read-retry",
+        "loopback-only"
+      ],
+      "limitations": [
+        "sessionStorage only",
+        "not crash or closed-tab durability",
+        "synthetic data"
+      ]
+    }
+  },
+  "additional_checks": [
+    "check-browser-entry.py: PASS_BUNSHO_BROWSER_ENTRY (synthetic Wasm protocol BS1, BS2, BS3 including invalid discriminator)",
+    "git diff --check",
+    "Python script syntax"
+  ],
+  "test_adjustment": "Initial hidden-tab UI test timed out because its 1ms timer raced a fast Worker; rerun explicitly stalled the step Worker and restored it before retry. This is an injected timeout, not a real background timing measurement.",
+  "limitations": [
+    "Synthetic local data only",
+    "Original JSON retained; unsupported attributes are not editable",
+    "CR normalization fails closed",
+    "No OS IME or actual user migration",
+    "No QEMU app execution, public pin, live route or release qualification"
+  ]
+}
