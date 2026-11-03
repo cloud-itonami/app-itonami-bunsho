@@ -37,8 +37,12 @@ if legacy.count(mutation) != 1:
 spec = importlib.util.spec_from_file_location('mac', amu / 'scripts/seed/check-aiueos-user-macos-native.py')
 mac = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(mac)
+title_guard = '(or (not (option-some?-of [:option :string] title-raw))\n                     (option-some?-of [:option :string] title))'
+if legacy.count(title_guard) != 1:
+    raise SystemExit('title guard mutation anchor changed')
 results = {}
-for name, code, expected in [('conversion', legacy, 15), ('duplicate-mutant', legacy.replace(mutation, '(= 0 1)'), 14)]:
+for name, code, expected in [('conversion', legacy, 16), ('duplicate-mutant', legacy.replace(mutation, '(= 0 1)'), 15),
+                             ('title-guard-mutant', legacy.replace(title_guard, '(= 1 1)'), 15)]:
     source = out / (name + '.kotoba')
     source.write_text('\n'.join([editor, string, parser, code, fixture]), encoding='utf-8')
     native = subprocess.run([str(amu / 'bin/amu'), 'run', str(source)], cwd=out,
@@ -57,4 +61,4 @@ for name, code, expected in [('conversion', legacy, 15), ('duplicate-mutant', le
     results[name] = {'result': expected, 'wasmSha256': hashlib.sha256((out / (name + '.wasm')).read_bytes()).hexdigest()}
 (out / 'receipt.json').write_text(json.dumps({'inputSha256': {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in files},
     'results': results}, indent=2) + '\n')
-print('PASS_LEGACY_DOCUMENT native and synthetic browser, including duplicate-element mutant')
+print('PASS_LEGACY_DOCUMENT native and synthetic browser, including duplicate-element and title-guard mutants')
