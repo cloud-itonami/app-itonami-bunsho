@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Compare old BS1, new BS1 and equivalent BS2 browser view wires.
+"""Compare old and new browser view wires for BS1 and BS2 snapshots.
 
 Usage: python3 scripts/check-browser-view-parity.py AMU_DIR OLD_BUILD NEW_BUILD BS2_FILE OUTPUT_DIR CHROME
 Synthetic input only. This checks view parity, not production compatibility.
@@ -36,15 +36,16 @@ spec.loader.exec_module(browser)
 chrome_bin = browser.WASM.find_browser(str(chrome))
 cases = [('old-bs1', old / 'program.wasm', {'allow': [37, 38], 'fuel': 25000000, 'args': ['view', bs1]}),
          ('new-bs1', new / 'program.wasm', {'allow': [37, 38], 'fuel': 25000000, 'args': ['view', bs1]}),
+         ('old-bs2', old / 'program.wasm', {'allow': [37, 38], 'fuel': 100000000, 'args': ['view', wire]}),
          ('new-bs2', new / 'program.wasm', {'allow': [37, 38], 'fuel': 100000000, 'args': ['view', wire]})]
 _, results = browser.run_js(chrome_bin, out, cases)
 for name, _, _ in cases:
     item = results[name]
     if item.get('exit') != 0 or item.get('wasmTrap') is not None or not re.search(r'\{:status :ok :result 0(?:\s|\})', item.get('report') or ''):
         raise ValueError(name + ': ' + repr(item))
-if results['old-bs1']['output'] != results['new-bs1']['output'] or results['new-bs1']['output'] != results['new-bs2']['output']:
+if results['old-bs1']['output'] != results['new-bs1']['output'] or results['old-bs2']['output'] != results['new-bs2']['output']:
     raise ValueError('view wires differ')
 (out / 'result.json').write_text(json.dumps({'status': 'PASS', 'blocks': count,
     'reports': {name: results[name]['report'] for name, _, _ in cases},
     'limitations': ['synthetic data', 'does not prove accessibility or general performance']}, indent=2) + '\n')
-print('PASS_VIEW_PARITY old BS1, new BS1 and equivalent BS2')
+print('PASS_VIEW_PARITY old/new BS1 and old/new BS2')

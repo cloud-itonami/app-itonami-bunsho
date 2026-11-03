@@ -56,9 +56,8 @@
     (let [rendered (browser-view-node (dat v i))]
       (if (= rendered 0) (browser-view-children v (+ i 1) n) rendered))))
 
-(defn browser-view-node [node :document] :i64
-  (let [attrs (dget node :attrs) children (dget node :children)
-        n (if (vector? children) (document-count children) 0)
+(defn browser-view-head [node :document n :i64] :i64
+  (let [attrs (dget node :attrs)
         emitted (arena-scope
                   (let [fields (string-concat (snap-frame (dstr (dget node :tag)))
                                  (string-concat (snap-frame (dstr (dget attrs :class)))
@@ -69,17 +68,88 @@
                                       (string-concat (snap-frame (dstr (dget attrs :aria-label)))
                                                      (snap-frame (string-from-i64 n)))))))))
                         out (typed-cap-call :io/write :string :string fields)] 0))]
+    emitted))
+
+(defn browser-view-node [node :document] :i64
+  (let [children (dget node :children)
+        n (if (vector? children) (document-count children) 0)
+        emitted (browser-view-head node n)]
     (if (= emitted 0) (browser-view-children children 0 n) emitted)))
+
+;; Validate the entire BS1 payload before emitting any view bytes. Each scan
+;; retains only an offset; the document's text and view rows need not coexist
+;; in the runtime arena. BS2 provenance continues through its own validator.
+(defn browser-scan-block [raw :string at :i64] :i64
+  (arena-scope
+    (let [k (snap-read raw at)]
+      (if (< (vector-at k 0) 0) -1
+        (let [t (snap-read raw (vector-at k 2))]
+          (if (or (< (vector-at t 0) 0) (not (snap-kind? (snap-text raw k))))
+            -1 (vector-at t 2)))))))
+
+(defn browser-scan-blocks [raw :string at :i64 left :i64] :bool
+  (if (= left 0) (= at (string-byte-length raw))
+    (let [next (browser-scan-block raw at)]
+      (and (>= next 0) (browser-scan-blocks raw next (- left 1))))))
+
+;; Encode the next offset and UTF-8 text length in a scalar before the arena
+;; is released. Frame lengths are bounded to 1024 bytes by snap-read.
+(defn browser-render-row [raw :string at :i64 i :i64 start :i64 preview :bool] :i64
+  (arena-scope
+    (let [k (snap-read raw at) t (snap-read raw (vector-at k 2))
+          kind (snap-text raw k) text (snap-text raw t)
+          node (if preview (preview-node-fields kind text)
+                 (edit-row-fields kind i start text))
+          emitted (browser-view-node node)]
+      (+ (* (vector-at t 2) 2048) (string-byte-length text)))))
+
+(defn browser-render-rows [raw :string at :i64 i :i64 n :i64 start :i64 preview :bool] :i64
+  (if (= i n) (if (= n 0) 1 (- start 1))
+    (let [row (browser-render-row raw at i start preview)]
+      (browser-render-rows raw (quot row 2048) (+ i 1) n
+                           (next-start start (rem row 2048)) preview))))
+
+(defn browser-render-bs1 [raw :string offset :i64] :i64
+  (let [title (snap-read raw offset)]
+    (if (< (vector-at title 0) 0) 3
+      (let [mode-frame (snap-read raw (vector-at title 2))]
+        (if (< (vector-at mode-frame 0) 0) 3
+          (let [count-frame (snap-read raw (vector-at mode-frame 2))
+                mode (snap-text raw mode-frame)]
+            (if (or (< (vector-at count-frame 0) 0)
+                    (not (or (string=? mode "edit") (string=? mode "preview")))) 3
+              (let [n (snap-number (snap-text raw count-frame) 0)
+                    start (vector-at count-frame 2)]
+                (if (or (< n 0) (not (browser-scan-blocks raw start n))) 3
+                  (let [preview (string=? mode "preview")
+                        shell (view (document-map :title (document-string (snap-text raw title))
+                                                  :mode (document-string mode)
+                                                  :blocks (document-vector)))
+                        children (dget shell :children)
+                        prefix (typed-cap-call :io/write :string :string "BV2|")
+                        root (browser-view-head shell 4)
+                        header (browser-view-node (dat children 0))
+                        tools (browser-view-node (dat children 1))
+                        main (browser-view-head (dat children 2) n)
+                        end (browser-render-rows raw start 0 n 1 preview)
+                        footer (document-assoc (dat children 3) :text
+                                 (document-string (string-concat (string-from-i64 n)
+                                   (string-concat " ブロック · 本文 index 1–" (string-from-i64 end)))))
+                        rendered (browser-view-node footer)
+                        out (typed-cap-call :io/write :string :string "\n")] 0))))))))))
 
 (defn browser-render [raw :string] :i64
   (if (> (string-byte-length raw) 35000) 3
+    (if (browser-prefix? raw 49) (browser-render-bs1 raw 4)
+     (if (and (browser-prefix? raw 51) (>= (string-byte-length raw) 5)
+              (= (string-code-point-at raw 4) 49)) (browser-render-bs1 raw 5)
     (let [decoded (browser-decode raw)]
       (if (option-some?-of [:option :document] decoded)
         (let [state (option-value-of [:option :document] decoded (init))
               prefix (typed-cap-call :io/write :string :string "BV2|")
               result (browser-view-node (view state))
               out (typed-cap-call :io/write :string :string "\n")] result)
-        3))))
+        3))))))
 
 (defn main [] :i64
   (let [argc (browser-arg "") op (browser-arg "0")]

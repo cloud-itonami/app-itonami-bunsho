@@ -1,0 +1,106 @@
+{
+  "date": "2026-11-03",
+  "status": "PASS_SYNTHETIC_BROWSER",
+  "sourceSha256": "579447d990e49bede813fb524163eddb87a981852995fb1baa39e3ca7991a9e7",
+  "normal": {
+    "compilerSha256": "2c551579c06a0228029bb06bae177e93126ecbbc37d636d693c471dbac8d1536",
+    "wasmSha256": "ce5b1f52699595d4164700af48730ac1097634fffbe7293d0523a986dfd26091"
+  },
+  "experimentalCompact": {
+    "compilerSha256": "3c63cc6c8c4641bf971173e8baa7596326f6e992d23e1b965df6fff4d4041b63",
+    "wasmSha256": "ebdc798dec53c75b672dab500e45d04701c59016b2f9760fe60a5ca306163b49",
+    "runtimeStringPoolBytes": 4194304,
+    "linearMemoryBytes": 7536640
+  },
+  "viewParity": {
+    "status": "PASS_STREAMED_VIEW_PARITY",
+    "cases": [
+      "legacy-bs2",
+      "edit-0-BS1|",
+      "edit-0-BS3|1",
+      "edit-1-BS1|",
+      "edit-1-BS3|1",
+      "edit-8-BS1|",
+      "edit-8-BS3|1",
+      "edit-32-BS1|",
+      "edit-32-BS3|1",
+      "edit-maximum",
+      "preview-0-BS1|",
+      "preview-0-BS3|1",
+      "preview-1-BS1|",
+      "preview-1-BS3|1",
+      "preview-8-BS1|",
+      "preview-8-BS3|1",
+      "preview-32-BS1|",
+      "preview-32-BS3|1",
+      "preview-maximum",
+      "bad-kind",
+      "trailing",
+      "truncated",
+      "bad-count",
+      "bad-utf8-end",
+      "bad-mode"
+    ],
+    "browser": {
+      "product": "Chrome/156.0.8078.74",
+      "protocol": "1.3"
+    },
+    "wasmSha256": {
+      "old": "af70455c1abec4f8fa334fbdef02cb1847a7c4df71a7199982f3c8af681c7c79",
+      "new": "ce5b1f52699595d4164700af48730ac1097634fffbe7293d0523a986dfd26091",
+      "compact": "ebdc798dec53c75b672dab500e45d04701c59016b2f9760fe60a5ca306163b49"
+    },
+    "scope": "synthetic browser wire parity; compact Wasm is not QEMU"
+  },
+  "maxViewProtectStep": {
+    "edit": {
+      "viewBytes": 54918,
+      "viewSha256": "9a0cf0a3aa3c3b61c4237de50bc92909247f0ec552d2760a9e7b5135bf178d21",
+      "protect": {
+        "exit": 0,
+        "report": "{:status :ok :result 0 :fuel {:initial 100000000 :remaining 89500219}}",
+        "stderr": ""
+      },
+      "step": {
+        "exit": 0,
+        "report": "{:status :ok :result 0 :fuel {:initial 100000000 :remaining 88959379}}",
+        "stderr": ""
+      }
+    },
+    "preview": {
+      "viewBytes": 35351,
+      "viewSha256": "e8552cc08acf65621fffd0b3f1aa402cf00afb1c61fec8f0ada2b982e7d1cf9a",
+      "protect": {
+        "exit": 0,
+        "report": "{:status :ok :result 0 :fuel {:initial 100000000 :remaining 89500113}}",
+        "stderr": ""
+      },
+      "step": {
+        "exit": 0,
+        "report": "{:status :ok :result 0 :fuel {:initial 100000000 :remaining 88959249}}",
+        "stderr": ""
+      }
+    }
+  },
+  "largeIndexedDbRestore": {
+    "status": "PASS_LARGE_RESTORE_EDIT_RELOAD",
+    "snapshotBytes": 34068,
+    "blocks": 32,
+    "blockBytes": 1024,
+    "previousStateBackedUp": true
+  },
+  "additionalChecks": [
+    "browser-entry",
+    "browser-idb-ui",
+    "browser-idb-ime",
+    "browser-idb-restart",
+    "old-new-bs1-bs2-view-parity"
+  ],
+  "limitations": [
+    "synthetic data and local Chrome only",
+    "compact allocator and linear memory are experimental; does not include browser engine overhead",
+    "large BS2 legacy-provenance documents are not qualified by this test",
+    "not an Itonami OS or QEMU execution",
+    "not a live data migration, fleet synchronization, deployment or release"
+  ]
+}
