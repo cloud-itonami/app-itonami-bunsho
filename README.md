@@ -15,3 +15,7 @@ The existing index Wasm experiment is documented in
 [its evidence](docs/evidence/index-wasm-20261102.md); it is not an editor or
 persistence qualification. The candidate `bunsho.itonami.app` is not a claim
 of an available or deployed service.
+
+## Android
+
+See [the independent Tauri build](android/README.md).
