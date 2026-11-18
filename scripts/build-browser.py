@@ -19,8 +19,8 @@ if len(sys.argv) != 5:
 amu, broker, policy_repo, out = [Path(x).resolve() for x in sys.argv[1:]]
 out.mkdir(parents=True, exist_ok=False)
 root = Path(__file__).resolve().parents[1]
-pin = json.loads((root / 'appview/docs-performers-r5ycqp6x/client-runtime.pin.json').read_text())
-raw = subprocess.run(['git', '-C', str(broker), 'show', pin['revision'] + ':src/kotoba-client-runtime.js'],
+pin = json.loads((root / 'browser/client-runtime.pin.json').read_text())
+raw = subprocess.run(['git', '-C', str(broker), 'show', pin['revision'] + ':' + pin['path']],
                      check=True, capture_output=True).stdout
 if hashlib.sha256(raw).hexdigest() != pin['sha256']:
     raise SystemExit('canonical broker digest mismatch')
