@@ -8,6 +8,8 @@ on:
       - 'tests/**'
       - 'appview/docs-performers-r5ycqp6x/client-runtime.pin.json'
       - 'appview/docs-performers-r5ycqp6x/cljs/public/.well-known/did.json'
+      - 'appview/docs-performers-r5ycqp6x/cljs/public/client-runtime.json'
+      - 'appview/docs-performers-r5ycqp6x/scripts/**'
       - '.github/workflows/browser-selfhost.yml'
 permissions:
   contents: read
@@ -33,7 +35,7 @@ jobs:
           git -C "$root/amu" checkout --quiet --detach FETCH_HEAD
           printf '%s  %s\n' '2c551579c06a0228029bb06bae177e93126ecbbc37d636d693c471dbac8d1536' "$root/amu/seed/bootstrap/aarch64-macos/amu-full-root.macho" | shasum -a 256 -c -
           git init -q "$root/broker"
-          git -C "$root/broker" fetch --quiet --depth=1 --filter=blob:none https://github.com/kotoba-lang/kotoba.git ecbfc15b139280a0d2563a5375d69c9a11156dc2
+          git -C "$root/broker" fetch --quiet --depth=1 --filter=blob:none https://github.com/kotoba-lang/kotoba.git a1b90e38c9e5334facfa993062e237299c70de10
           git init -q "$root/policy"
           git -C "$root/policy" fetch --quiet --depth=1 --filter=blob:none https://github.com/kotoba-lang/kotoba.git c28c8b551d696df780dddff5064ac530ae29ff2f
       - name: Compile Wasm and package test inputs
@@ -44,6 +46,9 @@ jobs:
           payload="$RUNNER_TEMP/office-payload"
           mkdir -p "$payload/amu/scripts/seed"
           python3 scripts/build-browser.py "$root/amu" "$root/broker" "$root/policy" "$payload/build"
+          node scripts/check-client-runtime-contract.mjs "$payload/build/kotoba-client-runtime.js" browser/client-runtime.pin.json "$payload/build/client-runtime.json" https://bunsho.itonami.app
+          node scripts/check-client-runtime-contract.mjs "$payload/build/kotoba-client-runtime.js" appview/docs-performers-r5ycqp6x/client-runtime.pin.json appview/docs-performers-r5ycqp6x/cljs/public/client-runtime.json
+          node appview/docs-performers-r5ycqp6x/scripts/check-client-runtime.mjs "$payload/build/kotoba-client-runtime.js"
           cp "$root/amu/scripts/seed/check-wasm32-browser.py" "$payload/amu/scripts/seed/"
           PAYLOAD="$payload" python3 - <<'PY'
           import hashlib, os

@@ -1,6 +1,7 @@
 {
-  "module": "kotoba-lang/wasm-webcomponent/src/kotoba-client-runtime.js",
-  "revision": "e00ae75e1c589f76b4f53a88a5e3256c98c9e162",
-  "sha256": "7f760128c3a58098123c31ec3dd34b9c871932e3933f2c952facc4ab0e647212",
+  "module": "kotoba-lang/kotoba/lib/kotoba.wasmWebcomponent/src/kotoba-client-runtime.js",
+  "path": "lib/kotoba.wasmWebcomponent/src/kotoba-client-runtime.js",
+  "revision": "a1b90e38c9e5334facfa993062e237299c70de10",
+  "sha256": "d6f67c058c5c40fc56fe500648dc79704a2eee02d4af75fc17898aad1f560a75",
   "app-origin": "https://bunsho.itonami.app"
 }
