@@ -1,5 +1,5 @@
 // Validates this app's static client-runtime descriptor with the canonical
-// kotoba-lang/wasm-webcomponent broker module (never a local copy of its
+// kotoba-lang/kotoba lib/kotoba.wasmWebcomponent broker module (never a local copy of its
 // rules). Usage: node scripts/check-client-runtime.mjs <path/to/kotoba-client-runtime.js>
 // (or set KOTOBA_CLIENT_RUNTIME to that path)
 import { createHash } from 'node:crypto';

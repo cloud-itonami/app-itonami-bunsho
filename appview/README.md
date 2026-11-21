@@ -24,8 +24,10 @@ net-kotobase/ipfs の Worker が配信する。Worker の route をこの app �
 ## 外部操作を足すとき
 
 `client-runtime.json` の `operations` に、service・endpoint・data-categories・
-`consent: "each-operation"` を宣言する。実行は共有 broker
-（`kotoba-lang/wasm-webcomponent/src/kotoba-client-runtime.js`、`docs-performers-r5ycqp6x/client-runtime.pin.json`
+`consent: "each-operation"` と `disclosure`（送り先の事業者の正式名・国・データ・目的・回数・撤回先。
+日本の外なら country-name と foreign-info-url も）を宣言する。内部アドレスには `scope: "lan"` が要る。
+送り先の事業者名と国が確定しない操作は宣言しない。実行は共有 broker
+（`kotoba-lang/kotoba/lib/kotoba.wasmWebcomponent/src/kotoba-client-runtime.js`、`docs-performers-r5ycqp6x/client-runtime.pin.json`
 で revision と sha256 を固定）を通し、操作ごとにユーザーの同意を取ってからブラウザが直接呼ぶ。
 app origin への API 呼び出しや、app origin 経由のプロキシは使わない。
 
@@ -33,6 +35,7 @@ app origin への API 呼び出しや、app origin 経由のプロキシは使�
 
 ```bash
 node docs-performers-r5ycqp6x/scripts/check-client-runtime.mjs <kotoba-client-runtime.js のパス>
+node ../scripts/check-client-runtime-contract.mjs <kotoba-client-runtime.js のパス> docs-performers-r5ycqp6x/client-runtime.pin.json docs-performers-r5ycqp6x/cljs/public/client-runtime.json
 ```
 
 broker の digest、descriptor の妥当性、app origin の endpoint を拒否すること（負の対照）、
