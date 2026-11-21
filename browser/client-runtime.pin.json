@@ -1,6 +1,6 @@
 {
   "module": "kotoba-lang/kotoba/lib/kotoba.wasmWebcomponent/src/kotoba-client-runtime.js",
   "path": "lib/kotoba.wasmWebcomponent/src/kotoba-client-runtime.js",
-  "revision": "ee75001ee44a9b793602d1549e5e977c4562a5fe",
-  "sha256": "e7bcd2d729ceeed3460cc766335a2ff4d0937f9af7a82b038c5df9d20e427ebe"
+  "revision": "e58ae70b4bdc818b3feec767f7ac9908cd6e7a2c",
+  "sha256": "37e826338686eefbb2b9c7a731b73c53f7f5d6864158c0790edad60f25682d6d"
 }
