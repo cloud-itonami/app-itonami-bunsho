@@ -35,7 +35,7 @@ jobs:
           git -C "$root/amu" checkout --quiet --detach FETCH_HEAD
           printf '%s  %s\n' '2c551579c06a0228029bb06bae177e93126ecbbc37d636d693c471dbac8d1536' "$root/amu/seed/bootstrap/aarch64-macos/amu-full-root.macho" | shasum -a 256 -c -
           git init -q "$root/broker"
-          git -C "$root/broker" fetch --quiet --depth=1 --filter=blob:none https://github.com/kotoba-lang/kotoba.git ee75001ee44a9b793602d1549e5e977c4562a5fe
+          git -C "$root/broker" fetch --quiet --depth=1 --filter=blob:none https://github.com/kotoba-lang/kotoba.git e58ae70b4bdc818b3feec767f7ac9908cd6e7a2c
           git init -q "$root/policy"
           git -C "$root/policy" fetch --quiet --depth=1 --filter=blob:none https://github.com/kotoba-lang/kotoba.git c28c8b551d696df780dddff5064ac530ae29ff2f
       - name: Compile Wasm and package test inputs
