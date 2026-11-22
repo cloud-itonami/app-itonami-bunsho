@@ -62,8 +62,10 @@ if did_document.get('id') != 'did:web:bunsho.itonami.app' or did_document.get('@
     raise SystemExit('unexpected static DID document')
 (out / '.well-known').mkdir()
 (out / '.well-known/did.json').write_bytes(did)
-desc = {'schema': 'kotoba.app.client-runtime.v1', 'target': 'browser', 'profile': 'trusted-page-v1',
-        'entry': 'index.html', 'local-state': {'adapter': 'indexeddb', 'schema': 'itonami.bunsho.candidate.idb-v2', 'version': 2},
+# restricted-wasm-v1 (KOTOBA-159). The sandboxed guest has no storage until the runtime's host-mediated
+# storage (KOTOBA-968): local-state is memory, and the app refuses to open a document it cannot keep.
+desc = {'schema': 'kotoba.app.client-runtime.v1', 'target': 'browser', 'profile': 'restricted-wasm-v1',
+        'entry': 'index.html', 'local-state': {'adapter': 'memory', 'schema': 'itonami.bunsho.candidate.idb-v2', 'version': 2},
         'workers': [{'id': 'bunsho-worker', 'entry': 'worker.js', 'protocol': 'wasm32-browser-static.v1'}], 'operations': []}
 (out / 'client-runtime.json').write_text(json.dumps(desc, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
 config = ('export const descriptor = ' + json.dumps(desc, ensure_ascii=False) + ';\n'
@@ -81,4 +83,6 @@ receipt = {'wasmSha256': hashlib.sha256(wasm).hexdigest(), 'compilerSha256': has
            'transactionalStorageSha256': hashlib.sha256((out / 'transactional-storage.js').read_bytes()).hexdigest(),
            'managedStorageSha256': hashlib.sha256((out / 'managed-storage.js').read_bytes()).hexdigest()}
 (out / 'build-receipt.json').write_text(json.dumps(receipt, indent=2) + '\n')
+commit = subprocess.run(['git', '-C', str(root), 'rev-parse', 'HEAD'], check=True, capture_output=True, text=True).stdout.strip()
+subprocess.run(['node', str(root / 'scripts/make-restricted.mjs'), str(out), commit], check=True)
 print('BUILT_BUNSHO_BROWSER_CANDIDATE', out)

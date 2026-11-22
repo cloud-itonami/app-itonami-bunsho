@@ -1,6 +1,9 @@
-import { clientRuntimeProblems, clientRuntimeConnectSrc } from './kotoba-client-runtime.js';
+// restricted-wasm-v1 guest (KOTOBA-159): the host page validates the descriptor with the canonical
+// runtime and mounts this document in an opaque-origin sandbox whose policy is connect-src 'none'.
 import { openManagedStore } from './managed-storage.js';
-import { descriptor, wasmBase64, wasmSha256, draftPolicyBase64, draftPolicySha256 } from './bundle.js';
+import { wasmBase64, wasmSha256, draftPolicyBase64, draftPolicySha256, workerSource } from './bundle.js';
+// The sandboxed guest loads no file: the Amu static host runs as a Worker from its inlined text.
+const workerURL = URL.createObjectURL(new Blob([workerSource], { type: 'text/javascript' }));
 
 const status = document.getElementById('status');
 const mount = document.getElementById('app');
@@ -292,7 +295,7 @@ function parseTree(wire) {
 }
 function run(args, module = compiledModule) {
   return new Promise((resolve, reject) => {
-    const worker = new Worker('./worker.js');
+    const worker = new Worker(workerURL);
     const timer = setTimeout(() => { worker.terminate(); reject(Error('worker timeout')); }, 30000);
     worker.onmessage = ({ data }) => {
       clearTimeout(timer); worker.terminate();
@@ -519,7 +522,6 @@ document.getElementById('backup-confirm').addEventListener('click', () => {
   });
 });
 async function start() {
-  if (clientRuntimeProblems(descriptor, [], location.origin).length || clientRuntimeConnectSrc(descriptor, [], [], location.origin) !== "connect-src 'none'") throw Error('descriptor');
   bytes = Uint8Array.from(atob(wasmBase64), c => c.charCodeAt(0));
   const digest = [...new Uint8Array(await crypto.subtle.digest('SHA-256', bytes))].map(x => x.toString(16).padStart(2, '0')).join('');
   if (digest !== wasmSha256) throw Error('artifact digest');
@@ -528,6 +530,16 @@ async function start() {
   const policyDigest = [...new Uint8Array(await crypto.subtle.digest('SHA-256', policyBytes))].map(x => x.toString(16).padStart(2, '0')).join('');
   if (policyDigest !== draftPolicySha256) throw Error('draft policy digest');
   compiledDraftPolicy = await WebAssembly.compile(policyBytes);
+  // The sandboxed guest has no storage of its own until the runtime's host-mediated storage
+  // (KOTOBA-968). Bunsho never edits a document it cannot keep, so it stops here and says so. Both
+  // programs are compiled and the static host has run `init` once (it writes nothing), so the page
+  // records that the programs work in this environment.
+  if (!storageAvailable()) {
+    const output = await run(['init']);
+    if (output.endsWith('\n')) document.documentElement.dataset.programsReady = 'true';
+    freezeStorage('この版では文書を端末に保存できないため、開きません（保存の仕組みの更新を待っています）。何も変更していません。');
+    return;
+  }
   storage = await openManagedStore('itonami.office.bunsho.v2', LIMIT, () => localStorage.getItem(KEY));
   const initial = await storage.inspect();
   persistedState = initial.current; persisted = initial.current.value;
@@ -562,5 +574,10 @@ async function start() {
     fail('新しい文書');
   }
   inspectDraft(true);
+}
+// An opaque-origin document (the sandboxed guest) has no IndexedDB, localStorage or sessionStorage.
+// The check opens nothing, so it has no side effect where storage does work.
+function storageAvailable() {
+  try { return globalThis.origin !== 'null' && Boolean(globalThis.indexedDB); } catch { return false; }
 }
 start().catch(() => { freezeStorage('文書を開けません。保存済みの内容を確認してください。'); inspectDraft(false); });

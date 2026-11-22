@@ -1,0 +1,18 @@
+{
+  "schema": "itonami.disabled-features.v1",
+  "note": "Features that worked before the restricted-wasm-v1 move and are off now. Decision 2026-11-22: no Bunsho release while this list is not empty (scripts/deploy-gate.mjs). Remove an entry only when the feature works again.",
+  "features": [
+    {
+      "id": "document-kept",
+      "label": "文書を開き、編集し、端末に保存する（版の比較つきの保存、別のタブの変更の検出、未保存の入力の保護）",
+      "reason": "The sandboxed guest has no IndexedDB, localStorage or sessionStorage; Bunsho does not open a document it cannot keep.",
+      "waits-for": "KOTOBA-968 (host-mediated storage with compare-and-swap and change notification)"
+    },
+    {
+      "id": "backup-export",
+      "label": "バックアップと回復用のデータを書き出す（.bs1/.bs2/.bs3、未保存の入力、旧データ）",
+      "reason": "The sandbox has no way to hand a file to the user.",
+      "waits-for": "KOTOBA-968 (save hand-off)"
+    }
+  ]
+}
