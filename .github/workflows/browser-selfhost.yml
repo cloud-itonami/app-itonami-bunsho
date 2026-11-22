@@ -49,6 +49,7 @@ jobs:
           node scripts/check-client-runtime-contract.mjs "$payload/build/kotoba-client-runtime.js" browser/client-runtime.pin.json "$payload/build/client-runtime.json" https://bunsho.itonami.app
           node scripts/check-client-runtime-contract.mjs "$payload/build/kotoba-client-runtime.js" appview/docs-performers-r5ycqp6x/client-runtime.pin.json appview/docs-performers-r5ycqp6x/cljs/public/client-runtime.json
           node appview/docs-performers-r5ycqp6x/scripts/check-client-runtime.mjs "$payload/build/kotoba-client-runtime.js"
+          node --test scripts/deploy-gate.test.mjs
           cp "$root/amu/scripts/seed/check-wasm32-browser.py" "$payload/amu/scripts/seed/"
           PAYLOAD="$payload" python3 - <<'PY'
           import hashlib, os
